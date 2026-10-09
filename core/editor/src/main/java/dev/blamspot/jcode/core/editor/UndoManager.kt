@@ -14,6 +14,9 @@ class UndoManager(
     private val maxInvertedBytes: Int = 50 * 1024 * 1024,
 ) {
     private data class UndoEntry(
+        /** The edit the user made — applied verbatim by redo. */
+        val tx: EditTx,
+        /** The inverse of [tx], built against the pre-edit snapshot — applied by undo. */
         val invertedTx: EditTx,
         val selectionBefore: List<Caret>,
         val selectionAfter: List<Caret>,
@@ -48,7 +51,7 @@ class UndoManager(
         }
         currentGroupSelection = selectionBefore
 
-        val entry = UndoEntry(inverted, selectionBefore, selectionBefore, now)
+        val entry = UndoEntry(tx, inverted, selectionBefore, selectionBefore, now)
         history.addLast(entry)
         totalInvertedBytes += estimateByteSize(inverted)
         redoStack.clear()
@@ -84,11 +87,13 @@ class UndoManager(
         totalInvertedBytes -= estimateByteSize(entry.invertedTx)
 
         runBlocking {
-            state.applyEdit(entry.invertedTx)
+            // recordInUndo = false: an undo is a history traversal, not a new edit — recording the
+            // inverse would append it to the history and clear the redo stack underneath us.
+            state.applyEdit(entry.invertedTx, recordInUndo = false)
             state.setSelection(entry.selectionBefore)
         }
 
-        redoStack.addLast(entry.copy(selectionAfter = entry.selectionBefore))
+        redoStack.addLast(entry)
         return true
     }
 
@@ -97,15 +102,16 @@ class UndoManager(
         if (redoStack.isEmpty()) return false
 
         val entry = redoStack.removeLast()
-        val inverted = invertEdit(entry.invertedTx, state.snapshot.value)
-
         runBlocking {
-            state.applyEdit(inverted)
+            // Reapply the original edit verbatim. Inverting the inverse instead would need the
+            // pre-undo snapshot — the post-undo one is all that exists here, and reading the
+            // deleted text out of it restores the wrong bytes.
+            state.applyEdit(entry.tx, recordInUndo = false)
             state.setSelection(entry.selectionAfter)
         }
 
-        history.addLast(entry.copy(invertedTx = inverted))
-        totalInvertedBytes += estimateByteSize(inverted)
+        history.addLast(entry)
+        totalInvertedBytes += estimateByteSize(entry.invertedTx)
         return true
     }
 

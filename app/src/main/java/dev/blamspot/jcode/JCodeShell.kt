@@ -1934,8 +1934,7 @@ fun JCodeApp(
             text = {
                 Text(
                     "JCode 将重启以切换到 ${pending.environmentId}。编辑器和未保存的更改" +
-                        "将被保留；以下各项将被停止：
-" +
+                        "将被保留；以下各项将被停止：\n" +
                         pending.running.joinToString("\n") { "•  $it" },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

@@ -113,11 +113,9 @@ class DebugController(
         if (!engine.dapAdapter) {
             pushOutput(
                 "尚不支持调试 ${hostPath.substringAfterLast('/')}：JCode 没有" +
-                    "内置的 ${engine.name} 适配器。
-请使用以下参数运行程序 " +
+                    "内置的 ${engine.name} 适配器。\n请使用以下参数运行程序 " +
                     "`-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005` in a terminal " +
-                    "并连接外部调试器。
-",
+                    "并连接外部调试器。\n",
             )
             _state.value = DebugState.ERROR
             return
@@ -182,8 +180,7 @@ class DebugController(
             if (_state.value == DebugState.STARTING) {
                 pushOutput(
                     "无法连接到 ${engine.name} 调试适配器——它已启动，但连接" +
-                        "超时。请查看日志（标签 JCodeDAP-adapter）了解详情。
-",
+                        "超时。请查看日志（标签 JCodeDAP-adapter）了解详情。\n",
                 )
                 _state.value = DebugState.ERROR
             }

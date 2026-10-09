@@ -306,7 +306,7 @@ object VsixPackage {
                 add("未声明“main”，因此没有可运行的扩展代码。")
             }
             if (unsupported.isNotEmpty()) {
-                add("JCode 未实现以下贡献点：${unsupported.joinToString(", ")}。", ")}.")
+                add("JCode 未实现以下贡献点：${unsupported.joinToString(", ")}。")
             }
             if (manifest.contributeKeys.none { it == "views" || it == "viewsContainers" }) {
                 add("未贡献任何视图，因此在 JCode 中可能没有可见界面。")

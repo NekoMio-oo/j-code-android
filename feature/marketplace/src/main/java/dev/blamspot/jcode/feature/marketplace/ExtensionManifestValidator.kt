@@ -59,7 +59,7 @@ object ExtensionManifestValidator {
         }
         ext.apiCapabilities.forEach { cap ->
             if (cap !in KNOWN_CAPABILITIES) {
-                warn("未知的 API 能力 `$cap`（已知：${KNOWN_CAPABILITIES.joinToString(", ")}）。", ")}).", "api.capabilities")
+                warn("未知的 API 能力 `$cap`（已知：${KNOWN_CAPABILITIES.joinToString(", ")}）。", "api.capabilities")
             }
         }
 
@@ -115,7 +115,7 @@ object ExtensionManifestValidator {
 
         // --- deps (informational) ---
         val allDeps = ext.requires.sdks + ext.requires.lsps + ext.requires.dbg
-        if (allDeps.isNotEmpty()) info("需要工具链：${allDeps.joinToString(", ")}（随扩展一同安装）。", ")} (installed with the extension).", "requires")
+        if (allDeps.isNotEmpty()) info("需要工具链：${allDeps.joinToString(", ")}（随扩展一同安装）。", "requires")
 
         return issues.sortedBy { it.severity.ordinal }
     }

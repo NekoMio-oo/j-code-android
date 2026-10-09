@@ -187,8 +187,14 @@ class EditorState(
         undoManager = UndoManager(this)
     }
 
-    /** Apply an edit transaction through the single-writer dispatcher. */
-    suspend fun applyEdit(tx: EditTx) = withContext(scope.coroutineContext) {
+    /**
+     * Apply an edit transaction through the single-writer dispatcher.
+     *
+     * [recordInUndo] is false for the edits the [UndoManager] itself applies (undo/redo): those are
+     * history traversals, not new edits, and recording them would append the inverse to the history
+     * and clear the redo stack mid-traversal.
+     */
+    suspend fun applyEdit(tx: EditTx, recordInUndo: Boolean = true) = withContext(scope.coroutineContext) {
         if (readOnly) return@withContext
         val oldSnapshot = _snapshot.value
         val newSnapshot = bufferRef.applyEdit(tx)
@@ -217,7 +223,7 @@ class EditorState(
         }
 
         // Push to undo manager
-        undoManager?.recordEdit(tx, _carets.value, oldSnapshot)
+        if (recordInUndo) undoManager?.recordEdit(tx, _carets.value, oldSnapshot)
     }
 
     /**
