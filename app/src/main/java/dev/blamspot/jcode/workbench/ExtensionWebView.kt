@@ -507,7 +507,7 @@ internal class VsixSession private constructor(
     private val onOpenPanel: (handle: String, title: String) -> Unit,
 ) {
     /** What to show while there is no page yet, and why if there never will be. */
-    var status by mutableStateOf("Starting ${extension.name}…")
+    var status by mutableStateOf("正在启动 ${extension.name}…")
         private set
     var failure by mutableStateOf<String?>(null)
         private set
@@ -932,7 +932,7 @@ internal class VsixSession private constructor(
             ?: projectPath?.substringAfterLast('/')
 
         host.start(projectDir = projectPath)?.let { failure = it; return }
-        status = "Loading ${extension.name}…"
+        status = "正在加载 ${extension.name}…"
 
         // Seed the host with the extension's settings — `contributes.configuration` defaults overlaid
         // with the user's saved values — so `getConfiguration(section).get(key)` returns them. Empty
@@ -1250,7 +1250,7 @@ internal fun VsixPanelPage(
         return
     }
     if (!surface.hasPage) {
-        ExtensionNotice("Opening ${extension.name}…", modifier)
+        ExtensionNotice("正在打开 ${extension.name}…", modifier)
         return
     }
     VsixSurfaceView(surface, modifier)
@@ -1636,7 +1636,7 @@ private const val VIEWPORT_SIZE_JS = """
 
 private const val NO_UI_HTML =
     "<html><body style=\"font-family:sans-serif;color:#9aa;padding:24px\">" +
-        "This extension does not ship a UI.</body></html>"
+        "此扩展未提供界面。</body></html>"
 
 /** JCode's live theme as CSS variables (--jcode-*), injected into extension pages so they match the app. */
 internal fun extensionThemeJs(

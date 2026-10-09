@@ -39,7 +39,7 @@ class WorkspaceManager @Inject constructor(
     private val storageRoots: StorageRoots
         get() = storageRootsCache ?: resolveStorageRoots(context).also { storageRootsCache = it }
 
-    /** Id of the root "Default Workspace" (whose projects live in [StorageRoots.projectsRoot]). */
+    /** Id of the root "默认工作区" (whose projects live in [StorageRoots.projectsRoot]). */
     @Volatile
     private var defaultWorkspaceId: Long? = null
 
@@ -548,7 +548,7 @@ class WorkspaceManager @Inject constructor(
             val existing = workspaceDao.getWorkspaceByRootPath(rootPath)
             val workspaceId = existing?.id ?: workspaceDao.upsertWorkspace(
                 WorkspaceEntity(
-                    name = "Default Workspace",
+                    name = "默认工作区",
                     rootPath = rootPath,
                     lastOpened = now,
                 )
@@ -558,7 +558,7 @@ class WorkspaceManager @Inject constructor(
             workspaceDao.observeWorkspace(workspaceId).first()?.toDomain()
                 ?: Workspace(
                     id = workspaceId,
-                    name = existing?.name ?: "Default Workspace",
+                    name = existing?.name ?: "默认工作区",
                     rootPath = rootPath,
                     lastOpened = existing?.lastOpened ?: now,
                     projects = emptyList(),
@@ -597,7 +597,7 @@ class WorkspaceManager @Inject constructor(
                 val tree = androidx.documentfile.provider.DocumentFile.fromTreeUri(context, path.uri)
                     ?: error("Unable to open SAF tree: ${path.uri}")
                 val jcodeDir = tree.findFile(".jcode") ?: tree.createDirectory(".jcode")
-                val folderName = tree.name ?: "External Folder"
+                val folderName = tree.name ?: "外部文件夹"
                 val configFileName = "$folderName.yaml"
                 val projectFile = jcodeDir?.findFile(configFileName) ?: jcodeDir?.createFile("application/x-yaml", configFileName)
                 context.contentResolver.openOutputStream(projectFile?.uri ?: error("Unable to create $configFileName"), "wt")?.use { stream ->
@@ -694,7 +694,7 @@ class WorkspaceManager @Inject constructor(
             is FsPath.Saf -> {
                 val tree = androidx.documentfile.provider.DocumentFile.fromTreeUri(context, path.uri)
                     ?: return@withContext
-                val folderName = tree.name ?: "External Folder"
+                val folderName = tree.name ?: "外部文件夹"
                 val jcodeDir = tree.findFile(".jcode") ?: tree.createDirectory(".jcode") ?: return@withContext
                 val configFile = jcodeDir.findFile("$folderName.yaml")
                     ?: jcodeDir.createFile("application/x-yaml", "$folderName.yaml")
@@ -729,7 +729,7 @@ class WorkspaceManager @Inject constructor(
 
         is FsPath.Saf -> {
             val tree = androidx.documentfile.provider.DocumentFile.fromTreeUri(context, path.uri)
-            val folderName = tree?.name ?: "External Folder"
+            val folderName = tree?.name ?: "外部文件夹"
             tree?.findFile(".jcode")?.findFile("$folderName.yaml")?.let { file ->
                 runCatching {
                     context.contentResolver.openInputStream(file.uri)?.use { it.readBytes().toString(Charsets.UTF_8) }

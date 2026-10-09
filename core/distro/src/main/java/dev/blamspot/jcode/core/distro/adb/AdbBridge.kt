@@ -70,7 +70,7 @@ class AdbBridge(
         _state.value = AdbBridgeState.Discovering
 
         val relayPort = runCatching { relay.start() }.getOrElse { error ->
-            return@withLock publish(AdbBridgeState.Failed("Could not bind a local relay port: ${error.message}"))
+            return@withLock publish(AdbBridgeState.Failed("无法绑定本地中继端口：${error.message}"))
         }
 
         val backend = discovery.await()
@@ -97,7 +97,7 @@ class AdbBridge(
                 publish(AdbBridgeState.Ready(relayPort = relayPort, backendPort = backend.port))
             }
             device != null -> publish(
-                AdbBridgeState.Degraded("Device reported by adb as '${device.state}' — accept the debugging prompt or re-pair."),
+                AdbBridgeState.Degraded("adb 报告设备状态为'${device.state}'——请接受调试授权提示或重新配对。"),
             )
             else -> publish(AdbBridgeState.Failed("adb did not list $serial after connecting to $backend."))
         }
@@ -124,9 +124,9 @@ class AdbBridge(
         runCatching { client.devices() }.getOrDefault(emptyList()).firstOrNull { it.serial == serial }
 
     private fun discoveryHint(): String = if (discovery.isWirelessDebuggingEnabled()) {
-        "Wireless debugging is on but this device is not advertising adb yet."
+        "无线调试已开启，但此设备尚未广播 adb。"
     } else {
-        "Turn on Wireless debugging in Developer options."
+        "请在开发者选项中开启无线调试。"
     }
 
     private fun startServerFailure(result: ExecResult): String {
@@ -134,7 +134,7 @@ class AdbBridge(
             .firstOrNull { !it.isNullOrBlank() }
             ?.trim()
             ?.takeLast(MAX_FAILURE_DETAIL)
-        return "Could not start the adb server in the distro" + if (detail.isNullOrEmpty()) "." else ": $detail"
+        return "无法在发行版内启动 adb 服务器" + if (detail.isNullOrEmpty()) "." else ": $detail"
     }
 
     private suspend fun persistSerial(value: String) {

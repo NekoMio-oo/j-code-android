@@ -60,16 +60,16 @@ internal fun DebugSessionPanel(ui: DebugSessionUi, modifier: Modifier = Modifier
             horizontalArrangement = Arrangement.spacedBy(Space.sm),
         ) {
             Icon(jcIcon(JCodeIcon.Debug), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            // "Debug session", not "Debug": beside a row of run configs each carrying their own Debug
+            // "调试会话", not "调试": beside a row of run configs each carrying their own Debug
             // button, a section called Debug reads as a second, different Debug command.
-            Text("Debug session", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            Text("调试会话", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.weight(1f))
             DebugStateChip(ui.state)
         }
         DebugToolbar(ui)
         if (ui.callStack.isNotEmpty()) CallStackList(ui)
         if (ui.variables.isNotEmpty()) VariablesList(ui)
-        // Console output lives in the right-drawer "Debug" tab (alongside Terminal/Output), not here.
+        // Console output lives in the right-drawer "调试" tab (alongside Terminal/Output), not here.
     }
 }
 
@@ -96,18 +96,18 @@ internal fun DebugLaunchRow(ui: DebugSessionUi) {
                     horizontalArrangement = Arrangement.spacedBy(Space.xs),
                 ) {
                     Text(
-                        text = "Debug $target",
+                        text = "调试 $target",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f),
                     )
-                    JcTooltip("Start debugging") {
+                    JcTooltip("启动调试") {
                         IconButton(onClick = ui.onDebug) {
                             Icon(
                                 painter = jcIcon(JCodeIcon.Debug),
-                                contentDescription = "Start debugging",
+                                contentDescription = "启动调试",
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(22.dp),
                             )
@@ -119,7 +119,7 @@ internal fun DebugLaunchRow(ui: DebugSessionUi) {
         // Kept, because it is a diagnosis rather than an empty state: it names the engine that is
         // missing and where to install it.
         target != null -> Text(
-            "No debug engine installed for $target. Install one in Debug Engines (DBG).",
+            "未为 $target 安装调试引擎。请在「调试引擎（DBG）」中安装一个。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -134,12 +134,12 @@ private fun DebugToolbar(ui: DebugSessionUi) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Space.xxs),
     ) {
-        DebugAction(JCodeIcon.Continue, "Continue", enabled = stopped, tint = MaterialTheme.colorScheme.primary, onClick = ui.onContinue)
-        DebugAction(JCodeIcon.StepOver, "Step over", enabled = stopped, onClick = ui.onStepOver)
-        DebugAction(JCodeIcon.StepInto, "Step into", enabled = stopped, onClick = ui.onStepInto)
-        DebugAction(JCodeIcon.StepOut, "Step out", enabled = stopped, onClick = ui.onStepOut)
+        DebugAction(JCodeIcon.Continue, "继续", enabled = stopped, tint = MaterialTheme.colorScheme.primary, onClick = ui.onContinue)
+        DebugAction(JCodeIcon.StepOver, "单步跳过", enabled = stopped, onClick = ui.onStepOver)
+        DebugAction(JCodeIcon.StepInto, "单步进入", enabled = stopped, onClick = ui.onStepInto)
+        DebugAction(JCodeIcon.StepOut, "单步跳出", enabled = stopped, onClick = ui.onStepOut)
         Spacer(Modifier.weight(1f))
-        DebugAction(JCodeIcon.Stop, "Stop", enabled = true, tint = MaterialTheme.colorScheme.error, onClick = ui.onStop)
+        DebugAction(JCodeIcon.Stop, "停止", enabled = true, tint = MaterialTheme.colorScheme.error, onClick = ui.onStop)
     }
 }
 
@@ -170,7 +170,7 @@ private fun SectionLabel(text: String) {
 
 @Composable
 private fun CallStackList(ui: DebugSessionUi) {
-    SectionLabel("Call stack")
+    SectionLabel("调用堆栈")
     Column(
         modifier = Modifier.fillMaxWidth().heightIn(max = 140.dp).verticalScroll(rememberScrollState()),
     ) {
@@ -273,7 +273,7 @@ internal fun DebugConsoleLines(
 }
 
 /**
- * The right-drawer "Debug" tab: live session state + transport controls + the full-height console.
+ * The right-drawer "调试" tab: live session state + transport controls + the full-height console.
  * Reads [dev.blamspot.jcode.workbench.LocalDebugSession] so it mirrors the Run/Debug side panel's session.
  */
 @Composable
@@ -283,7 +283,7 @@ internal fun DebugConsoleSidebarContent(modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize().padding(horizontal = Space.sm, vertical = Space.s)) {
         if (!active && ui.output.isEmpty()) {
             Text(
-                "Start a debug session to see its console output here.",
+                "启动调试会话，即可在此处查看其控制台输出。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(Space.s),
@@ -292,7 +292,7 @@ internal fun DebugConsoleSidebarContent(modifier: Modifier = Modifier) {
         }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
             Text(
-                text = ui.debugTargetName?.let { "Debug: $it" } ?: "Debug",
+                text = ui.debugTargetName?.let { "调试：$it" } ?: "调试",
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,

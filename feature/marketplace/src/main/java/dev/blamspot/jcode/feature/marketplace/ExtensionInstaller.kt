@@ -64,7 +64,7 @@ class ExtensionInstaller internal constructor(context: Context) {
                     suggests = parseDeps(entry["suggests"]),
                 )
             }
-            MarketplaceIndex(map.str("name") ?: "JCode Marketplace", map.str("version"), entries)
+            MarketplaceIndex(map.str("name") ?: "JCode 扩展市场", map.str("version"), entries)
         }
     }
 
@@ -533,7 +533,7 @@ class ExtensionInstaller internal constructor(context: Context) {
             val run = step.str("run")
             if (script == null && run == null) return@mapNotNull null
             TemplateRecipeStep(
-                label = step.str("label") ?: "Run",
+                label = step.str("label") ?: "运行",
                 run = run?.trim().orEmpty(),
                 script = script,
                 workdir = step.str("workdir"),
@@ -693,10 +693,10 @@ class ExtensionInstaller internal constructor(context: Context) {
             val terminals = p.listOfAny("terminals").mapNotNull { t ->
                 val tm = (t as? Map<*, *>)?.toStringKeyMap() ?: return@mapNotNull null
                 val cmd = presetCommand(tm, presetDir).takeIf(String::isNotBlank) ?: return@mapNotNull null
-                RunPresetTerminal(label = tm.str("label") ?: "Run", command = cmd)
+                RunPresetTerminal(label = tm.str("label") ?: "运行", command = cmd)
             }.ifEmpty {
                 presetCommand(p, presetDir).takeIf(String::isNotBlank)
-                    ?.let { listOf(RunPresetTerminal(p.str("terminalLabel") ?: "Run", it)) }
+                    ?.let { listOf(RunPresetTerminal(p.str("terminalLabel") ?: "运行", it)) }
                     .orEmpty()
             }
             if (terminals.isEmpty()) return@mapNotNull null

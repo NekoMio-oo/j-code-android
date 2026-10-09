@@ -52,7 +52,7 @@ class TerminalView @JvmOverloads constructor(
     private var cellWidth = 0f
     private var cellHeight = 0f
 
-    // Selection state ("Select Text" in the context menu shows draggable handles over it). Rows are
+    // Selection state ("选择文本" in the context menu shows draggable handles over it). Rows are
     // LOGICAL — relative to the live screen top, negative rows in scrollback — so the highlight and
     // handles track the content while scrolled. Cleared on new output, resize, or session rebind.
     private var isSelecting = false
@@ -130,7 +130,7 @@ class TerminalView @JvmOverloads constructor(
         override fun onLongPress(e: MotionEvent) {
             // Request the action menu. With a selection active it offers Copy; a handle drag never
             // reaches this detector, so no in-drag guard is needed. The press cell is captured
-            // content-anchored (logical row + scrollback size) so "Select Text" still targets what
+            // content-anchored (logical row + scrollback size) so "选择文本" still targets what
             // was under the finger even after output shifts rows while the menu is open.
             if (cellWidth > 0f && cellHeight > 0f) {
                 pressLogicalRow = (e.y / cellHeight).toInt().coerceIn(0, rows - 1) - scrollOffset
@@ -483,7 +483,7 @@ class TerminalView @JvmOverloads constructor(
         val text = getSelectedText()
         if (text.isBlank()) return false
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText("Terminal Selection", text))
+        clipboard.setPrimaryClip(ClipData.newPlainText("终端选区", text))
         return true
     }
 
@@ -496,7 +496,7 @@ class TerminalView @JvmOverloads constructor(
         if (!isSelecting) return
         val copied = copySelectionToClipboard()
         clearSelection()
-        toast(if (copied) "Copied" else "Nothing to copy")
+        toast(if (copied) "Copied" else "没有可复制的内容")
     }
 
     fun contextSelectAll() = selectAllAndCopy()
@@ -528,7 +528,7 @@ class TerminalView @JvmOverloads constructor(
             val isImage = type?.startsWith("image/") == true || clip.description?.hasMimeType("image/*") == true
             if (isImage) {
                 val guestPath = onPasteImage?.invoke(uri)
-                if (guestPath != null) sendPaste(shellQuote(guestPath) + " ") else toast("Couldn't paste image")
+                if (guestPath != null) sendPaste(shellQuote(guestPath) + " ") else toast("无法粘贴图片")
                 return
             }
         }
@@ -573,7 +573,7 @@ class TerminalView @JvmOverloads constructor(
         selectionStartCol = 0
         selectionEndRow = (rows - 1).coerceAtLeast(0) - scrollOffset
         selectionEndCol = (cols - 1).coerceAtLeast(0)
-        toast(if (copySelectionToClipboard()) "Copied" else "Nothing to copy")
+        toast(if (copySelectionToClipboard()) "Copied" else "没有可复制的内容")
     }
 
     /** Clear the screen via Ctrl-L (the shell/readline redraws a fresh prompt). */
@@ -1586,7 +1586,7 @@ class TerminalView @JvmOverloads constructor(
                 for (i in 0 until clip.itemCount) {
                     val uri = clip.getItemAt(i).uri ?: continue
                     val guestPath = onPasteImage?.invoke(uri)
-                    if (guestPath != null) sendPaste(shellQuote(guestPath) + " ") else toast("Couldn't paste image")
+                    if (guestPath != null) sendPaste(shellQuote(guestPath) + " ") else toast("无法粘贴图片")
                 }
             }
             split.second

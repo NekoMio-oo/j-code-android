@@ -152,7 +152,7 @@ const val EXTENSION_API_VERSION = 1
  *  must not be able to grow the decoration maps without limit. */
 const val MAX_EXPLORER_DECORATIONS = 20_000
 
-/** Throttle for the "Android killed the distro" prompt — one kill takes every terminal at once. */
+/** Throttle for the "Android 终止了发行版" prompt — one kill takes every terminal at once. */
 private const val PROCESS_LIMIT_PROMPT_INTERVAL_MS = 60_000L
 
 /**
@@ -204,7 +204,7 @@ enum class EditorCloseChoice { SAVE, DISCARD, CLOSE_SAVED, CANCEL }
 /** Drives the editor "unsaved changes" dialog: the titles of the dirty tabs about to be closed. */
 /**
  * [savedCount] is how many tabs in the closing set are already saved. It is zero whenever a single
- * dirty tab is closed, and that is what hides the prompt's "Close Saved" action — with nothing clean
+ * dirty tab is closed, and that is what hides the prompt's "关闭已保存" action — with nothing clean
  * in the set it would close nothing at all.
  */
 data class PendingEditorClose(val dirtyTitles: List<String>, val savedCount: Int)
@@ -340,7 +340,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _marketplaceBusy = MutableStateFlow(false)
     val marketplaceBusy: StateFlow<Boolean> = _marketplaceBusy.asStateFlow()
 
-    /** Per-extension install phase ("Installing…", "Installing required tools…", "Verifying…"),
+    /** Per-extension install phase ("Installing…", "正在安装所需工具…", "Verifying…"),
      *  keyed by extension id, shown on the detail chip and list rows while an install runs. */
     private val _extensionInstallPhases = MutableStateFlow<Map<String, String>>(emptyMap())
     val extensionInstallPhases: StateFlow<Map<String, String>> = _extensionInstallPhases.asStateFlow()
@@ -364,14 +364,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // Gate the Extension Dev log to dev (unsigned sideloaded) extensions only.
             dev.blamspot.jcode.workbench.ExtensionDevLog.devIds = installed.filter { it.dev }.map { it.id }.toSet()
             // Any extension may contribute templates (a language/dev pack can bundle them too).
-            // Always offer an "Empty Project" first — a blank folder that needs no extension.
+            // Always offer an "空项目" first — a blank folder that needs no extension.
             // Stamped with its extension on the way through: a template that hands its configure
             // step to a view needs to say whose view it is, and only the list knows that here.
             val fromExtensions = installed.flatMap { ext ->
                 ext.templates.map { it.copy(extensionId = ext.id) }
             }
             val emptyOption = fromExtensions.filter { it.id == "empty" }.ifEmpty {
-                listOf(ProjectTemplate(id = "empty", name = "Empty Project", description = "A blank project folder — no scaffolding."))
+                listOf(ProjectTemplate(id = "empty", name = "空项目", description = "空白项目文件夹 — 不含脚手架。"))
             }
             _templates.value = emptyOption + fromExtensions.filter { it.id != "empty" }
         }
@@ -396,7 +396,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _pendingReload.update { list -> list.filterNot { it.id == id } }
     }
 
-    /** Reload every extension awaiting one (the banner's "Reload" button). */
+    /** Reload every extension awaiting one (the banner's "重新加载" button). */
     fun reloadPendingExtensions() {
         _pendingReload.value.map { it.id }.forEach { reloadExtension(it) }
     }
@@ -411,7 +411,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _editorGroup.value.tabs.any { it.id.startsWith(EXT_APP_PREFIX + id) || it.id.startsWith(VSIX_PANEL_PREFIX + id) }
 
     /**
-     * Close what an uninstalled extension still has open (the "Reload" on its removal snackbar).
+     * Close what an uninstalled extension still has open (the "重新加载" on its removal snackbar).
      *
      * Not [reloadExtension]: that tells a live page to re-read its extension off disk, and for one
      * that has just been removed there is nothing to re-read — the page would reload into a 404 and
@@ -469,7 +469,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val installedBefore = _installedExtensions.value.map { it.id }.toSet()
             // A .vsix that bundles its own runtime runs to hundreds of megabytes, and unpacking one
             // takes long enough that a silent wait reads as a hang. Say it started before doing it.
-            emitMessage("Importing extension… a large package takes a while.")
+            emitMessage("正在导入扩展…大体积的软件包需要较长时间。")
             val result = withContext(Dispatchers.IO) {
                 runCatching {
                     val tmp = File.createTempFile("import", ".pkg", appContext.cacheDir)
@@ -489,24 +489,24 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     emitMessage(
                         when (outcome) {
                             is ExtensionInstaller.SideloadOutcome.Jext ->
-                                if (outcome.signed) "Installed '${outcome.extension.name}' (signed — not debuggable)."
+                                if (outcome.signed) "已安装“${outcome.extension.name}”（已签名——不可调试）。"
                                 // Named as the warning it is: nothing verified this package, and what
                                 // it runs, it runs in the Linux runtime.
-                                else "Imported '${outcome.extension.name}' — unsigned and unverified; " +
-                                    "it runs with your runtime's access."
+                                else "已导入“${outcome.extension.name}”——未签名且未经验证； " +
+                                    "它将以你的运行时的访问权限运行。"
                             // Lead with what will not work: a VS Code extension can install cleanly and
                             // still be missing the part the user wanted.
                             is ExtensionInstaller.SideloadOutcome.Vsix ->
                                 outcome.compatibility.warnings.firstOrNull()
-                                    ?.let { "Imported '${outcome.extension.name}' (.vsix) — $it" }
-                                    ?: "Imported '${outcome.extension.name}' (.vsix)."
+                                    ?.let { "已导入“${outcome.extension.name}”（.vsix）——$it" }
+                                    ?: "已导入“${outcome.extension.name}”（.vsix）。"
                         },
                     )
                     if (outcome.extension.id in installedBefore) {
                         markPendingReload(outcome.extension.id, outcome.extension.name)
                     }
                 }
-                .onFailure { emitMessage("Import failed: ${it.message ?: "unrecognised package"}") }
+                .onFailure { emitMessage("导入失败：${it.message ?: "unrecognised package"}") }
         }
     }
 
@@ -516,7 +516,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _marketplaceBusy.value = true
             extensionInstaller.fetchIndex()
                 .onSuccess { _marketplaceEntries.value = it.entries }
-                .onFailure { _messages.tryEmit("Marketplace: ${it.message ?: "failed to load"}") }
+                .onFailure { _messages.tryEmit("扩展市场：${it.message ?: "failed to load"}") }
             _marketplaceBusy.value = false
         }
         // Custom sources refresh alongside so their update badges stay current with the built-in index.
@@ -571,7 +571,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         // attempt any missing toolchains best-effort, so the code update always applies.
         val freshInstall = !extensionInstaller.isInstalled(entry.id)
         if (freshInstall && !entry.requires.isEmpty) {
-            setExtensionPhase(entry.id, "Installing required tools…")
+            setExtensionPhase(entry.id, "正在安装所需工具…")
             // Deps the marketplace index declared for this entry — resolved before install. A missing
             // required *extension* aborts (the pack is broken without it); a required *toolchain* is
             // best-effort so a heavy/flaky download (e.g. android-sdk) can't roll back the whole pack.
@@ -580,7 +580,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         setExtensionPhase(entry.id, "Installing…")
         val result = extensionInstaller.install(entry, BuildConfig.VERSION_NAME)
-            .onFailure { _messages.tryEmit("Install failed: ${it.message ?: "error"}") }
+            .onFailure { _messages.tryEmit("安装失败：${it.message ?: "error"}") }
         if (result.isFailure) {
             setExtensionPhase(entry.id, null)
             return false
@@ -595,14 +595,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _messages.tryEmit("${entry.name}: installed but not detected on disk — install failed.")
             return false
         }
-        _messages.tryEmit("Installed ${entry.name}")
+        _messages.tryEmit("已安装 ${entry.name}")
 
         // The marketplace index currently omits `requires`, so the pre-install pass above sees nothing
         // for most extensions. Re-resolve from the freshly-installed manifest (the authoritative
         // source) to pull chained extensions (e.g. Android Dev Pack → Kotlin) and toolchains the index
         // left out. Non-fatal: the extension is already installed and usable on its own.
         if (!installedEntry.requires.isEmpty) {
-            setExtensionPhase(entry.id, "Installing required tools…")
+            setExtensionPhase(entry.id, "正在安装所需工具…")
             resolveRequires(entry.name, installedEntry.requires, visiting, abortOnExtensionFail = false, abortOnToolchainFail = false)
         }
         setExtensionPhase(entry.id, null)
@@ -617,7 +617,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * [abortOnExtensionFail] gates required *extensions* — cheap, essential, and the pack is broken
      * without them, so a fresh install aborts. [abortOnToolchainFail] gates required *toolchains*
      * (SDKs/LSPs/debuggers): even on a fresh install these are best-effort, because a heavy or flaky
-     * download (e.g. android-sdk, a "Large download") shouldn't roll back an otherwise-usable pack —
+     * download (e.g. android-sdk, a "大体积下载") shouldn't roll back an otherwise-usable pack —
      * its language features still work and the toolchain stays retryable from the Toolchains manager.
      */
     private suspend fun resolveRequires(
@@ -635,7 +635,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 _messages.tryEmit("$sourceName: required extension '$depId' isn't in the marketplace.")
                 if (abortOnExtensionFail) return false else continue
             }
-            _messages.tryEmit("Installing required extension: ${depEntry.name}…")
+            _messages.tryEmit("正在安装所需的扩展：${depEntry.name}…")
             if (!installExtensionResolvingDeps(depEntry, visiting)) {
                 _messages.tryEmit("$sourceName: required extension ${depEntry.name} failed.")
                 if (abortOnExtensionFail) return false
@@ -653,7 +653,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         for (lspId in deps.lsps) {
             if (lspId in distroService.lspCatalogState.value.installedEntryIds) continue
-            _messages.tryEmit("Installing required language server: $lspId…")
+            _messages.tryEmit("正在安装所需的语言服务器：$lspId…")
             if (!installRequiredLsp(lspId)) {
                 val reason = distroService.lspCatalogState.value.errorMessage ?: "install failed"
                 _messages.tryEmit("$sourceName: required language server '$lspId' — $reason")
@@ -662,7 +662,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         for (dbgId in deps.dbg) {
             if (dbgId in distroService.debugCatalogState.value.installedEntryIds) continue
-            _messages.tryEmit("Installing required debugger: $dbgId…")
+            _messages.tryEmit("正在安装所需的调试器：$dbgId…")
             if (!installRequiredDbg(dbgId)) {
                 val reason = distroService.debugCatalogState.value.errorMessage ?: "install failed"
                 _messages.tryEmit("$sourceName: required debugger '$dbgId' — $reason")
@@ -745,7 +745,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         for (dep in entry?.requiredSdks.orEmpty()) {
             if (!resolveAndInstallSdk(dep, forName, visiting)) return false
         }
-        _messages.tryEmit("Installing required toolchain: ${entry?.name ?: sdkId}…")
+        _messages.tryEmit("正在安装所需的工具链：${entry?.name ?: sdkId}…")
         if (!installRequiredSdk(sdkId)) {
             val reason = distroService.sdkCatalogState.value.errorMessage ?: "install failed"
             _messages.tryEmit("$forName: required toolchain '${entry?.name ?: sdkId}' — $reason Install aborted.")
@@ -826,7 +826,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if (residentCode) {
                 _prompts.tryEmit(
                     WorkbenchPrompt.RestartApp(
-                        "Restart JCode to finish removing ${name ?: "the extension"}.",
+                        "重启 JCode 以完成移除${name ?: "扩展"}。",
                     ),
                 )
             } else if (liveSurfaces) {
@@ -835,7 +835,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 _prompts.tryEmit(
                     WorkbenchPrompt.ReloadExtension(
                         id = id,
-                        message = "${name ?: "The extension"} was removed — reload to close what it still has open.",
+                        message = "「${name ?: "扩展"}」已被移除 — 重新加载以关闭它仍打开的内容。",
                     ),
                 )
             }
@@ -876,7 +876,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // crashes with "multiple DataStores active for the same file".
     private val uiPreferences = UiPreferencesStore.get(appContext)
 
-    /** Serialize the app-preferences DataStore for the Settings > Backup "Export settings" action. */
+    /** Serialize the app-preferences DataStore for the Settings > Backup "导出设置" action. */
     suspend fun exportSettingsJson(): String = SettingsBackup.export(uiPreferences)
 
     /** Apply a previously-exported settings document; returns how many settings were restored. */
@@ -890,17 +890,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun backupEnvironmentTo(uri: android.net.Uri) {
         if (_envBackupStatus.value != null) return
         viewModelScope.launch {
-            _envBackupStatus.value = "Preparing backup…"
+            _envBackupStatus.value = "正在准备备份…"
             val ok = runCatching {
                 withContext(Dispatchers.IO) {
                     appContext.contentResolver.openOutputStream(uri)?.use { os ->
                         distroService.packSelectedEnvironment(os) { files, bytes ->
-                            _envBackupStatus.value = "Backing up… $files files (${bytes / (1024 * 1024)} MB)"
+                            _envBackupStatus.value = "正在备份… $files 个文件（${bytes / (1024 * 1024)} MB）"
                         }
                     } ?: error("Could not open the destination file")
                 }
             }.getOrDefault(false)
-            _messages.tryEmit(if (ok) "Environment backed up." else "Environment backup failed.")
+            _messages.tryEmit(if (ok) "环境已备份。" else "环境备份失败。")
             _envBackupStatus.value = null
         }
     }
@@ -909,7 +909,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun restoreEnvironmentFrom(uri: android.net.Uri) {
         if (_envBackupStatus.value != null) return
         viewModelScope.launch {
-            _envBackupStatus.value = "Restoring environment…"
+            _envBackupStatus.value = "正在恢复环境…"
             val ok = runCatching {
                 val tmp = withContext(Dispatchers.IO) {
                     val t = java.io.File(appContext.cacheDir, "env-restore-${System.nanoTime()}.tar.gz")
@@ -922,7 +922,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 withContext(Dispatchers.IO) { tmp.delete() }
                 restored
             }.getOrDefault(false)
-            _messages.tryEmit(if (ok) "Environment restored." else "Environment restore failed.")
+            _messages.tryEmit(if (ok) "环境已恢复。" else "环境恢复失败。")
             _envBackupStatus.value = null
         }
     }
@@ -931,7 +931,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * Restore the environment from a backup during ONBOARDING: copy the picked .tar.gz to cache, arm the
      * DistroInstalled step to restore from it (instead of downloading), then run the full setup pipeline
      * so proot / jcode-user / smoke-test still run and produce a working environment. Progress shows in
-     * the onboarding "Setup log" and finishes with the normal "Done" completion.
+     * the onboarding "设置日志" and finishes with the normal "完成" completion.
      */
     fun restoreEnvironmentOnboarding(uri: android.net.Uri) {
         viewModelScope.launch {
@@ -945,7 +945,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }.getOrNull()
             }
             if (tmp == null) {
-                _messages.tryEmit("Could not read the backup file.")
+                _messages.tryEmit("无法读取备份文件。")
                 return@launch
             }
             distroService.setPendingRestoreTarball(tmp)
@@ -986,7 +986,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 size
             }
             _migrationBundle.value = null
-            emitMessage("Removed the migration bundle (${freed / (1024 * 1024)} MB).")
+            emitMessage("已删除迁移包（${freed / (1024 * 1024)} MB）。")
             if (pending.oldAppInstalled) requestUninstall(pending.sourcePackage)
         }
     }
@@ -1002,7 +1002,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     .setData(Uri.parse("package:$packageName"))
                     .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK),
             )
-        }.onFailure { _messages.tryEmit("Could not open the uninstaller for $packageName.") }
+        }.onFailure { _messages.tryEmit("无法为 $packageName 打开卸载程序。") }
     }
 
     /** A migration bundle waiting to be imported, refreshed on demand. See [MigrationBundle]. */
@@ -1034,9 +1034,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _envBackupStatus.value = null
             result
                 .onSuccess { (dir, parts) ->
-                    emitMessage("Migration bundle written to ${dir.absolutePath} (${parts.size} parts).")
+                    emitMessage("迁移包已写入 ${dir.absolutePath}（共 ${parts.size} 个分卷）。")
                 }
-                .onFailure { emitMessage("Migration export failed: ${it.message ?: "unknown error"}") }
+                .onFailure { emitMessage("迁移导出失败：${it.message ?: "unknown error"}") }
         }
     }
 
@@ -1084,7 +1084,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Writes the bundle; throws on failure. Returns the directory and the parts that landed. */
     private suspend fun writeMigrationBundle(onProgress: (String) -> Unit): Pair<File, List<String>> {
-        onProgress("Preparing migration bundle…")
+        onProgress("正在准备迁移包…")
         return withContext(Dispatchers.IO) {
             val dir = MigrationBundle.directory()
             dir.deleteRecursively()
@@ -1094,13 +1094,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             File(dir, MigrationBundle.SETTINGS).writeText(SettingsBackup.export(uiPreferences))
             parts += MigrationBundle.SETTINGS
 
-            // Reuses the same packer the "Back up environment" action uses, so a bundle's
+            // Reuses the same packer the "备份环境" action uses, so a bundle's
             // rootfs is byte-for-byte an ordinary environment backup.
             if (distroService.selectedEnvironmentInstalled()) {
-                onProgress("Packing the Linux environment…")
+                onProgress("正在打包 Linux 环境…")
                 File(dir, MigrationBundle.ROOTFS).outputStream().use { out ->
                     distroService.packSelectedEnvironment(out) { files, bytes ->
-                        onProgress("Packing the environment… $files files (${bytes / (1024 * 1024)} MB)")
+                        onProgress("正在打包环境… $files 个文件（${bytes / (1024 * 1024)} MB）")
                     }
                 }
                 parts += MigrationBundle.ROOTFS
@@ -1110,10 +1110,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // migration they are already in the shared folder and go nowhere.
             val projects = File(WorkspaceHostPaths.projectsRoot)
             if (projects.isDirectory && projects.absolutePath.startsWith(appContext.filesDir.absolutePath)) {
-                onProgress("Packing projects…")
+                onProgress("正在打包项目…")
                 File(dir, MigrationBundle.PROJECTS).outputStream().use { out ->
                     RootfsArchiver.pack(projects, out) { files, _ ->
-                        onProgress("Packing projects… $files files")
+                        onProgress("正在打包项目… $files 个文件")
                     }
                 }
                 parts += MigrationBundle.PROJECTS
@@ -1121,10 +1121,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             val extensions = File(appContext.filesDir, "extensions")
             if (extensions.isDirectory) {
-                onProgress("Packing extensions…")
+                onProgress("正在打包扩展…")
                 File(dir, MigrationBundle.EXTENSIONS).outputStream().use { out ->
                     RootfsArchiver.pack(extensions, out) { files, _ ->
-                        onProgress("Packing extensions… $files files")
+                        onProgress("正在打包扩展… $files 个文件")
                     }
                 }
                 parts += MigrationBundle.EXTENSIONS
@@ -1147,17 +1147,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (_envBackupStatus.value != null) return
         val bundle = _migrationBundle.value ?: return
         viewModelScope.launch {
-            _envBackupStatus.value = "Importing from ${bundle.sourcePackage}…"
+            _envBackupStatus.value = "正在从 ${bundle.sourcePackage} 导入…"
             val restored = runCatching {
                 withContext(Dispatchers.IO) {
                     bundle.file(MigrationBundle.SETTINGS)?.let { SettingsBackup.import(uiPreferences, it.readText()) }
 
                     bundle.file(MigrationBundle.PROJECTS)?.let {
-                        _envBackupStatus.value = "Restoring projects…"
+                        _envBackupStatus.value = "正在恢复项目…"
                         distroService.extractArchive(it, File(WorkspaceHostPaths.projectsRoot))
                     }
                     bundle.file(MigrationBundle.EXTENSIONS)?.let {
-                        _envBackupStatus.value = "Restoring extensions…"
+                        _envBackupStatus.value = "正在恢复扩展…"
                         distroService.extractArchive(it, File(appContext.filesDir, "extensions"))
                     }
                     // Copied out of shared storage first: the setup pipeline consumes the tarball,
@@ -1170,7 +1170,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }.getOrElse {
                 _envBackupStatus.value = null
-                emitMessage("Migration import failed: ${it.message ?: "unknown error"}")
+                emitMessage("迁移导入失败：${it.message ?: "unknown error"}")
                 return@launch
             }
             _envBackupStatus.value = null
@@ -1185,7 +1185,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 distroService.setPendingRestoreTarball(restored)
                 runAutoSetup()
             } else {
-                emitMessage("Imported settings, projects and extensions.")
+                emitMessage("已导入设置、项目和扩展。")
             }
         }
     }
@@ -1206,7 +1206,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             .edit().putBoolean(MainActivity.KEY_HW_ACCELERATION, enabled).apply()
         viewModelScope.launch { uiPreferences.edit { it[hardwareAccelerationKey] = enabled } }
         // The window flag is read once at startup (see MainActivity), so only a fresh process applies it.
-        if (changed) _prompts.tryEmit(WorkbenchPrompt.RestartApp("Restart JCode to apply the hardware acceleration change."))
+        if (changed) _prompts.tryEmit(WorkbenchPrompt.RestartApp("重启 JCode 以应用硬件加速更改。"))
     }
 
     // Explorer "hide files at the project root" preference: a mode + the user's newline-separated
@@ -1407,7 +1407,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun startVirtualDeviceAdb() {
         val rootfs = virtualDeviceRootfs() ?: run {
             OutputLog.append(
-                "Virtual device adb not started: no installed Linux runtime to host its socket\n",
+                "虚拟设备 adb 未启动：没有已安装的 Linux 运行时来承载其套接字\n",
                 OutputKind.Error,
             )
             return
@@ -1416,7 +1416,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         // there is nothing to start, and nothing for a client to connect to.
         val spec = runCatching { VirtualDeviceBridge.startAdb(rootfs) }.getOrNull() ?: run {
             OutputLog.append(
-                "Virtual device adb not started: no pack provides a device\n",
+                "虚拟设备 adb 未启动：没有软件包提供设备\n",
                 OutputKind.Error,
             )
             return
@@ -1450,7 +1450,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 "adb start-server && adb connect $spec && exec sleep infinity",
         )
         if (virtualDeviceAdbServer == null) {
-            OutputLog.append("Virtual device adb connect failed: the Linux runtime is not ready\n", OutputKind.Error)
+            OutputLog.append("虚拟设备 adb 连接失败：Linux 运行时尚未就绪\n", OutputKind.Error)
         }
     }
 
@@ -1499,7 +1499,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (_virtualDeviceAdbReconnecting.value) return
         viewModelScope.launch {
             if (!runInVirtualDevice.value) {
-                OutputLog.append("Virtual device is off — turn it on to connect.\n", OutputKind.Error)
+                OutputLog.append("虚拟设备已关闭——请将其打开以连接。\n", OutputKind.Error)
                 return@launch
             }
             _virtualDeviceAdbReconnecting.value = true
@@ -1515,8 +1515,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val target = TerminalSessionHost.manager(appContext).virtualDeviceAdbSpec
                 val attached = target.isNotEmpty() && awaitVirtualDeviceAttached(target)
                 OutputLog.append(
-                    if (attached) "Virtual device attached at $target.\n"
-                    else "Virtual device did not attach at $target.\n",
+                    if (attached) "虚拟设备已连接到 $target。\n"
+                    else "虚拟设备未能连接到 $target。\n",
                     if (attached) OutputKind.Info else OutputKind.Error,
                 )
             } finally {
@@ -1572,8 +1572,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         AndroidRunTarget(
                             serial = device.serial,
                             label = when {
-                                device.serial == virtualSpec -> "Virtual device"
-                                device.serial == relaySerial -> "This phone"
+                                device.serial == virtualSpec -> "虚拟设备"
+                                device.serial == relaySerial -> "本机"
                                 else -> device.model?.replace('_', ' ') ?: device.serial
                             },
                             state = device.state,
@@ -1771,7 +1771,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val terminalFontKey = stringPreferencesKey("terminal_font")
 
     /** Selected monospace font id for the editor / terminal (see [MonoFontCatalog]). A saved id for a
-     *  font that was removed from the catalog (e.g. the retired "System monospace") falls back to the
+     *  font that was removed from the catalog (e.g. the retired "系统等宽字体") falls back to the
      *  default. */
     val editorFontId: StateFlow<String> = uiPreferences.data
         .map { prefs ->
@@ -1856,10 +1856,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         val out = mutableListOf<EnvironmentFont>()
-        // The environment's default monospace (follows fontconfig), shown first as "Distro monospace".
+        // The environment's default monospace (follows fontconfig), shown first as "发行版等宽字体".
         val matchCmd = "command -v fc-match >/dev/null 2>&1 && fc-match -f '%{file}' monospace 2>/dev/null || true"
         hostFile(distroService.exec(matchCmd, user = "root", raw = true).stdout)
-            ?.let { out.add(EnvironmentFont("${MonoFontCatalog.ENV_PREFIX}default", "Distro monospace", it.absolutePath)) }
+            ?.let { out.add(EnvironmentFont("${MonoFontCatalog.ENV_PREFIX}default", "发行版等宽字体", it.absolutePath)) }
         out.addAll(byFamily.values.sortedBy { it.name.lowercase() })
         return out
     }
@@ -2183,7 +2183,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val editorCursorDragVerticalKey = intPreferencesKey("editor_cursor_drag_vertical_level")
     private val editorCursorDragHorizontalKey = intPreferencesKey("editor_cursor_drag_horizontal_level")
 
-    /** "Drag to move cursor" sensitivity per axis: 1 (slow/precise) … 5 (fast). Default 2. */
+    /** "拖动以移动光标" sensitivity per axis: 1 (slow/precise) … 5 (fast). Default 2. */
     val editorCursorDragVerticalLevel: StateFlow<Int> = uiPreferences.data
         .map { prefs -> (prefs[editorCursorDragVerticalKey] ?: SettingsDefaults.CURSOR_DRAG_LEVEL).coerceIn(1, 5) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsDefaults.CURSOR_DRAG_LEVEL)
@@ -2321,7 +2321,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // "Open web previews in" — which browser Build & Run / URL taps use. A global default plus a
+    // "Web 预览打开位置" — which browser Build & Run / URL taps use. A global default plus a
     // per-project override (device-local: which browser apps exist is not portable project config).
     /** Installed browser apps, discovered once (the set rarely changes within a session). */
     val installedBrowsers: List<dev.blamspot.jcode.design.BrowserApp> by lazy { dev.blamspot.jcode.run.ProjectRunner.installedBrowsers(appContext) }
@@ -2412,7 +2412,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // ----- Custom extension sources (user-added .vsix release repos) -------------------------------
     // An "extension source" is a GitHub repo URL whose releases publish `.vsix` files. JCode resolves
     // each repo's newest `.vsix` release and, for an extension installed from a source, folds an
-    // "Update available" entry into the same Extensions list as the built-in marketplace. Managed on
+    // "有可用更新" entry into the same Extensions list as the built-in marketplace. Managed on
     // the Extension Sources page (Extensions panel → Sources button). This is how a VSIX extension
     // like OpenChamber gets updated inside JCode — the host owns updates, the extension doesn't.
 
@@ -2442,7 +2442,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * The extensions the Extensions panel lists: the built-in marketplace index, plus a synthesized
      * entry per custom source — so a source's extension is offered in the same list as a marketplace
-     * one, and an installed one badges "Update available" when its source publishes a newer release.
+     * one, and an installed one badges "有可用更新" when its source publishes a newer release.
      * Keying the synthesized entry by the id the extension installs under makes the existing
      * `marketStatus`/`isUpdateAvailable` logic cover both with no UI change; its
      * [MarketplaceEntry.vsixAssetUrl] routes the install back to the source's release asset.
@@ -2512,7 +2512,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val normalized = url.trim()
         if (normalized.isBlank()) return
         if (ProviderReleaseFetcher.parseRepo(normalized) == null) {
-            _messages.tryEmit("Not a recognizable GitHub repo URL")
+            _messages.tryEmit("无法识别的 GitHub 仓库 URL")
             return
         }
         viewModelScope.launch {
@@ -2574,16 +2574,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val release = _sourceReleases.value[sourceUrl]
                 ?: runCatching { ProviderReleaseFetcher.latest(sourceUrl) }.getOrNull()
-            if (release == null) { _messages.tryEmit("No .vsix release found for this source"); return@launch }
+            if (release == null) { _messages.tryEmit("未找到此扩展源的 .vsix 发布包"); return@launch }
             _marketplaceBusy.value = true
             try {
                 extensionInstaller.installVsixFromUrl(release.vsixAssetUrl)
                     .onSuccess { result ->
                         recordExtensionSource(result.extension.id, sourceUrl)
-                        _messages.tryEmit("Installed ${result.extension.name} ${result.manifest.version}")
+                        _messages.tryEmit("已安装 ${result.extension.name} ${result.manifest.version}")
                         markPendingReload(result.extension.id, result.extension.name)
                     }
-                    .onFailure { _messages.tryEmit("Install failed: ${it.message ?: "error"}") }
+                    .onFailure { _messages.tryEmit("安装失败：${it.message ?: "error"}") }
             } finally {
                 _marketplaceBusy.value = false
             }
@@ -2609,7 +2609,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _editorGroup.value = _editorGroup.value.withActiveTabChanged(existing.id)
         } else {
             _editorGroup.value = _editorGroup.value.withTabAdded(
-                EditorTab.page(EXT_SOURCES_TAB_ID, "Extension Sources", EditorPageKind.ExtensionSources),
+                EditorTab.page(EXT_SOURCES_TAB_ID, "扩展源", EditorPageKind.ExtensionSources),
             )
         }
         refreshExtensionSources()
@@ -2819,30 +2819,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun lspGoToDefinition(path: String, line: Int, character: Int, word: String) {
-        if (!requireLanguageServer(path, LspFeature.Definition, "Go to Definition")) return
+        if (!requireLanguageServer(path, LspFeature.Definition, "转到定义")) return
         val targets = lspController.definition(path, line, character)
         when (targets.size) {
-            0 -> emitMessage("No definition found for \"$word\"")
+            0 -> emitMessage("未找到“$word”的定义")
             1 -> openLspLocation(targets.first())
             else -> _lspLocationPicker.value =
-                LspLocationPicker("Definitions of \"$word\"", targets.toEntries())
+                LspLocationPicker("“$word”的定义", targets.toEntries())
         }
     }
 
     private suspend fun lspFindReferences(path: String, line: Int, character: Int, word: String) {
-        if (!requireLanguageServer(path, LspFeature.References, "Find References")) return
+        if (!requireLanguageServer(path, LspFeature.References, "查找引用")) return
         val results = lspController.references(path, line, character)
         if (results.isEmpty()) {
-            emitMessage("No references found for \"$word\"")
+            emitMessage("未找到“$word”的引用")
             return
         }
-        _lspLocationPicker.value = LspLocationPicker("References to \"$word\"", results.toEntries())
+        _lspLocationPicker.value = LspLocationPicker("对“$word”的引用", results.toEntries())
     }
 
     private suspend fun lspBeginRename(path: String, line: Int, character: Int, word: String) {
-        if (!requireLanguageServer(path, LspFeature.Rename, "Rename Symbol")) return
+        if (!requireLanguageServer(path, LspFeature.Rename, "重命名符号")) return
         if (word.isBlank()) {
-            emitMessage("Put the cursor on a symbol to rename it")
+            emitMessage("请将光标置于要重命名的符号上")
             return
         }
         _lspRenameRequest.value = LspRenameRequest(path, line, character, word)
@@ -2863,10 +2863,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val applied = applyWorkspaceEdit(edit)
             emitMessage(
                 if (applied) {
-                    "Renamed to \"$trimmed\" in ${edit.fileCount} " +
+                    "已将“$trimmed”重命名，涉及 ${edit.fileCount} 个" +
                         if (edit.fileCount == 1) "file" else "files"
                 } else {
-                    "Rename failed"
+                    "重命名失败"
                 },
             )
         }
@@ -2882,7 +2882,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun openLspLocation(location: LocationResult) {
         val file = File(location.path)
         if (!file.isFile) {
-            emitMessage("Can't open ${file.name}: file not found")
+            emitMessage("无法打开 ${file.name}：文件未找到")
             return
         }
         _bringEditorToFront.tryEmit(Unit)
@@ -2974,7 +2974,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         notifyWorkspaceFilesChanged()
         true
     }.getOrElse {
-        emitMessage("Failed to apply edits: ${it.message ?: "error"}")
+        emitMessage("应用编辑失败：${it.message ?: "error"}")
         false
     }
 
@@ -3326,7 +3326,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             availableContributions(exts, acts, sdk) { it.editorStartActions }
         }.stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5_000L), emptyList())
 
-    /** Actions active extensions contribute to the left-drawer "Open Folder" dropdown. */
+    /** Actions active extensions contribute to the left-drawer "打开文件夹" dropdown. */
     val contributedDrawerActions: StateFlow<List<ShellContribution>> =
         combine(installedExtensions, extensionActivations, distroService.sdkCatalogState) { exts, acts, sdk ->
             availableContributions(exts, acts, sdk) { it.drawerActions }
@@ -3500,7 +3500,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val project = _postClonePrompt.value ?: return
         _postClonePrompt.value = null
         if (open) _selectedProjectId.value = project.id
-        else viewModelScope.launch { emitMessage("Added '${project.name}' to the workspace.") }
+        else viewModelScope.launch { emitMessage("已将“${project.name}”添加到工作区。") }
     }
 
     /** Host side of the guest /sources mount — the staging dir extensions materialize folders into
@@ -3532,7 +3532,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val workspaceNode = workspaceManager.createNode(name, nodeType, null)
                 workspaceManager.enterWorkspaceFolder(workspaceNode)
                 _showNewItemDialog.value = false
-                emitMessage("Workspace '${workspaceNode.name}' created.")
+                emitMessage("工作区“${workspaceNode.name}”已创建。")
                 return@launch
             }
 
@@ -3543,7 +3543,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             if (template == null || template.isEmpty) {
                 _showNewItemDialog.value = false
-                emitMessage("Project '${project.name}' created.")
+                emitMessage("项目“${project.name}”已创建。")
                 return@launch
             }
 
@@ -3551,7 +3551,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             // now instead of blocking on a modal. Hold a JOB session so Android does not kill the
             // long-running npm/dotnet steps while the app is backgrounded.
             _showNewItemDialog.value = false
-            emitMessage("Setting up '${project.name}' in the Setup terminal…")
+            emitMessage("正在 Setup 终端中设置“${project.name}”…")
             SessionRegistry.registerSession(
                 appContext,
                 BackendSessionKind.JOB,
@@ -3562,9 +3562,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 // an Android project's SDK is present before its first build instead of failing later.
                 val missing = template.requires.filterNot { it in distroService.sdkCatalogState.value.installedEntryIds }
                 if (missing.isNotEmpty()) {
-                    emitMessage("Installing ${missing.size} required toolchain(s) for '${project.name}'…")
+                    emitMessage("正在为“${project.name}”安装 ${missing.size} 个必需的工具链…")
                     if (!installRequiredSdks(template.requires, project.name)) {
-                        emitMessage("Project '${project.name}' scaffold cancelled: required toolchains missing.")
+                        emitMessage("项目“${project.name}”的脚手架已取消：缺少必需的工具链。")
                         templateScaffolder.reset()
                         return@use
                     }
@@ -3578,8 +3578,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     ),
                 )
                 emitMessage(
-                    if (ok) "Project '${project.name}' ready."
-                    else "Project '${project.name}' scaffold failed: " +
+                    if (ok) "项目“${project.name}”已就绪。"
+                    else "项目“${project.name}”的脚手架失败：" +
                         (scaffoldState.value.errorMessage ?: "see the Setup terminal."),
                 )
                 templateScaffolder.reset()
@@ -3597,7 +3597,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val resolved = workspaceManager.resolveManageable(path)
             if (workspaceManager.isManagedRoot(resolved)) {
-                emitMessage("That folder is the JCode Projects root — pick a project or workspace folder inside it.")
+                emitMessage("该文件夹是 JCode Projects 根目录——请在其内部选择项目或工作区文件夹。")
                 return@launch
             }
             if (workspaceManager.isOnManagedStorage(resolved)) {
@@ -3622,7 +3622,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 resetDefaultWorkspaceProject()
                 val project = workspaceManager.addFolder(resolved)
                 _selectedProjectId.value = project.id
-                emitMessage("Opened '${project.name}'.")
+                emitMessage("已打开“${project.name}”。")
             }
         }
     }
@@ -3634,23 +3634,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _importProgress.value = ImportProgress(label, ImportPhase.Scanning)
         val staged = try {
             val scan = runCatching { scanFolderForImport(appContext, source) }.getOrElse {
-                emitMessage("Couldn't read '$label': ${it.message ?: "unknown error"}.")
+                emitMessage("无法读取“$label”：${it.message ?: "unknown error"}.")
                 return
             }
             if (scan.fileCount == 0) {
-                emitMessage("'$label' is empty — nothing to import.")
+                emitMessage("“$label”为空——没有可导入的内容。")
                 return
             }
             val sources = sourcesRoot().apply { mkdirs() }
             if (scan.totalBytes + IMPORT_FREE_SPACE_HEADROOM_BYTES > sources.usableSpace) {
                 emitMessage(
-                    "'$label' is too large to import — needs ${formatBytes(scan.totalBytes)}, " +
-                        "only ${formatBytes(sources.usableSpace)} free.",
+                    "“$label”太大，无法导入——需要 ${formatBytes(scan.totalBytes)}，" +
+                        "仅有 ${formatBytes(sources.usableSpace)} 可用空间。",
                 )
                 return
             }
             if (!saveAllDirtyAwait()) {
-                emitMessage("Save or close open files before importing a folder.")
+                emitMessage("导入文件夹前，请先保存或关闭已打开的文件。")
                 return
             }
             _importProgress.value = ImportProgress(label, ImportPhase.Copying, done = 0, total = scan.fileCount)
@@ -3659,7 +3659,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     _importProgress.value = ImportProgress(label, ImportPhase.Copying, done, scan.fileCount)
                 }
             }.getOrElse {
-                emitMessage("Import failed: ${it.message ?: "unknown error"}.")
+                emitMessage("导入失败：${it.message ?: "unknown error"}.")
                 return
             }
         } finally {
@@ -3668,13 +3668,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val stagedPath = FsPath.Local(staged)
         when {
             workspaceManager.isWorkspaceFolder(stagedPath) ->
-                adoptStagedGuarded(staged, WorkspaceNodeType.Workspace)?.let { emitMessage("Imported Workspace '${it.name}'.") }
+                adoptStagedGuarded(staged, WorkspaceNodeType.Workspace)?.let { emitMessage("已导入工作区“${it.name}”。") }
 
             workspaceManager.folderNeedsType(stagedPath) && breadcrumb.value.size <= 1 ->
                 _openFolderTypePrompt.value = PendingFolderType.AdoptStaged(staged)
 
             else ->
-                adoptStagedGuarded(staged, WorkspaceNodeType.Project)?.let { emitMessage("Imported '${it.name}'.") }
+                adoptStagedGuarded(staged, WorkspaceNodeType.Project)?.let { emitMessage("已导入“${it.name}”。") }
         }
     }
 
@@ -3683,7 +3683,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      *  saving. On an unsaveable buffer the staged copy is discarded (already messaged) and null returned. */
     private suspend fun adoptStagedGuarded(staged: File, nodeType: WorkspaceNodeType): Project? {
         if (!saveAllDirtyAwait()) {
-            emitMessage("Save or close open files before importing a folder.")
+            emitMessage("导入文件夹前，请先保存或关闭已打开的文件。")
             withContext(Dispatchers.IO) { staged.deleteRecursively() }
             return null
         }
@@ -3752,16 +3752,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     resetDefaultWorkspaceProject()
                     val project = workspaceManager.addFolderWithType(path, nodeType)
                     _selectedProjectId.value = project.id
-                    emitMessage("Opened ${if (isWorkspace) "Workspace" else "Project"} '${project.name}'.")
+                    emitMessage("已打开${if (isWorkspace) "工作区" else "项目"} '${project.name}'.")
                 }
 
                 is PendingFolderType.AdoptStaged -> {
                     if (!pending.staged.isDirectory) {
-                        emitMessage("The imported folder is no longer available.")
+                        emitMessage("导入的文件夹已不可用。")
                         return@launch
                     }
                     adoptStagedGuarded(pending.staged, nodeType)?.let {
-                        emitMessage("Imported ${if (isWorkspace) "Workspace" else "Project"} '${it.name}'.")
+                        emitMessage("已导入${if (isWorkspace) "工作区" else "项目"} '${it.name}'.")
                     }
                 }
             }
@@ -3792,7 +3792,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun removeProject(projectId: Long) {
         viewModelScope.launch {
             workspaceManager.removeProject(projectId)
-            emitMessage("Removed from workspace.")
+            emitMessage("已从工作区移除。")
         }
     }
 
@@ -3800,7 +3800,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _selectedProjectId.value = projectId
     }
 
-    /** Roster tap / "Open": a Workspace is entered (its projects show); a Project is selected. */
+    /** Roster tap / "打开": a Workspace is entered (its projects show); a Project is selected. */
     fun openProject(project: Project) {
         if (project.nodeType == WorkspaceNodeType.Workspace) {
             viewModelScope.launch {
@@ -3835,7 +3835,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             clearEditorTabs()
             clearDefaultWorkspaceProjects()
             persistSession()
-            emitMessage("Project closed.")
+            emitMessage("项目已关闭。")
         }
     }
 
@@ -3869,26 +3869,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun renameProject(projectId: Long, newName: String) {
         viewModelScope.launch {
             val ok = workspaceManager.renameProject(projectId, newName)
-            emitMessage(if (ok) "Renamed to '${newName.trim()}'." else "Rename failed.")
+            emitMessage(if (ok) "已重命名为“${newName.trim()}”。" else "重命名失败。")
         }
     }
 
-    /** Copy a local project/recent dir out to a user-picked SAF folder ("Export to storage") so it's
+    /** Copy a local project/recent dir out to a user-picked SAF folder ("导出到存储空间") so it's
      *  browsable in a file manager / other apps. A one-shot snapshot: `node_modules` (large and
      *  regenerable) is skipped. Projects otherwise live on app-private ext4 (see WorkspaceHostPaths);
      *  the DocumentsProvider gives a live view, this gives a real on-disk copy. A null/non-directory
      *  [source] (e.g. a SAF project with no local dir) is rejected with a message. */
     fun exportDirTo(name: String, source: File?, dest: Uri) {
         if (source == null || !source.isDirectory) {
-            viewModelScope.launch { emitMessage("Export failed: '$name' isn't a local folder.") }
+            viewModelScope.launch { emitMessage("导出失败：“$name”不是本地文件夹。") }
             return
         }
         viewModelScope.launch {
-            emitMessage("Exporting '$name'…")
+            emitMessage("正在导出“$name”…")
             val stamp = java.text.SimpleDateFormat("yyyyMMdd-HHmmss", java.util.Locale.US).format(java.util.Date())
             runCatching { copyLocalTreeToDocumentTree(appContext, source, dest, "$name-$stamp") }
-                .onSuccess { emitMessage("Exported $it file(s) from '$name'.") }
-                .onFailure { emitMessage("Export failed: ${it.message ?: "unknown error"}") }
+                .onSuccess { emitMessage("已从“$name”导出 $it 个文件。") }
+                .onFailure { emitMessage("导出失败：${it.message ?: "unknown error"}") }
         }
     }
 
@@ -4032,7 +4032,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if (!ensureScopeAvailable(ConfigScope.Project)) return@launch
             val root = (selectedProject.value?.fsPath as? FsPath.Local)?.file ?: return@launch
             val rel = relativeTabKey(root, tab.filePath)
-                ?: run { emitMessage("Can't color a file outside the project"); return@launch }
+                ?: run { emitMessage("无法给项目之外的文件设置颜色"); return@launch }
             configService.updateProjectTabColorMaps { files, dirs ->
                 (if (hex == null) files - rel else files + (rel to hex)) to dirs
             }
@@ -4112,7 +4112,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             val label = environmentId
             val removed = distroService.deleteEnvironment(environmentId)
-            emitMessage(if (removed) "Removed environment '$label'." else "Could not remove '$label'.")
+            emitMessage(if (removed) "已移除环境“$label”。" else "无法移除“$label”。")
         }
     }
 
@@ -4136,7 +4136,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val file = configService.ensureConfigFile(ConfigScope.Workspace)
             if (file == null) {
-                emitMessage("Workspace config is unavailable.")
+                emitMessage("工作区配置不可用。")
                 return@launch
             }
             openLocalFile(file)
@@ -4147,7 +4147,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val file = configService.ensureConfigFile(ConfigScope.Project)
             if (file == null) {
-                emitMessage("Project overrides require a local project.")
+                emitMessage("项目覆盖需要本地项目。")
                 return@launch
             }
             openLocalFile(file)
@@ -4202,7 +4202,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     /** True while an opt-in `apt-get update && upgrade` is running (drives the Settings button state). */
     val systemPackagesUpdating: StateFlow<Boolean> = _systemPackagesUpdating.asStateFlow()
 
-    /** Opt-in "Update system packages": runs `apt-get update && apt-get upgrade` (self-healing, streamed
+    /** Opt-in "更新系统软件包": runs `apt-get update && apt-get upgrade` (self-healing, streamed
      *  to the Setup terminal). Deliberately never automatic — an upgrade can be large/slow under proot. */
     fun updateSystemPackages() {
         if (_systemPackagesUpdating.value) return
@@ -4214,16 +4214,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 name = "environment:update-packages",
             )
             try {
-                _messages.tryEmit("Updating system packages… (see the Setup terminal for progress)")
+                _messages.tryEmit("正在更新系统软件包…（请在 Setup 终端中查看进度）")
                 val result = distroService.updateSystemPackages()
                 _messages.tryEmit(
                     if (result.succeeded) {
-                        "System packages up to date."
+                        "系统软件包已是最新。"
                     } else {
                         val reason = result.internalError
                             ?: result.stderr.lineSequence().firstOrNull { it.isNotBlank() }
                             ?: "see the Setup terminal"
-                        "Package update failed: $reason"
+                        "软件包更新失败：$reason"
                     },
                 )
             } finally {
@@ -4423,7 +4423,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _editorGroup.value = _editorGroup.value.withActiveTabChanged(existing.id)
             return
         }
-        val tab = EditorTab.page(SETTINGS_TAB_ID, "Settings", EditorPageKind.Settings)
+        val tab = EditorTab.page(SETTINGS_TAB_ID, "设置", EditorPageKind.Settings)
         _editorGroup.value = _editorGroup.value.withTabAdded(tab)
     }
 
@@ -4436,7 +4436,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         _editorGroup.value = _editorGroup.value.withTabAdded(
-            EditorTab.page(TRASH_TAB_ID, "Trash", EditorPageKind.Trash),
+            EditorTab.page(TRASH_TAB_ID, "回收站", EditorPageKind.Trash),
         )
     }
 
@@ -4447,7 +4447,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _editorGroup.value = _editorGroup.value.withActiveTabChanged(existing.id)
             return
         }
-        val tab = EditorTab.page(ENVIRONMENT_TAB_ID, "Environment", EditorPageKind.Environment)
+        val tab = EditorTab.page(ENVIRONMENT_TAB_ID, "环境", EditorPageKind.Environment)
         _editorGroup.value = _editorGroup.value.withTabAdded(tab)
     }
 
@@ -4463,7 +4463,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     /** Open an extension's web frontend at a named view (loaded as `#view`) as a full editor page and
      *  bring the editor to front — used by the `workbench.openView` Extension API. By default one
      *  ExtensionApp tab exists at a time (opening a view replaces the previous one, matching the SCM
-     *  diff-peek pattern); [coexist] opts into a genuine additional tab (Mermaid "View in New Tab"). */
+     *  diff-peek pattern); [coexist] opts into a genuine additional tab (Mermaid "在新选项卡中查看"). */
     fun openExtensionViewPage(extensionId: String, view: String, title: String? = null, coexist: Boolean = false) {
         _bringEditorToFront.tryEmit(Unit)
         val ext = _installedExtensions.value.firstOrNull { it.id == extensionId }
@@ -4473,7 +4473,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (view.isBlank()) { openExtensionAppPage(extensionId); return }
         val tabId = EXT_APP_PREFIX + extensionId + "#" + view
         val titleOf: () -> String = {
-            title?.takeIf { it.isNotBlank() } ?: listOfNotNull(ext?.name, viewLabel).joinToString(" · ").ifBlank { "View" }
+            title?.takeIf { it.isNotBlank() } ?: listOfNotNull(ext?.name, viewLabel).joinToString(" · ").ifBlank { "查看" }
         }
         if (coexist) openExtensionPage(tabId, titleOf) else openDetailPage(tabId, EditorPageKind.ExtensionApp, titleOf)
     }
@@ -4513,7 +4513,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** Open/focus an ExtensionApp page WITHOUT evicting other extension pages, so distinct routes
-     *  (e.g. a Mermaid document preview and a single chart opened from "View in New Tab") coexist as
+     *  (e.g. a Mermaid document preview and a single chart opened from "在新选项卡中查看") coexist as
      *  separate tabs. Same id → refocus (no reload); new id → added beside the others. Only reached
      *  when the caller explicitly opts into coexistence (see [openExtensionViewPage]). */
     private fun openExtensionPage(tabId: String, title: () -> String) {
@@ -5044,7 +5044,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         // The workbench's bin, offered to extensions so a destructive action of theirs can be as
-        // recoverable as one of the Explorer's — Source Control's "Discard" is the case it exists
+        // recoverable as one of the Explorer's — Source Control's "放弃" is the case it exists
         // for. The setting is honoured here rather than by the caller: whether a delete is kept is
         // the user's decision about JCode, not a decision each extension gets to make for itself.
         "workbench.trash" -> {
@@ -5289,7 +5289,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // launcher exec returns. spawnStdioProcess gives a piped proot Process the JVM holds open, so the
     // server survives until we destroy() it (which reaps its tree). Keyed by "<extId> <serviceId>"
     // (extension ids never contain spaces) so services can be listed + reaped per owning extension
-    // for the Task Manager "Background extensions" section.
+    // for the Task Manager "后台扩展" section.
     private val runtimeServices = ConcurrentHashMap<String, Process>()
 
     private fun svcKey(extId: String, id: String) = "$extId $id"
@@ -5362,7 +5362,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         Runtime.getRuntime().exit(0)
     }
 
-    // --- Background extensions (Task Manager "Background extensions" section) -----------------------
+    // --- Background extensions (Task Manager "后台扩展" section) -----------------------
     // A "background extension" is one running a persistent WebView host (the SCM sidebar or OpenChamber
     // Chat) and/or a service.start server. Stop reaps its services and tears down its host; the SCM
     // host re-attaches whenever a project is open, so it is additionally SUSPENDED to stay down until
@@ -5503,7 +5503,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _editorGroup.value = _editorGroup.value.withActiveTabChanged(existing.id)
             return
         }
-        val tab = EditorTab.page(EXT_PERMISSIONS_TAB_ID, "Extension Settings", EditorPageKind.ExtensionPermissions)
+        val tab = EditorTab.page(EXT_PERMISSIONS_TAB_ID, "扩展设置", EditorPageKind.ExtensionPermissions)
         _editorGroup.value = _editorGroup.value.withTabAdded(tab)
     }
 
@@ -5549,19 +5549,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _editorGroup.value = if (existing != null) {
             group.withActiveTabChanged(existing.id)
         } else {
-            group.withTabAdded(EditorTab.page(BROWSER_TAB_ID, "Browser", EditorPageKind.Browser))
+            group.withTabAdded(EditorTab.page(BROWSER_TAB_ID, "浏览器", EditorPageKind.Browser))
         }
     }
 
     /** Open (or focus) the Android device page — the adb pairing wizard for this phone. */
     fun openAndroidDevicePage() {
-        openDetailPage(ANDROID_DEVICE_TAB_ID, EditorPageKind.AndroidDevice) { "Android Device" }
+        openDetailPage(ANDROID_DEVICE_TAB_ID, EditorPageKind.AndroidDevice) { "Android 设备" }
     }
 
     /** Open (or focus) the device sandbox tab. The APK, and the name the tab wears for it, are the
      *  Android Dev Pack's — it asks for this through [VirtualDeviceBridge], like the browser's URL. */
     fun openAppSandboxTab() {
-        val title = VirtualDeviceBridge.deviceTabTitle?.takeIf { it.isNotBlank() } ?: "Device sandbox"
+        val title = VirtualDeviceBridge.deviceTabTitle?.takeIf { it.isNotBlank() } ?: "设备沙盒"
         openDetailPage(APP_SANDBOX_TAB_ID, EditorPageKind.AppSandbox) { title }
         // A second request can name a different APK — `adb shell am start` does — and the tab is
         // reused, so the name it is wearing has to move with it.
@@ -5577,7 +5577,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      * would read as something the guest put there.
      */
     fun openVirtualHardwareTab() {
-        openDetailPage(VIRTUAL_HARDWARE_TAB_ID, EditorPageKind.VirtualHardware) { "Device hardware" }
+        openDetailPage(VIRTUAL_HARDWARE_TAB_ID, EditorPageKind.VirtualHardware) { "设备硬件" }
     }
 
     /** Turn the device off once its editor tab is gone — process and all, not merely unbound. Page
@@ -5603,7 +5603,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     suspend fun pairAdbDevice(target: String, code: String): String? {
         val digits = code.filter(Char::isDigit)
-        if (digits.isEmpty()) return "Enter the 6-digit pairing code shown on this device."
+        if (digits.isEmpty()) return "请输入此设备上显示的 6 位配对码。"
         if (!ADB_TARGET_RE.matches(target)) return "\"$target\" is not a valid host:port."
         val result = setupTerminalRunner.run(
             label = "adb pair $target",
@@ -5611,11 +5611,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             workdir = null,
             asUser = distroService.environmentState.value.runtime.user,
             timeoutMs = ADB_PAIR_TIMEOUT_MS,
-        ) ?: return "Could not start the Setup terminal — is the Linux environment installed?"
+        ) ?: return "无法启动 Setup 终端——是否已安装 Linux 环境？"
         if (result.exitCode == 0) return null
         return result.internalError
             ?: "adb pair failed (exit ${result.exitCode ?: -1}) — check the code and port, then retry. " +
-            "The pairing dialog must still be open."
+            "配对对话框必须保持打开状态。"
     }
 
     /** Full status re-check (installed + update-available) for the SDK catalog; runs async, no-op if already running. */
@@ -5634,7 +5634,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
      * Re-install (upgrade) every SDK / language server / debug engine the last check flagged as
-     * updatable, then re-check so the "Update available" markers clear. Deps are already present, so
+     * updatable, then re-check so the "有可用更新" markers clear. Deps are already present, so
      * this re-runs each tool's install command directly through the shared Setup terminal.
      */
     /** Open the detail page for a single debug engine. Reuses one debug-detail tab (replaces any other). */
@@ -5683,7 +5683,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun openRunConfigPage(project: Project, index: Int?) {
         val suffix = index?.toString() ?: "new"
         openDetailPage(RUN_CONFIG_PREFIX + project.id + "#" + suffix, EditorPageKind.RunConfig) {
-            if (index == null) "New run — ${project.name}" else "Run: ${project.name}"
+            if (index == null) "新建运行 — ${project.name}" else "运行：${project.name}"
         }
     }
 
@@ -5691,7 +5691,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun openBuildConfigPage(project: Project, index: Int?) {
         val suffix = index?.toString() ?: "new"
         openDetailPage(BUILD_CONFIG_PREFIX + project.id + "#" + suffix, EditorPageKind.BuildConfig) {
-            if (index == null) "New build — ${project.name}" else "Build: ${project.name}"
+            if (index == null) "新建构建 — ${project.name}" else "构建：${project.name}"
         }
     }
 
@@ -5711,23 +5711,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     // A "New" tab holds index=null forever, so re-saving would keep appending; close it
                     // after the first save (re-open via Configure to edit the now-saved config in place).
                     if (index == null) withContext(Dispatchers.Main) { closeTabsNow(setOf(RUN_CONFIG_PREFIX + project.id + "#new"), activate = null) }
-                    _messages.tryEmit("Saved run config for ${project.name}")
+                    _messages.tryEmit("已保存 ${project.name} 的运行配置")
                 }
-                .onFailure { _messages.tryEmit("Failed to save run config: ${it.message ?: "error"}") }
+                .onFailure { _messages.tryEmit("保存运行配置失败：${it.message ?: "error"}") }
         }
     }
 
     /** Append all of [configs] to the project's `.jcode/run.yaml` in one write (a framework file-pick
-     *  in the "Add run config" dialog creates every config that file offers at once). */
+     *  in the "添加运行配置" dialog creates every config that file offers at once). */
     fun saveRunConfigs(project: Project, configs: List<dev.blamspot.jcode.core.config.RunConfig>) {
         if (configs.isEmpty()) return
         viewModelScope.launch(Dispatchers.IO) {
             runCatching { dev.blamspot.jcode.run.ProjectRunner.upsertRuns(project, configs) }
                 .onSuccess {
                     _runConfigVersion.value++
-                    _messages.tryEmit("Saved run config for ${project.name}")
+                    _messages.tryEmit("已保存 ${project.name} 的运行配置")
                 }
-                .onFailure { _messages.tryEmit("Failed to save run config: ${it.message ?: "error"}") }
+                .onFailure { _messages.tryEmit("保存运行配置失败：${it.message ?: "error"}") }
         }
     }
 
@@ -5738,9 +5738,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 .onSuccess {
                     _runConfigVersion.value++
                     if (index == null) withContext(Dispatchers.Main) { closeTabsNow(setOf(BUILD_CONFIG_PREFIX + project.id + "#new"), activate = null) }
-                    _messages.tryEmit("Saved build task for ${project.name}")
+                    _messages.tryEmit("已保存 ${project.name} 的构建任务")
                 }
-                .onFailure { _messages.tryEmit("Failed to save build task: ${it.message ?: "error"}") }
+                .onFailure { _messages.tryEmit("保存构建任务失败：${it.message ?: "error"}") }
         }
     }
 
@@ -5750,7 +5750,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 _runConfigVersion.value++
                 // Every later config shifts down one, so any open run-config editor's index is now stale.
                 withContext(Dispatchers.Main) { closeConfigEditorTabs(RUN_CONFIG_PREFIX + project.id + "#") }
-                _messages.tryEmit("Deleted run config")
+                _messages.tryEmit("已删除运行配置")
             }
         }
     }
@@ -5760,7 +5760,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             runCatching { dev.blamspot.jcode.run.ProjectRunner.deleteBuild(project, index) }.onSuccess {
                 _runConfigVersion.value++
                 withContext(Dispatchers.Main) { closeConfigEditorTabs(BUILD_CONFIG_PREFIX + project.id + "#") }
-                _messages.tryEmit("Deleted build task")
+                _messages.tryEmit("已删除构建任务")
             }
         }
     }
@@ -5770,8 +5770,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val host = deriveDebugEntryHost(project, config)
         if (host == null) {
             _messages.tryEmit(
-                "Nothing debuggable in '${config.name}'. Open a .py/.js/.ts/.cs file, tap a line's gutter to " +
-                    "set a breakpoint, then tap Debug.",
+                "“${config.name}”中没有可调试的内容。请打开 .py/.js/.ts/.cs 文件，点击某行旁的行号槽以" +
+                    "设置断点，然后点击调试。",
             )
             return
         }
@@ -5861,7 +5861,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (state == null) {
             viewModelScope.launch(Dispatchers.IO) {
                 runCatching { File(path).writeText(text) }
-                    .onFailure { emitMessage("Could not write ${File(path).name}: ${it.message ?: "error"}") }
+                    .onFailure { emitMessage("无法写入 ${File(path).name}：${it.message ?: "error"}") }
             }
             return
         }
@@ -6076,8 +6076,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 if (now - lastReloadNoticeAt > RELOAD_NOTICE_THROTTLE_MS) {
                     lastReloadNoticeAt = now
                     emitMessage(
-                        if (reloaded.size == 1) "Reloaded ${reloaded.first()} from disk"
-                        else "Reloaded ${reloaded.size} files from disk"
+                        if (reloaded.size == 1) "已从磁盘重新加载 ${reloaded.first()}"
+                        else "已从磁盘重新加载 ${reloaded.size} 个文件"
                     )
                 }
             }
@@ -6095,7 +6095,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun saveAllTabs() {
         val dirty = _editorGroup.value.tabs.filter { it.isDirty && it.editorState != null }
         if (dirty.isEmpty()) {
-            viewModelScope.launch { emitMessage("No unsaved changes") }
+            viewModelScope.launch { emitMessage("没有未保存的更改") }
             return
         }
         dirty.forEach { saveTab(it) }
@@ -6118,19 +6118,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (!tab.isDirty) return
         val file = tab.filePath
         if (file.path.isBlank()) {
-            viewModelScope.launch { emitMessage("Can't discard \"${tab.title}\": unsupported file source") }
+            viewModelScope.launch { emitMessage("无法放弃“${tab.title}”的更改：不支持的文件来源") }
             return
         }
         viewModelScope.launch {
             val bytes = runCatching {
                 withContext(Dispatchers.IO) { workspaceManager.fsFor(FsPath.Local(file)).read(FsPath.Local(file)) }
             }.getOrElse {
-                emitMessage("Failed to discard ${tab.title}: ${it.message ?: "error"}")
+                emitMessage("放弃 ${tab.title} 的更改失败：${it.message ?: "error"}")
                 return@launch
             }
             state.replaceAll(bytes.toString(Charsets.UTF_8)) // force: discard intentionally drops edits
             withContext(Dispatchers.IO) { file.diskSignatureOrNull() }?.let { diskSignatures[tab.id] = it }
-            emitMessage("Discarded changes in ${tab.title}")
+            emitMessage("已放弃 ${tab.title} 中的更改")
         }
     }
 
@@ -6141,28 +6141,28 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun formatActiveTab() {
         val tab = _editorGroup.value.activeTab ?: return
         val state = tab.editorState ?: run {
-            viewModelScope.launch { emitMessage("Nothing to format") }
+            viewModelScope.launch { emitMessage("没有可格式化的内容") }
             return
         }
         val name = tab.filePath.name
         val lang = activeLanguageExtensions.value.firstNotNullOfOrNull { ext -> ext.languageFor(name) }
         viewModelScope.launch {
             if (formatWithLanguageServer(tab)) {
-                emitMessage("Formatted ${tab.title}")
+                emitMessage("已格式化 ${tab.title}")
                 return@launch
             }
             val snap = state.snapshot.value
             val original = snap.readRangeAsUtf16(0, snap.byteLength)
             val formatted = dev.blamspot.jcode.editor.CodeFormatter.format(original, lang)
             if (formatted == original) {
-                emitMessage("Already formatted")
+                emitMessage("已经格式化")
                 return@launch
             }
             state.applyEdit(EditTx.replace(0, snap.byteLength, formatted))
             val newLen = state.snapshot.value.byteLength
             val caret = (state.carets.value.firstOrNull()?.head ?: 0).coerceIn(0, newLen)
             state.setSelection(listOf(Caret(caret, caret)))
-            emitMessage("Formatted ${tab.title}")
+            emitMessage("已格式化 ${tab.title}")
         }
     }
 
@@ -6205,7 +6205,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun saveTab(tab: EditorTab) {
         if (tab.editorState == null) return // page tab: nothing to persist
-        viewModelScope.launch { if (saveTabAwait(tab)) emitMessage("Saved ${tab.title}") }
+        viewModelScope.launch { if (saveTabAwait(tab)) emitMessage("已保存 ${tab.title}") }
     }
 
     /**
@@ -6216,7 +6216,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val state = tab.editorState ?: return false // page tab: nothing to persist
         val file = tab.filePath
         if (file.path.isBlank()) {
-            emitMessage("Can't save \"${tab.title}\": unsupported file source")
+            emitMessage("无法保存“${tab.title}”：不支持的文件来源")
             return false
         }
         // `editor.formatOnSave` — a documented .jcode key that until 1.6.2 parsed, merged and
@@ -6237,7 +6237,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 workspaceManager.fsFor(FsPath.Local(file)).write(FsPath.Local(file), bytes)
             }
             // A keystroke landing mid-write mints a newer snapshot: the write succeeded but the tab is
-            // dirty again, so don't clear dirty and report the tab as still-unsaved (not a false "Saved").
+            // dirty again, so don't clear dirty and report the tab as still-unsaved (not a false "已保存").
             val clean = state.snapshot.value === snapshot
             if (clean) state.markClean()
             withContext(Dispatchers.IO) { file.diskSignatureOrNull() }?.let { diskSignatures[tab.id] = it }
@@ -6246,7 +6246,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             notifyWorkspaceFilesChanged()
             clean
         }.getOrElse {
-            emitMessage("Failed to save ${tab.title}: ${it.message ?: "error"}")
+            emitMessage("保存 ${tab.title} 失败：${it.message ?: "error"}")
             false
         }
     }
@@ -6262,7 +6262,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (dirty.isEmpty()) return true
         var saved = 0
         dirty.forEach { if (saveTabAwait(it)) saved++ }
-        if (saved > 0) emitMessage(if (saved == 1) "Saved 1 file" else "Saved $saved files")
+        if (saved > 0) emitMessage(if (saved == 1) "已保存 1 个文件" else "已保存 $saved 个文件")
         return saved == dirty.size
     }
 
@@ -6289,11 +6289,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         when (prep) {
-            OpenPrep.Missing -> emitMessage("File no longer exists: ${file.name}")
+            OpenPrep.Missing -> emitMessage("文件已不存在：${file.name}")
             OpenPrep.Image -> _editorGroup.value = _editorGroup.value.withTabAdded(
                 EditorTab.page(stableId, file.name, EditorPageKind.ImageViewer),
             )
-            OpenPrep.Binary -> emitMessage("Binary preview is not implemented yet for ${file.name}.")
+            OpenPrep.Binary -> emitMessage("尚未实现 ${file.name} 的二进制预览。")
             is OpenPrep.Text -> {
                 val tab = prep.tab
                 applyConfigToTab(tab, effectiveConfig.value)
@@ -6335,7 +6335,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         val bytes = workspaceManager.fsFor(node.path).read(node.path)
         if (!bytes.isLikelyText()) {
-            emitMessage("Binary preview is not implemented yet for ${node.name}.")
+            emitMessage("尚未实现 ${node.name} 的二进制预览。")
             return
         }
 
@@ -6505,7 +6505,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val project = selectedProject.value
         val hasLocalProject = project?.fsPath is FsPath.Local
         if (!hasLocalProject) {
-            emitMessage("Project overrides require a local project root.")
+            emitMessage("项目覆盖需要本地项目根目录。")
         }
         return hasLocalProject
     }

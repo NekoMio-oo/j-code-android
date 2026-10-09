@@ -28,7 +28,7 @@ import java.io.ByteArrayOutputStream
  *    screenshots the system clipboard does not. A view receives those only if it advertises the MIME
  *    types in its `EditorInfo`, which is what [NoFullscreenWebView] does. This is the route that
  *    actually works on a phone.
- *  - **`ClipData`.** Ctrl+V and the panel's "Paste image" read `primaryClip`, which covers apps that
+ *  - **`ClipData`.** Ctrl+V and the panel's "粘贴图片" read `primaryClip`, which covers apps that
  *    do put an image URI there (Chrome's "Copy image").
  *
  * Both end up in [pasteImageUri].

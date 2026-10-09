@@ -93,7 +93,7 @@ internal fun WorkspaceEmptyState(workspace: Workspace?) {
                 fontWeight = FontWeight.SemiBold,
             )
             Text(
-                text = "No project yet — add one with + above, or open an existing folder.",
+                text = "还没有项目——点击上方的 + 添加，或打开现有文件夹。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -122,7 +122,7 @@ internal fun ProjectRoster(
         verticalArrangement = Arrangement.spacedBy(Space.xs),
     ) {
         Text(
-            text = "PROJECTS",
+            text = "项目",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -179,11 +179,11 @@ internal fun ProjectRoster(
                             modifier = Modifier.weight(1f),
                         )
                         Box {
-                            JcTooltip("Project actions") {
+                            JcTooltip("项目操作") {
                                 IconButton(onClick = { openMenuId = project.id }, modifier = Modifier.size(32.dp)) {
                                     Icon(
                                         painter = jcIcon(JCodeIcon.MoreVert),
-                                        contentDescription = "Project actions",
+                                        contentDescription = "项目操作",
                                         modifier = Modifier.size(IconSize.md),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
@@ -193,13 +193,13 @@ internal fun ProjectRoster(
                                 expanded = openMenuId == project.id,
                                 onDismissRequest = { openMenuId = null },
                                 quickActions = listOf(
-                                    ContextAction(JCodeIcon.Rename, "Rename") { renameTarget = project },
-                                    ContextAction(JCodeIcon.Delete, "Remove", destructive = true) { onRemoveProject(project.id) },
+                                    ContextAction(JCodeIcon.Rename, "重命名") { renameTarget = project },
+                                    ContextAction(JCodeIcon.Delete, "移除", destructive = true) { onRemoveProject(project.id) },
                                 ),
                                 listActions = listOf(
-                                    ContextAction(JCodeIcon.Open, if (isWorkspace) "Open workspace" else "Open") { onOpenProject(project) },
-                                    ContextAction(JCodeIcon.Settings, "Project settings") { onOpenProjectSettings(project.id) },
-                                    ContextAction(JCodeIcon.Save, "Export to storage") { onExportProject(project) },
+                                    ContextAction(JCodeIcon.Open, if (isWorkspace) "打开工作区" else "打开") { onOpenProject(project) },
+                                    ContextAction(JCodeIcon.Settings, "项目设置") { onOpenProjectSettings(project.id) },
+                                    ContextAction(JCodeIcon.Save, "导出到存储空间") { onExportProject(project) },
                                 ),
                             )
                         }
@@ -213,26 +213,26 @@ internal fun ProjectRoster(
         var newName by remember(target.id) { mutableStateOf(target.name) }
         AlertDialog(
             onDismissRequest = { renameTarget = null },
-            title = { Text("Rename") },
+            title = { Text("重命名") },
             text = {
                 TextField(
                     value = newName,
                     onValueChange = { newName = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text("Name") },
+                    placeholder = { Text("名称") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 )
             },
             confirmButton = {
                 CompactFilledButton(
-                    text = "Rename",
+                    text = "重命名",
                     onClick = { onRenameProject(target.id, newName); renameTarget = null },
                     enabled = newName.isNotBlank() && newName.trim() != target.name,
                 )
             },
             dismissButton = {
-                CompactOutlinedButton(text = "Cancel", onClick = { renameTarget = null })
+                CompactOutlinedButton(text = "取消", onClick = { renameTarget = null })
             },
         )
     }

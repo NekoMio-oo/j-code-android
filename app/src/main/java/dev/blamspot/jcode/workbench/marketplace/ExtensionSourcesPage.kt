@@ -91,7 +91,7 @@ internal fun ExtensionSourcesPage(
             .padding(Space.md),
         verticalArrangement = Arrangement.spacedBy(Space.ms),
     ) {
-        ManagerGroupHeader("Add a source")
+        ManagerGroupHeader("添加源")
         Row(
             horizontalArrangement = Arrangement.spacedBy(Space.sm),
             verticalAlignment = Alignment.CenterVertically,
@@ -103,7 +103,7 @@ internal fun ExtensionSourcesPage(
                 onImeAction = submit,
                 modifier = Modifier.weight(1f),
             )
-            CompactFilledButton(text = "Add", onClick = submit, enabled = newUrl.isNotBlank())
+            CompactFilledButton(text = "添加", onClick = submit, enabled = newUrl.isNotBlank())
         }
         Row(
             horizontalArrangement = Arrangement.spacedBy(Space.s),
@@ -116,14 +116,14 @@ internal fun ExtensionSourcesPage(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "Installs as unsigned third-party code — only add sources you trust.",
+                text = "将作为未签名的第三方代码安装——仅添加您信任的源。",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         ManagerGroupHeader(
-            title = "Sources",
+            title = "源代码",
             trailing = {
                 if (state.refreshing) {
                     Box(modifier = Modifier.size(32.dp), contentAlignment = Alignment.Center) {
@@ -133,7 +133,7 @@ internal fun ExtensionSourcesPage(
                     IconButton(onClick = onRefresh, modifier = Modifier.size(32.dp)) {
                         Icon(
                             painter = jcIcon(JCodeIcon.Refresh),
-                            contentDescription = "Refresh sources",
+                            contentDescription = "刷新源",
                             modifier = Modifier.size(IconSize.md),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -144,7 +144,7 @@ internal fun ExtensionSourcesPage(
 
         if (state.sources.isEmpty()) {
             Text(
-                text = "No sources yet. Add a repo above to install and update VSIX extensions from it.",
+                text = "暂无源。请在上方添加仓库，以便从中安装和更新 VSIX 扩展。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
@@ -188,9 +188,9 @@ private fun SourceCard(
         else -> ManagerItemStatus.Installed
     }
     val actionLabel = when {
-        installedFromSource == null -> "Install"
-        updatable -> "Update"
-        else -> "Reinstall"
+        installedFromSource == null -> "安装"
+        updatable -> "更新"
+        else -> "重新安装"
     }
 
     Surface(
@@ -257,12 +257,12 @@ private fun SourceCard(
 
             when {
                 release != null -> {
-                    ManagerSummaryRow("Latest release", "v${release.version}")
-                    installedFromSource?.version?.let { ManagerSummaryRow("Installed", "v$it") }
+                    ManagerSummaryRow("最新版本", "v${release.version}")
+                    installedFromSource?.version?.let { ManagerSummaryRow("已安装", "v$it") }
                     ManagerSummaryRow("Asset", release.assetName)
                 }
-                refreshing -> ManagerSummaryRow("Latest release", "Checking…")
-                else -> ManagerSummaryRow("Latest release", "No .vsix release found")
+                refreshing -> ManagerSummaryRow("最新版本", "正在检查…")
+                else -> ManagerSummaryRow("最新版本", "未找到 .vsix 版本")
             }
 
             Row(
@@ -272,7 +272,7 @@ private fun SourceCard(
                 if (release != null) {
                     CompactFilledButton(text = actionLabel, onClick = onInstall, enabled = !busy)
                 }
-                CompactOutlinedButton(text = "Remove", onClick = onRemove)
+                CompactOutlinedButton(text = "移除", onClick = onRemove)
             }
         }
     }

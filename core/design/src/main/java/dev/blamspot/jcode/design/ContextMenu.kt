@@ -29,9 +29,9 @@ data class ContextAction(
     /**
      * A tick at the end of the row, for a row that is a setting rather than a verb.
      *
-     * Null for the ordinary case — a verb has no state to show, and an empty checkbox beside "Copy"
+     * Null for the ordinary case — a verb has no state to show, and an empty checkbox beside "复制"
      * would invite the reading that copying is switched off. A two-way *choice* is still better said
-     * by naming the action ("Request desktop site"); this is for a mode that is simply on or off,
+     * by naming the action ("请求桌面版网站"); this is for a mode that is simply on or off,
      * where the name has to stay put so you can find it again.
      */
     val checked: Boolean? = null,

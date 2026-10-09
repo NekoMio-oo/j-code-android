@@ -12,7 +12,7 @@ import kotlin.random.Random
  * - [RandomRemember]: on first open, pick a random color and remember it per file.
  * - [Random]: a random color each session, remembered for nothing.
  * - [DirectoryBased]: all files in a folder share one remembered random color.
- * - [Disabled]: no tab colors, and the "Change Tab Color" menu item is hidden.
+ * - [Disabled]: no tab colors, and the "更改选项卡颜色" menu item is hidden.
  *
  * A manually-set color (via the tab menu) always takes precedence in every mode except [Disabled].
  */
@@ -38,14 +38,14 @@ val LocalTabColoringSetting = compositionLocalOf { TabColoringSetting() }
  */
 class EditorTabColors(
     val colorFor: (String) -> Color? = { null },
-    /** False when the effective mode is [TabColoring.Disabled] — hides the "Change Tab Color" item. */
+    /** False when the effective mode is [TabColoring.Disabled] — hides the "更改选项卡颜色" item. */
     val pickerEnabled: Boolean = true,
 )
 
 val LocalEditorTabColors = compositionLocalOf { EditorTabColors() }
 
 /**
- * The 25-color (5x5) tab accent palette shown in the "Change Tab Color" picker and drawn from for the
+ * The 25-color (5x5) tab accent palette shown in the "更改选项卡颜色" picker and drawn from for the
  * random/auto modes. Medium-saturation hues that read clearly as a thin accent in light and dark.
  */
 val TabColorPalette: List<Color> = listOf(
@@ -56,7 +56,7 @@ val TabColorPalette: List<Color> = listOf(
     Color(0xFFF48FB1), Color(0xFFCE93D8), Color(0xFF90CAF9), Color(0xFFA5D6A7), Color(0xFFFFF59D),
 )
 
-/** A random palette color, for the auto modes and the picker's "Random" button. */
+/** A random palette color, for the auto modes and the picker's "随机" button. */
 fun randomTabColor(): Color = TabColorPalette[Random.nextInt(TabColorPalette.size)]
 
 /** Serialize a color as `#RRGGBB` for YAML storage. */

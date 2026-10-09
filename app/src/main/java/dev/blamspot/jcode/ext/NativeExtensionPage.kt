@@ -75,7 +75,7 @@ internal fun NativeExtensionPage(
     LaunchedEffect(noticeSource, failure) {
         WorkbenchNotices.set(
             noticeSource,
-            failure?.let { listOf(WorkbenchNotices.Notice(it.message ?: "The extension could not be loaded.")) }
+            failure?.let { listOf(WorkbenchNotices.Notice(it.message ?: "无法加载该扩展。")) }
                 .orEmpty(),
         )
     }
@@ -91,12 +91,12 @@ internal fun NativeExtensionPage(
             verticalArrangement = Arrangement.spacedBy(Space.s),
         ) {
             Text(
-                text = "${extension.name} could not be loaded",
+                text = "${extension.name} 无法加载",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.error,
             )
             Text(
-                text = failure?.message ?: "Unknown error.",
+                text = failure?.message ?: "未知错误。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

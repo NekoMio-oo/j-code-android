@@ -102,7 +102,7 @@ class VirtualStorageProvider : DocumentsProvider() {
         delegate?.getDocumentType(documentId) ?: throw noDevice(documentId)
 
     private fun noDevice(documentId: String) = FileNotFoundException(
-        "No virtual device: install the Android Dev Pack to browse it ($documentId).",
+        "没有虚拟设备：请安装 Android Dev Pack 以浏览（$documentId）。",
     )
 
     private companion object {

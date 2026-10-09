@@ -114,7 +114,7 @@ internal fun WindowModeController() {
     }
 }
 
-/** "Go to Line" palette command: accepts `line` or `line:column` (1-based) and reveals it. */
+/** "转到行" palette command: accepts `line` or `line:column` (1-based) and reveals it. */
 @Composable
 internal fun GoToLineDialog(
     lineCount: Int,
@@ -133,13 +133,13 @@ internal fun GoToLineDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Go to Line") },
+        title = { Text("转到行") },
         text = {
             OutlinedTextField(
                 value = input,
                 onValueChange = { input = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("line or line:column (1–$lineCount)") },
+                placeholder = { Text("行号或行号:列号（1–$lineCount）") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Go),
                 keyboardActions = KeyboardActions(onGo = { confirm() }),
                 singleLine = true,
@@ -147,10 +147,10 @@ internal fun GoToLineDialog(
             )
         },
         confirmButton = {
-            CompactFilledButton(text = "Go", onClick = ::confirm, enabled = parsed != null)
+            CompactFilledButton(text = "前往", onClick = ::confirm, enabled = parsed != null)
         },
         dismissButton = {
-            CompactOutlinedButton(text = "Cancel", onClick = onDismiss)
+            CompactOutlinedButton(text = "取消", onClick = onDismiss)
         },
     )
 }
@@ -163,7 +163,7 @@ private fun parseLineColumn(input: String): Pair<Int, Int>? {
 }
 
 /**
- * "Color Search" pick surface: a transparent full-screen layer that captures ONE tap, samples the
+ * "颜色搜索" pick surface: a transparent full-screen layer that captures ONE tap, samples the
  * window pixel under it via [PixelCopy] (so WebViews/canvases are included), and reports the color.
  * A hint chip at the top doubles as the cancel affordance.
  */
@@ -209,12 +209,12 @@ internal fun ColorPickOverlay(
                 horizontalArrangement = Arrangement.spacedBy(Space.ms),
             ) {
                 Text(
-                    text = "Tap anywhere to sample a color",
+                    text = "点击任意位置取色",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.inverseOnSurface,
                 )
                 Text(
-                    text = "Cancel",
+                    text = "取消",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.inversePrimary,
                 )
@@ -264,7 +264,7 @@ internal fun ColorSampleDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Sampled Color") },
+        title = { Text("取色结果") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Space.ms)) {
                 Box(
@@ -290,7 +290,7 @@ internal fun ColorSampleDialog(
                         IconButton(onClick = { clipboard.setText(AnnotatedString(value)) }) {
                             Icon(
                                 painter = jcIcon(JCodeIcon.Copy),
-                                contentDescription = "Copy $label",
+                                contentDescription = "复制 $label",
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
@@ -299,10 +299,10 @@ internal fun ColorSampleDialog(
             }
         },
         confirmButton = {
-            CompactFilledButton(text = "Done", onClick = onDismiss)
+            CompactFilledButton(text = "完成", onClick = onDismiss)
         },
         dismissButton = {
-            CompactOutlinedButton(text = "Pick again", onClick = onPickAgain)
+            CompactOutlinedButton(text = "重新选择", onClick = onPickAgain)
         },
     )
 }

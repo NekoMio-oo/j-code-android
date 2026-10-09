@@ -27,7 +27,7 @@ data class TreeRow(
     val vcsStatus: String? = null,
     /** The row is a git submodule root ("S" chip; can combine with a dirty [vcsStatus]). */
     val isSubmodule: Boolean = false,
-    /** A non-interactive "(empty)" marker shown under an expanded, childless directory. */
+    /** A non-interactive "（空）" marker shown under an expanded, childless directory. */
     val isPlaceholder: Boolean = false,
     /** A project-root entry matched by the exclude list while the effect is "grey out" — kept in the
      *  tree but dimmed (when the effect is "hide" the entry is dropped instead, so this stays false). */
@@ -258,7 +258,7 @@ class TreeViewModel(
         )
         addExpandedChildren(rootPath, depth = 1, out = result)
         // A transient root-list failure (File.listFiles → null under heavy IO, e.g. a build) collapses
-        // to just the root + an "(empty)" placeholder. Don't blank a tree that was populated a moment
+        // to just the root + an "（空）" placeholder. Don't blank a tree that was populated a moment
         // ago — keep it until a refresh succeeds. (A genuinely-emptied root reappears on the next load.)
         val builtEmpty = result.size == 2 && result[1].isPlaceholder
         val current = _treeRows.value
@@ -290,7 +290,7 @@ class TreeViewModel(
 
     private fun placeholderRow(parentPath: FsPath, depth: Int): TreeRow = TreeRow(
         id = parentPath.stableId + "::empty",
-        node = FsNode(parentPath, "(empty)", FsKind.File, 0L, 0L),
+        node = FsNode(parentPath, "（空）", FsKind.File, 0L, 0L),
         depth = depth,
         isExpanded = false,
         isSelected = false,

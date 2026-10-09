@@ -9,7 +9,7 @@ enum class ExtensionType {
     Formatter,
     /** Ships a web frontend ("Manage" UI), e.g. a runtime/tool manager like the VM Manager. */
     App,
-    /** Like [App], but its UI is a database manager surfaced under the "DB Managers" drawer. */
+    /** Like [App], but its UI is a database manager surfaced under the "数据库管理器" drawer. */
     DbManager,
     /** Like [App], but its UI is a source-control manager surfaced in the left-drawer "SCM" panel. */
     Scm,
@@ -710,7 +710,7 @@ data class NativeClaim(
     /**
      * What the editor's menu calls the toggle into this view.
      *
-     * "Preview" is right for a rendered Markdown document and wrong for a layout designer — you are
+     * "预览" is right for a rendered Markdown document and wrong for a layout designer — you are
      * not previewing it, you are editing it somewhere else. The claim knows what its view is; the
      * menu does not, and should not have to.
      */

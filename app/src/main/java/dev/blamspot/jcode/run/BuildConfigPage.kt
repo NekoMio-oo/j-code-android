@@ -45,22 +45,22 @@ fun BuildConfigPage(
             .padding(Space.lg),
         verticalArrangement = Arrangement.spacedBy(Space.lg),
     ) {
-        Text("Build configuration", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+        Text("构建配置", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
         Text(
-            "A build task for publish/deployment. Stored in this project's .jcode/run.yaml.",
+            "用于发布/部署的构建任务。存储在此项目的 .jcode/run.yaml 中。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
 
         SettingsTextFieldRow(
-            label = "Name",
+            label = "名称",
             value = name,
             onValueChange = { name = it; dirty = true },
         )
         SettingsTextFieldRow(
-            label = "Command (bash)",
-            supporting = "Runs in a dedicated terminal — e.g. dotnet publish -c Release -o \"\$HOME/.jcode-build/out\".",
+            label = "命令 (bash)",
+            supporting = "在专用终端中运行——例如 dotnet publish -c Release -o “\$HOME/.jcode-build/out”。",
             value = command,
             onValueChange = { command = it; dirty = true },
             singleLine = false,
@@ -69,7 +69,7 @@ fun BuildConfigPage(
         )
 
         CompactFilledButton(
-            text = if (savedOnce && !dirty) "Saved" else "Save",
+            text = if (savedOnce && !dirty) "已保存" else "保存",
             onClick = {
                 onSave(BuildConfig(name = name.ifBlank { "Build" }, command = command))
                 savedOnce = true

@@ -23,7 +23,7 @@ object WorkbenchNotices {
      * One problem: a line to show, and the output it came out of.
      *
      * [message] is whatever the failing tool said first, which is routinely the least useful thing
-     * it said — "Install failed." names the outcome and not one reason for it. [detail] is the run's
+     * it said — "安装失败。" names the outcome and not one reason for it. [detail] is the run's
      * own log, kept so the pane can be opened up to what actually happened instead of sending the
      * user back to re-run the thing that just failed.
      */

@@ -17,20 +17,20 @@ data class PaletteCommandInfo(
 
 /** The user-toggleable built-in palette commands (context-dependent ones note their surface). */
 val PaletteCommandCatalog: List<PaletteCommandInfo> = listOf(
-    PaletteCommandInfo("view.orientationLock", "Orientation Lock/Unlock", "Pin the screen to its current orientation."),
-    PaletteCommandInfo("view.hideChrome", "Hide Header and Tabs", "Distraction-free editing/preview; a floating pill restores the chrome."),
-    PaletteCommandInfo("view.fullscreen", "Fullscreen", "Hide the system status and navigation bars; swipe from an edge to peek."),
-    PaletteCommandInfo("view.keepAwake", "Keep Awake", "Prevent the screen from sleeping while the app is open."),
-    PaletteCommandInfo("editor.goToLine", "Go to Line", "Jump the active editor to a line (or line:column)."),
-    PaletteCommandInfo("tools.colorSearch", "Color Search", "Tap anywhere on screen to sample a pixel as copyable HEX/RGB(A)."),
-    PaletteCommandInfo("tools.virtualDevice", "Open Virtual Device", "Open the virtual device's screen and its launcher in a tab."),
-    PaletteCommandInfo("browser.open", "Open Browser", "Open the built-in browser, leaving the page it is on alone."),
-    PaletteCommandInfo("browser.back", "Browser: Back", "Go back a page. Offered while the browser tab is open and has somewhere to go."),
-    PaletteCommandInfo("browser.forward", "Browser: Forward", "Go forward a page. Offered while the browser tab is open and has somewhere to go."),
-    PaletteCommandInfo("browser.reload", "Browser: Reload/Stop", "Reload the page, or stop it while it is still loading."),
-    PaletteCommandInfo("editor.formatDocument", "Format Document", "Format the active file when its language is identified."),
-    PaletteCommandInfo("editor.fontSizeIncrease", "Increase Editor Font Size", "Bump the editor font one point (8–72)."),
-    PaletteCommandInfo("editor.fontSizeDecrease", "Decrease Editor Font Size", "Shrink the editor font one point (8–72)."),
+    PaletteCommandInfo("view.orientationLock", "锁定/解锁屏幕方向", "将屏幕固定为当前方向。"),
+    PaletteCommandInfo("view.hideChrome", "隐藏标题栏和选项卡", "无干扰的编辑/预览；悬浮胶囊可恢复界面。"),
+    PaletteCommandInfo("view.fullscreen", "Fullscreen", "隐藏系统状态栏和导航栏；从屏幕边缘滑动可临时查看。"),
+    PaletteCommandInfo("view.keepAwake", "保持唤醒", "在应用打开时防止屏幕休眠。"),
+    PaletteCommandInfo("editor.goToLine", "转到行", "将活动编辑器跳转到指定行（或行:列）。"),
+    PaletteCommandInfo("tools.colorSearch", "颜色搜索", "点击屏幕任意位置，取样像素并复制为 HEX/RGB(A)。"),
+    PaletteCommandInfo("tools.virtualDevice", "打开虚拟设备", "在选项卡中打开虚拟设备的屏幕及其启动器。"),
+    PaletteCommandInfo("browser.open", "打开浏览器", "打开内置浏览器，保持当前页面不变。"),
+    PaletteCommandInfo("browser.back", "浏览器：后退", "返回上一页。仅在浏览器选项卡已打开且有可返回的页面时可用。"),
+    PaletteCommandInfo("browser.forward", "浏览器：前进", "前往下一页。仅在浏览器选项卡已打开且有可前往的页面时可用。"),
+    PaletteCommandInfo("browser.reload", "浏览器：重新加载/停止", "重新加载页面，或在页面仍在加载时停止加载。"),
+    PaletteCommandInfo("editor.formatDocument", "格式化文档", "在识别出活动文件的语言时对其进行格式化。"),
+    PaletteCommandInfo("editor.fontSizeIncrease", "增大编辑器字号", "将编辑器字号增大 1 磅（8–72）。"),
+    PaletteCommandInfo("editor.fontSizeDecrease", "减小编辑器字号", "将编辑器字号减小 1 磅（8–72）。"),
 )
 
 /** Which built-in palette commands the user disabled, plus the Settings toggle writer. */
@@ -52,7 +52,7 @@ class CommandPaletteLauncher(val onOpen: () -> Unit = {})
 val LocalCommandPaletteLauncher = compositionLocalOf { CommandPaletteLauncher() }
 
 /**
- * Workbench chrome state for the palette's "Hide Header and Tabs" mode. A CompositionLocal (not
+ * Workbench chrome state for the palette's "隐藏标题栏和选项卡" mode. A CompositionLocal (not
  * params) because the shell composables sit at the ART verifier register limit.
  */
 @Immutable

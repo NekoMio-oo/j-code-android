@@ -42,7 +42,7 @@ object ProjectRunner {
 
     /** A runnable recipe for a detected project type, across one or more terminals. */
     data class RunPlan(
-        /** Short human label, e.g. "ASP.NET Core + Vite React (dev)". */
+        /** Short human label, e.g. "ASP.NET Core + Vite React（开发）". */
         val kindLabel: String,
         /** Localhost port to poll for readiness and open in the browser (the dev frontend). */
         val readyPort: Int,
@@ -205,7 +205,7 @@ object ProjectRunner {
     }
 
     /** A runnable trigger file — a `.csproj`, a `package.json`, a Gradle module, or an extension
-     *  preset's anchor — and the run configs it offers. The "Add run config" picker groups these by
+     *  preset's anchor — and the run configs it offers. The "添加运行配置" picker groups these by
      *  [kind] into frameworks; picking a file then creates all of its [configs] at once, which is why
      *  they need no per-config label of their own. */
     data class RunTrigger(
@@ -244,7 +244,7 @@ object ProjectRunner {
 
         val triggers = mutableListOf<RunTrigger>()
 
-        // Extension presets are curated — each becomes a trigger with a single "Run" option, and they
+        // Extension presets are curated — each becomes a trigger with a single "运行" option, and they
         // go first so a busy monorepo's generic probes can't crowd them past SCAN_TOTAL_CAP. Build-kind
         // presets are the Build segment's ([suggestBuildChoices]) and are skipped here.
         extensionPresets.forEach { (source, preset) ->
@@ -289,7 +289,7 @@ object ProjectRunner {
                 kind = if (web) "C# · ASP.NET Core" else "C# · .NET",
                 detail = rel(csproj),
                 configs = listOf(
-                    cfg("$name (debug)", "Debug", "debug"),
+                    cfg("$name (debug)", "调试", "debug"),
                     cfg(name, "Release", "release"),
                 ),
             )
@@ -308,7 +308,7 @@ object ProjectRunner {
                 val port = if (serveDev) VITE_PORT else 0
                 val cmd = if (serveDev) viteClientCommand(guestDir, stage(s), VITE_PORT, dirGuest)
                     else npmScriptCommand(dirGuest, stage("npm-$s"), s)
-                RunConfig(name = "npm run $s", readyPort = port, terminals = listOf(RunConfigTerminal("Run", cmd)))
+                RunConfig(name = "npm run $s", readyPort = port, terminals = listOf(RunConfigTerminal("运行", cmd)))
             }
             triggers += RunTrigger(
                 label = if (dir == root) "package.json" else "${dir.name}/package.json",
@@ -327,7 +327,7 @@ object ProjectRunner {
             val modules = androidAppModules(root, files)
             modules.take(SCAN_PER_KIND_CAP).forEach { module ->
                 val modulePath = module.relativeTo(root).invariantSeparatorsPath
-                // One module needs no disambiguation, and "Android app" is the name already in use.
+                // One module needs no disambiguation, and "Android 应用" is the name already in use.
                 val qualifier = if (modules.size > 1) " ${androidGradlePath(modulePath)}" else ""
                 triggers += RunTrigger(
                     label = if (modulePath.isEmpty()) project.name else androidGradlePath(modulePath),
@@ -335,12 +335,12 @@ object ProjectRunner {
                     detail = "build, install & launch",
                     configs = listOf(
                         RunConfig(
-                            name = "Android app$qualifier",
+                            name = "Android 应用$qualifier",
                             readyPort = 0,
-                            terminals = listOf(RunConfigTerminal("Run", androidRunCommand(guestDir, modulePath, gradle))),
+                            terminals = listOf(RunConfigTerminal("运行", androidRunCommand(guestDir, modulePath, gradle))),
                         ),
                         RunConfig(
-                            name = "Android app$qualifier (virtual device)",
+                            name = "Android 应用$qualifier（虚拟设备）",
                             readyPort = 0,
                             terminals = listOf(RunConfigTerminal("Build", androidVirtualDeviceCommand(guestDir, modulePath, gradle))),
                         ),
@@ -473,7 +473,7 @@ object ProjectRunner {
         val runs = effectiveRuns(project)
         if (index != null && index in runs.indices) return runs[index]
         detectRunPlan(project)?.let { return it.toRunConfig() }
-        return RunConfig(project.name, 0, terminals = listOf(RunConfigTerminal("Run", "")))
+        return RunConfig(project.name, 0, terminals = listOf(RunConfigTerminal("运行", "")))
     }
 
     /** The build config the editor opens for [index]: the effective one at that position, else blank. */
@@ -495,7 +495,7 @@ object ProjectRunner {
         val out = mutableListOf<BuildConfig>()
 
         scan.files.firstOrNull { it.extension.equals("csproj", ignoreCase = true) }?.let { csproj ->
-            out += BuildConfig("Publish (Release) — ${rel(csproj)}", dotnetPublishCommand(guest(csproj), stage("publish")))
+            out += BuildConfig("发布 (Release) — ${rel(csproj)}", dotnetPublishCommand(guest(csproj), stage("publish")))
         }
         scan.files.firstOrNull { it.name == "package.json" && runCatching { it.readText() }.getOrNull()?.contains("\"build\"") == true }
             ?.let { pkg ->
@@ -510,15 +510,15 @@ object ProjectRunner {
             when {
                 // A single app module's plain `assembleDebug` is the same work as its qualified task,
                 // and staying unqualified lets an extension's project-wide preset de-duplicate it.
-                modules.size == 1 -> out += gradleBuild("Assemble debug APK", "assembleDebug")
+                modules.size == 1 -> out += gradleBuild("组装调试 APK", "assembleDebug")
                 modules.size > 1 -> modules.take(SCAN_PER_KIND_CAP).forEach { module ->
                     val modulePath = module.relativeTo(root).invariantSeparatorsPath
                     out += gradleBuild(
-                        "Assemble debug APK — ${androidGradlePath(modulePath)}",
+                        "组装调试 APK — ${androidGradlePath(modulePath)}",
                         androidAssembleTask(modulePath),
                     )
                 }
-                else -> out += gradleBuild("Gradle — build", "build")
+                else -> out += gradleBuild("Gradle — 构建", "build")
             }
         }
         return out
@@ -665,7 +665,7 @@ object ProjectRunner {
     // ASP.NET Core + Vite React, dev: the backend (Development, :5080) and the Vite dev server
     // (:5173) run in their own terminals, started server-first. The browser opens the Vite frontend.
     private fun aspnetVitePlan(guestDir: String, stageName: String) = RunPlan(
-        kindLabel = "ASP.NET Core + Vite React (dev)",
+        kindLabel = "ASP.NET Core + Vite React（开发）",
         readyPort = VITE_PORT,
         terminals = listOf(
             RunTerminal("Server", aspnetServerCommand(guestDir, stageName, ASPNET_PORT)),
@@ -675,7 +675,7 @@ object ProjectRunner {
 
     // Standalone Vite/React app (the project root is the app).
     private fun vitePlan(guestDir: String, stageName: String) = RunPlan(
-        kindLabel = "Vite / React dev server",
+        kindLabel = "Vite / React 开发服务器",
         readyPort = VITE_PORT,
         terminals = listOf(
             RunTerminal("Client", viteClientCommand(guestDir, stageName, VITE_PORT, guestDir)),
@@ -741,7 +741,7 @@ object ProjectRunner {
         fun viewIntent() = Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         val specific = browser.isNotBlank() && browser != "SYSTEM" && browser != "ASK"
         val intent = when {
-            browser == "ASK" -> Intent.createChooser(viewIntent(), "Open web preview in")
+            browser == "ASK" -> Intent.createChooser(viewIntent(), "选择用于打开网页预览的应用")
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             specific -> viewIntent().setPackage(browser)
             else -> viewIntent()
@@ -750,7 +750,7 @@ object ProjectRunner {
         if (!ok && specific) runCatching { context.startActivity(viewIntent()) } // browser uninstalled → default
     }
 
-    /** Installed apps that can open http(s) URLs, for the "Open web previews in" picker. */
+    /** Installed apps that can open http(s) URLs, for the "Web 预览打开位置" picker. */
     fun installedBrowsers(context: Context): List<dev.blamspot.jcode.design.BrowserApp> {
         val probe = Intent(Intent.ACTION_VIEW, Uri.parse("http://example.com"))
         val pm = context.packageManager
@@ -812,7 +812,7 @@ object ProjectRunner {
     // `-p:SkipSpaBuild=true` skips a build-time SPA build the .csproj gates on that property (the .NET
     // SPA template convention — it would otherwise npm-build in the FUSE source tree and fail); a
     // harmless no-op for projects that don't use it.
-    private fun aspnetSinglePortCommand(csprojGuest: String, clientDir: String, serverStage: String, clientStage: String, port: Int, config: String = "Debug"): String =
+    private fun aspnetSinglePortCommand(csprojGuest: String, clientDir: String, serverStage: String, clientStage: String, port: Int, config: String = "调试"): String =
         buildString {
             appendLine("clear")
             appendLine("set -e")
@@ -867,7 +867,7 @@ object ProjectRunner {
     // Generic .NET build & run for a specific .csproj (a suggested config for external projects, so
     // the project is built as-is — no TFM retargeting). Same noexec-safe shape as the template
     // recipe: build to ext4, launch the managed DLL via the dotnet host.
-    private fun dotnetProjectCommand(csprojGuest: String, stageName: String, web: Boolean, port: Int, config: String = "Debug"): String =
+    private fun dotnetProjectCommand(csprojGuest: String, stageName: String, web: Boolean, port: Int, config: String = "调试"): String =
         buildString {
             appendLine("clear")
             appendLine("set -e")

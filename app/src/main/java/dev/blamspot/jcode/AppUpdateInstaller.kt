@@ -127,7 +127,7 @@ object AppUpdateInstaller {
             _state.value = State.Downloading(0)
             withContext(Dispatchers.IO) { download(app, apkUrl) }
         } catch (e: Exception) {
-            _state.value = State.Failed(e.message ?: "Download failed")
+            _state.value = State.Failed(e.message ?: "下载失败")
             return
         }
         // An update that installs under a different package is not an update: Android gives it an
@@ -154,7 +154,7 @@ object AppUpdateInstaller {
         val app = context.applicationContext
         val apk = File(apkPath)
         if (!apk.isFile) {
-            _state.value = State.Failed("The downloaded update is no longer available.")
+            _state.value = State.Failed("下载的更新已不可用。")
             return
         }
         install(app, apk)
@@ -172,10 +172,10 @@ object AppUpdateInstaller {
                 state.first { it !is State.Installing }
             }
             if (settled == null && _state.value is State.Installing) {
-                _state.value = State.Failed("Installation didn't finish. Tap Update to try again.")
+                _state.value = State.Failed("安装未完成。点按「安装更新」重试。")
             }
         } catch (e: Exception) {
-            _state.value = State.Failed(e.message ?: "Install failed")
+            _state.value = State.Failed(e.message ?: "安装失败")
         }
     }
 
@@ -203,7 +203,7 @@ object AppUpdateInstaller {
         try {
             conn.connect()
             if (conn.responseCode != HttpURLConnection.HTTP_OK) {
-                throw IOException("Download failed (HTTP ${conn.responseCode})")
+                throw IOException("下载失败（HTTP ${conn.responseCode}）")
             }
             val total = conn.contentLengthLong
             val out = File(context.cacheDir, "jcode-update.apk")
@@ -262,15 +262,15 @@ object AppUpdateInstaller {
                 if (confirm != null) {
                     confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     runCatching { context.startActivity(confirm) }
-                        .onFailure { _state.value = State.Failed("Couldn't open the installer") }
+                        .onFailure { _state.value = State.Failed("无法打开安装程序") }
                 } else {
-                    _state.value = State.Failed("Installer confirmation unavailable")
+                    _state.value = State.Failed("安装程序确认不可用")
                 }
             }
             PackageInstaller.STATUS_SUCCESS -> _state.value = State.Success
             else -> {
                 val msg = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE)
-                _state.value = State.Failed(msg?.takeIf { it.isNotBlank() } ?: "Install failed")
+                _state.value = State.Failed(msg?.takeIf { it.isNotBlank() } ?: "安装失败")
             }
         }
     }

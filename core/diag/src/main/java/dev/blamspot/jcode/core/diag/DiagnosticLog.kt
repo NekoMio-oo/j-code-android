@@ -17,7 +17,7 @@ const val DIAGNOSTIC_LOG_FILE_NAME = "jcode-diagnostic.log"
  * choice applied to the captured system log, so the two stay in step.
  */
 enum class DiagLevel(val label: String, val logcatPriority: String) {
-    Errors("Errors only", "E"),
+    Errors("仅错误", "E"),
     Normal("Normal", "I"),
     Verbose("Verbose", "V"),
 }

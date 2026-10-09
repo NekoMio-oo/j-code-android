@@ -48,7 +48,7 @@ class BackendService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_STOP) {
-            // The notification's "Stop & close" action: an explicit user request to fully close, so
+            // The notification's "停止并关闭" action: an explicit user request to fully close, so
             // tear down regardless of the swipe-away preference.
             shutdownRuntimeAndExit()
             return START_NOT_STICKY
@@ -70,7 +70,7 @@ class BackendService : Service() {
      *  this the runtime keeps running headless after the task is gone. */
     private fun shutdownRuntimeAndExit() {
         // Flush unsaved editor buffers to disk before anything else — killProcess below would otherwise
-        // race the async onStop flush and drop the latest edits (esp. the "Stop & close" action, which
+        // race the async onStop flush and drop the latest edits (esp. the "停止并关闭" action, which
         // fires from the notification shade without the Activity reaching onStop).
         runCatching { MainViewModel.sessionFlushBlocking?.invoke() }
         runCatching { TerminalSessionHost.manager(applicationContext).closeAll() }
@@ -92,7 +92,7 @@ class BackendService : Service() {
     /**
      * Everything this app owns except the process running this.
      *
-     * "Stop & close" means the app is gone, and the app is more processes than the one with the UI
+     * "停止并关闭" means the app is gone, and the app is more processes than the one with the UI
      * in it. `/proc` is mounted with hidepid for apps, so a uid-filtered walk of it is exactly this
      * app's tree and nothing else: the virtual device, whatever a guest forked, the detached adb
      * daemon that has `init` for a parent and so is reaped by nobody, and any proot still standing

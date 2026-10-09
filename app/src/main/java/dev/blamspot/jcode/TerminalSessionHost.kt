@@ -152,7 +152,7 @@ object TerminalSessionHost {
                         runCatching {
                             val cm = context.applicationContext
                                 .getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                            cm.setPrimaryClip(android.content.ClipData.newPlainText("Terminal", text))
+                            cm.setPrimaryClip(android.content.ClipData.newPlainText("终端", text))
                         }
                     }
                 }

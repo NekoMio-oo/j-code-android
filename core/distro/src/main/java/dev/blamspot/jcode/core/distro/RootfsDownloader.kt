@@ -110,7 +110,7 @@ class RootfsDownloader(
             targetFile.delete()
             emit(DownloadProgress.Failed(
                 name = entry.name,
-                error = "SHA256 mismatch: expected ${entry.sha256}, got $actualHash",
+                error = "SHA256 不匹配：期望值为 ${entry.sha256}，实际为 $actualHash",
             ))
             return@flow
         }

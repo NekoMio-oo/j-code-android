@@ -187,8 +187,8 @@ internal object NativeExtensionLoader {
         if (extension.dev && !allowUnsigned) {
             throw LoadFailure(
                 "${extension.name} is an unsigned development build. Extensions that ship native " +
-                    "code run inside JCode itself, so only officially signed packages are loaded. " +
-                    "Turn on Settings → Developer options to load unsigned ones while working on them.",
+                    "代码直接在 JCode 内部运行，因此只会加载官方签名的软件包。 " +
+                    "打开“设置”→“开发者选项”即可在开发期间加载未签名的扩展。",
             )
         }
 
@@ -200,7 +200,7 @@ internal object NativeExtensionLoader {
             val which = if (extension.nativeModules.size > 1) "${extension.name} (${module.id})" else extension.name
             throw LoadFailure(
                 "$which was built for JCode extension API ${module.abi}; " +
-                    "this JCode implements $JCODE_EXT_ABI. Update the extension.",
+                    "此 JCode 实现的是 $JCODE_EXT_ABI。请更新该扩展。",
             )
         }
 
@@ -244,7 +244,7 @@ internal object NativeExtensionLoader {
             val which = if (extension.nativeModules.size > 1) "${extension.name} (${module.id})" else extension.name
             throw LoadFailure(
                 "$which was built for JCode extension API ${module.abi}; " +
-                    "this JCode implements $JCODE_EXT_ABI. Update the extension.",
+                    "此 JCode 实现的是 $JCODE_EXT_ABI。请更新该扩展。",
             )
         }
         val apk = File(extension.dir, entry)
@@ -356,8 +356,8 @@ internal object NativeExtensionLoader {
             is ClassNotFoundException, is NoClassDefFoundError, is NoSuchMethodError, is LinkageError ->
                 LoadFailure(
                     "${extension.name} could not be loaded — it was built against a different " +
-                        "version of JCode (${real.javaClass.simpleName}: ${real.message}). " +
-                        "Updating the extension usually fixes it.",
+                        "版本的 JCode（${real.javaClass.simpleName}：${real.message}）构建的。 " +
+                        "更新该扩展通常可以解决此问题。",
                 )
             else -> LoadFailure("${extension.name} could not be loaded: ${real.message ?: real.javaClass.simpleName}")
         }

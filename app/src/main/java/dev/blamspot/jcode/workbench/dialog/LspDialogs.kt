@@ -46,7 +46,7 @@ internal fun LspLocationPickerDialog(
         text = {
             Column {
                 Text(
-                    text = if (picker.entries.size == 1) "1 result" else "${picker.entries.size} results",
+                    text = if (picker.entries.size == 1) "1 条结果" else "${picker.entries.size} 条结果",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -57,7 +57,7 @@ internal fun LspLocationPickerDialog(
                 }
             }
         },
-        confirmButton = { CompactFilledButton(text = "Close", onClick = onDismiss) },
+        confirmButton = { CompactFilledButton(text = "关闭", onClick = onDismiss) },
     )
 }
 
@@ -108,20 +108,20 @@ internal fun LspRenameDialog(
     val canConfirm = name.isNotBlank() && name.trim() != symbol
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Rename \"$symbol\"") },
+        title = { Text("重命名“$symbol”") },
         text = {
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("New name") },
+                label = { Text("新名称") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 modifier = Modifier.fillMaxWidth(),
             )
         },
         confirmButton = {
-            CompactFilledButton(text = "Rename", onClick = { onConfirm(name) }, enabled = canConfirm)
+            CompactFilledButton(text = "重命名", onClick = { onConfirm(name) }, enabled = canConfirm)
         },
-        dismissButton = { CompactOutlinedButton(text = "Cancel", onClick = onDismiss) },
+        dismissButton = { CompactOutlinedButton(text = "取消", onClick = onDismiss) },
     )
 }

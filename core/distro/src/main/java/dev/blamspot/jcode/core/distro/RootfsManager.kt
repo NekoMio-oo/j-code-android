@@ -98,7 +98,7 @@ class RootfsManager(
         val entry = manifest.findByDistroId(profile.id)
         
         if (entry == null) {
-            emit(InstallProgress.Failed(profile.id, "No rootfs image found for ${profile.label}"))
+            emit(InstallProgress.Failed(profile.id, "未找到 ${profile.label} 的 rootfs 镜像"))
             return@flow
         }
         
@@ -140,7 +140,7 @@ class RootfsManager(
         tarball.delete()
         
         if (!extractSuccess) {
-            emit(InstallProgress.Failed(profile.id, "Failed to extract rootfs"))
+            emit(InstallProgress.Failed(profile.id, "解压 rootfs 失败"))
             return@flow
         }
         

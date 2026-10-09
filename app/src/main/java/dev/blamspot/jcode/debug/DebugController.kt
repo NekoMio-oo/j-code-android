@@ -104,7 +104,7 @@ class DebugController(
         val engine = engineForFile(hostPath, projectDir)
         _output.value = emptyList()
         if (engine == null) {
-            pushOutput("No debug engine is installed for ${hostPath.substringAfterLast('/')}.\n")
+            pushOutput("未为 ${hostPath.substringAfterLast('/')} 安装调试引擎。\n")
             _state.value = DebugState.ERROR
             return
         }
@@ -112,10 +112,12 @@ class DebugController(
         // the `initialize` request until it times out. Fail fast with an actionable message instead.
         if (!engine.dapAdapter) {
             pushOutput(
-                "Debugging ${hostPath.substringAfterLast('/')} isn't available yet: JCode has no " +
-                    "built-in ${engine.name} adapter.\nRun the program with " +
+                "尚不支持调试 ${hostPath.substringAfterLast('/')}：JCode 没有" +
+                    "内置的 ${engine.name} 适配器。
+请使用以下参数运行程序 " +
                     "`-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005` in a terminal " +
-                    "and attach an external debugger.\n",
+                    "并连接外部调试器。
+",
             )
             _state.value = DebugState.ERROR
             return
@@ -123,10 +125,10 @@ class DebugController(
         // STARTING covers the prepare phase (a .NET build can take a while) so the UI shows progress
         // before any adapter process exists.
         _state.value = DebugState.STARTING
-        pushOutput("Preparing ${engine.name}…\n")
+        pushOutput("正在准备 ${engine.name}…\n")
         scope.launch {
             val plan = runCatching { prepareLaunch(engine, hostPath, projectDir) }
-                .onFailure { pushOutput("Debug setup failed: ${it.message}\n") }
+                .onFailure { pushOutput("调试设置失败：${it.message}\n") }
                 .getOrNull()
             if (plan == null) {
                 _state.value = DebugState.ERROR
@@ -169,18 +171,19 @@ class DebugController(
         scope.launch { s.stopped.collect { st -> if (st != null) onStopped(s, st) else clearStoppedView() } }
 
         val distroBreakpoints = distroBps() // DAP lines are 1-based; applied on `initialized`
-        pushOutput("Starting ${engine.name} on ${hostPath.substringAfterLast('/')}…\n")
+        pushOutput("正在 ${hostPath.substringAfterLast('/')} 上启动 ${engine.name}…\n")
         scope.launch {
             runCatching { s.start(plan.adapterCommand, plan.request, plan.config, distroBreakpoints) }
-                .onFailure { pushOutput("Debug failed: ${it.message}\n"); _state.value = DebugState.ERROR }
+                .onFailure { pushOutput("调试失败：${it.message}\n"); _state.value = DebugState.ERROR }
             // start() swallows a failed adapter launch (bad transport / handshake) into DISCONNECTED
             // without rethrowing, and the STARTING guard on the state collector can eat that final
             // DISCONNECTED — leaving the panel stuck on "Starting…" forever. If we never advanced past
             // STARTING, the adapter never became reachable: surface it as an error instead of hanging.
             if (_state.value == DebugState.STARTING) {
                 pushOutput(
-                    "Couldn't reach the ${engine.name} debug adapter — it started but the connection " +
-                        "timed out. See the log (tag JCodeDAP-adapter) for details.\n",
+                    "无法连接到 ${engine.name} 调试适配器——它已启动，但连接" +
+                        "超时。请查看日志（标签 JCodeDAP-adapter）了解详情。
+",
                 )
                 _state.value = DebugState.ERROR
             }
@@ -305,10 +308,10 @@ class DebugController(
             "cpp", "cc", "cxx" -> "c++ -g -O0 -o '$outBin' '$srcDistro'"
             "rs" -> "rustc -g -o '$outBin' '$srcDistro'"
             else -> throw dev.blamspot.jcode.core.debug.DebugException(
-                "Can't debug a .$ext on its own — open the .c/.cpp/.rs that defines main().",
+                "无法单独调试 .$ext——请打开定义了 main() 的 .c/.cpp/.rs 文件。",
             )
         }
-        pushOutput("Compiling ${srcFile.name}…\n")
+        pushOutput("正在编译 ${srcFile.name}…\n")
         val build = distroService.exec(
             command = "mkdir -p '$outDir' && rm -f '$outBin' && $compile",
             workdir = hostToDistro(projectDir),
@@ -319,10 +322,10 @@ class DebugController(
             // The compiler's own diagnostics are already in the console via onLine; this is the summary.
             throw dev.blamspot.jcode.core.debug.DebugException(
                 build.stderr.lineSequence().firstOrNull { it.isNotBlank() }
-                    ?: "Compile failed (exit ${build.exitCode ?: build.internalError}).",
+                    ?: "编译失败（退出码 ${build.exitCode ?: build.internalError}）。",
             )
         }
-        pushOutput("Launching ${srcFile.nameWithoutExtension} under ${engine.name}…\n")
+        pushOutput("正在 ${engine.name} 下启动 ${srcFile.nameWithoutExtension}…\n")
         val distroCwd = hostToDistro(projectDir)
         return LaunchPlan(
             distroCwd = distroCwd,
@@ -346,8 +349,8 @@ class DebugController(
     /** Build the enclosing .csproj and point netcoredbg at the produced DLL (source alone won't launch). */
     private suspend fun prepareDotnet(engine: DebugEngineEntry, hostPath: String, projectDir: String): LaunchPlan {
         val csproj = findCsproj(hostPath, projectDir)
-            ?: throw dev.blamspot.jcode.core.debug.DebugException("No .csproj found near ${hostPath.substringAfterLast('/')}.")
-        val csprojDir = csproj.parentFile ?: throw dev.blamspot.jcode.core.debug.DebugException("Bad project path.")
+            ?: throw dev.blamspot.jcode.core.debug.DebugException("在 ${hostPath.substringAfterLast('/')} 附近未找到 .csproj。")
+        val csprojDir = csproj.parentFile ?: throw dev.blamspot.jcode.core.debug.DebugException("项目路径无效。")
         val distroDir = hostToDistro(csprojDir.path)
         // .NET lives under /root/.dotnet (installed as root); build with that HOME/PATH.
         val dotnetPath = "/root/.dotnet:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
@@ -358,7 +361,7 @@ class DebugController(
             "HOME" to "/root", "DOTNET_ROOT" to "/root/.dotnet", "DOTNET_CLI_TELEMETRY_OPTOUT" to "1",
             "DOTNET_GCHeapHardLimit" to gcHeapLimit, "PATH" to dotnetPath,
         )
-        pushOutput("Building ${csproj.name} (dotnet build)…\n")
+        pushOutput("正在构建 ${csproj.name}（dotnet build）…\n")
         val build = distroService.exec(
             command = "cd '$distroDir' && dotnet build -c Debug -v m",
             workdir = distroDir,
@@ -371,7 +374,7 @@ class DebugController(
             throw dev.blamspot.jcode.core.debug.DebugException("dotnet build failed (exit ${build.exitCode ?: build.internalError}).")
         }
         val builtDll = findBuiltDll(csprojDir, build.stdout)
-            ?: throw dev.blamspot.jcode.core.debug.DebugException("Build succeeded but no output DLL was found.")
+            ?: throw dev.blamspot.jcode.core.debug.DebugException("构建成功，但未找到输出 DLL。")
         // Stage the build output onto ext4 before debugging. /workspace is a noexec FUSE mount and
         // netcoredbg cannot debug a program launched from it — the identical binary, project and
         // breakpoints hit from ext4 and fail from /workspace. The PDB still records the original
@@ -389,10 +392,10 @@ class DebugController(
         )
         if (!staged.succeeded) {
             throw dev.blamspot.jcode.core.debug.DebugException(
-                "Couldn't stage the build output for debugging (exit ${staged.exitCode ?: staged.internalError}).",
+                "无法为调试暂存构建输出（退出码 ${staged.exitCode ?: staged.internalError}）。",
             )
         }
-        pushOutput("Launching $dll under netcoredbg…\n")
+        pushOutput("正在 netcoredbg 下启动 $dll…\n")
         val config = baseConfig("coreclr", stageDir).apply {
             put("program", dll)
             put("stopAtEntry", false)
@@ -458,7 +461,7 @@ class DebugController(
         projectDir: String,
         module: java.io.File,
     ): LaunchPlan {
-        pushOutput("Android app module: ${module.name}\n")
+        pushOutput("Android 应用模块：${module.name}\n")
         val attach = AndroidDebugAttach(distroService, ::hostToDistro, ::pushOutput)
         androidAttach = attach
         val port = attach.attach(module)
@@ -484,7 +487,7 @@ class DebugController(
         val text = runCatching { srcFile.readText() }.getOrDefault("")
         if (!Regex("""static\s+void\s+main\s*\(\s*String""").containsMatchIn(text)) {
             throw dev.blamspot.jcode.core.debug.DebugException(
-                "No `public static void main(String[])` in ${srcFile.name} — open the file with main().",
+                "${srcFile.name} 中没有 `public static void main(String[])`——请打开包含 main() 的文件。",
             )
         }
         // Java requires the public type to match the file name, so that's the main class.
@@ -495,7 +498,7 @@ class DebugController(
         pkg?.split('.')?.forEach { root = root.parentFile ?: root }
         val srcRootDistro = hostToDistro(root.path)
         val classesDir = "/tmp/jcode-java-classes"
-        pushOutput("Compiling ${srcFile.name} (javac)…\n")
+        pushOutput("正在编译 ${srcFile.name}（javac）…\n")
         val build = distroService.exec(
             command = "rm -rf '$classesDir' && mkdir -p '$classesDir' && cd '$srcRootDistro' && " +
                 "javac -g -encoding UTF-8 -d '$classesDir' \$(find . -name '*.java')",
@@ -506,7 +509,7 @@ class DebugController(
         if (!build.succeeded) {
             throw dev.blamspot.jcode.core.debug.DebugException("javac failed (exit ${build.exitCode ?: build.internalError}).")
         }
-        pushOutput("Launching $mainFqn under ${engine.name}…\n")
+        pushOutput("正在 ${engine.name} 下启动 $mainFqn…\n")
         val distroCwd = hostToDistro(projectDir)
         val config = baseConfig("java", distroCwd).apply {
             put("mainClass", mainFqn)
@@ -521,7 +524,7 @@ class DebugController(
     private fun baseConfig(type: String, cwd: String, request: String = "launch"): JSONObject = JSONObject().apply {
         put("type", type)
         put("request", request)
-        put("name", "JCode Debug")
+        put("name", "JCode 调试")
         put("cwd", cwd)
         put("console", "internalConsole")
         put("stopOnEntry", false)
@@ -568,7 +571,7 @@ class DebugController(
             // start() swallows its own failures into DISCONNECTED/ERROR; if the child never reached a live
             // session (e.g. it couldn't connect to the child server), clean it up so it doesn't hang the run.
             if (child.state.value == DebugState.DISCONNECTED || child.state.value == DebugState.ERROR) {
-                pushOutput("Child debug session couldn't connect to the js-debug child server.\n")
+                pushOutput("子调试会话无法连接到 js-debug 子服务器。\n")
                 onChildTerminated(child)
             }
         }

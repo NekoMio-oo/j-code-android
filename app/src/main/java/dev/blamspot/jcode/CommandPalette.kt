@@ -79,7 +79,7 @@ internal fun CommandPalette(
             CompactSearchField(
                 query = query,
                 onQueryChange = { query = it },
-                placeholder = "Search commands",
+                placeholder = "搜索命令",
                 onImeAction = {
                     // Only act on a real query — an empty-field Go must not fire whatever command
                     // happens to sit first in the registry.
@@ -88,7 +88,7 @@ internal fun CommandPalette(
             )
             if (commands.isEmpty()) {
                 Text(
-                    text = "No matching commands",
+                    text = "没有匹配的命令",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = Space.sm, vertical = Space.ms),

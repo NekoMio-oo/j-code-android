@@ -123,7 +123,7 @@ internal fun ExtensionsPanel(
         // Outside the scroll, like Source Control's: the panel's name and its refresh should not
         // scroll away with the list they describe.
         ManagerPanelHeader(
-            title = "Extensions",
+            title = "扩展",
             installedCount = installed.size,
             onRefresh = onRefreshMarketplace,
             busy = busy,
@@ -131,14 +131,14 @@ internal fun ExtensionsPanel(
             onToggleSearch = { searchActive = !searchActive; if (!searchActive) query = "" },
             query = query,
             onQueryChange = { query = it },
-            searchPlaceholder = "Search extensions",
+            searchPlaceholder = "搜索扩展",
             onManage = onOpenPermissions,
-            manageContentDescription = "Extension settings",
+            manageContentDescription = "扩展设置",
             onImport = onImportExtension,
-            importContentDescription = "Import an extension (.jext or .vsix)",
+            importContentDescription = "导入扩展（.jext 或 .vsix）",
             onExtras = onOpenSources,
             extrasIcon = JCodeIcon.Sources,
-            extrasContentDescription = "Extension sources",
+            extrasContentDescription = "扩展源",
         )
         Column(
             modifier = Modifier
@@ -161,7 +161,7 @@ internal fun ExtensionsPanel(
                 ) {
                     Text(
                         text = if (pendingReloadNames.size == 1) {
-                            "Updated ${pendingReloadNames.first()} — reload to apply"
+                            "已更新 ${pendingReloadNames.first()}——重新加载以应用"
                         } else {
                             "${pendingReloadNames.size} extensions updated — reload to apply"
                         },
@@ -175,7 +175,7 @@ internal fun ExtensionsPanel(
                         onClick = onReloadPending,
                         contentPadding = PaddingValues(horizontal = Space.ms, vertical = Space.xxs),
                     ) {
-                        Text("Reload", style = MaterialTheme.typography.labelMedium)
+                        Text("重新加载", style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
@@ -188,9 +188,9 @@ internal fun ExtensionsPanel(
             if (rows.isEmpty()) {
                 Text(
                     text = when {
-                        busy && available.isEmpty() -> "Loading marketplace…"
-                        query.isNotBlank() -> "No extensions match “$query”."
-                        else -> "Refresh to load installable extensions."
+                        busy && available.isEmpty() -> "正在加载扩展市场…"
+                        query.isNotBlank() -> "没有与“$query”匹配的扩展。"
+                        else -> "刷新以加载可安装的扩展。"
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -207,7 +207,7 @@ internal fun ExtensionsPanel(
                             status = row.status,
                             onClick = { onOpenDetail(row.id) },
                             checking = phase != null,
-                            checkingLabel = phase ?: "Checking…",
+                            checkingLabel = phase ?: "正在检查…",
                             leading = {
                                 ExtensionIcon(type = row.type, name = row.name, iconFile = row.iconFile, iconUrl = row.iconUrl)
                             },
@@ -234,12 +234,12 @@ internal fun ExtensionsPanel(
 }
 
 /** True when a database-manager client extension (e.g. SQL Client) is installed, so the left-drawer
- *  "DB Managers" tool should be shown. */
+ *  "数据库管理器" tool should be shown. */
 internal fun List<InstalledExtension>.hasDbManagerClient(): Boolean =
     any { it.type == ExtensionType.DbManager }
 
 /**
- * Left-drawer "DB Managers" panel. With several DB-manager clients installed (e.g. SQL Client +
+ * Left-drawer "数据库管理器" panel. With several DB-manager clients installed (e.g. SQL Client +
  * Postgres Client) it shows a **list of clients** first; tapping one drills into that client's
  * embedded web frontend (with a Back header to return to the list). With a single client installed
  * it opens that client directly. Each client's frontend is wired to the Linux runtime via the
@@ -265,9 +265,9 @@ internal fun DbManagerPanel(
             modifier = modifier.fillMaxSize().padding(Space.md),
             verticalArrangement = Arrangement.spacedBy(Space.sm),
         ) {
-            Text("DB Managers", style = PanelHeader.titleStyle, fontWeight = PanelHeader.titleWeight)
+            Text("数据库管理器", style = PanelHeader.titleStyle, fontWeight = PanelHeader.titleWeight)
             Text(
-                "Install a database-manager extension (e.g. SQL Client) from Extensions to browse databases here.",
+                "从“扩展”面板安装数据库管理扩展（例如 SQL Client），即可在此处浏览数据库。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -286,7 +286,7 @@ internal fun DbManagerPanel(
         // Master view: the list of installed DB clients; tap one to open its frontend.
         Column(modifier = modifier.fillMaxSize()) {
             Text(
-                "DB Managers",
+                "数据库管理器",
                 style = PanelHeader.titleStyle,
                 fontWeight = PanelHeader.titleWeight,
                 modifier = Modifier
@@ -350,7 +350,7 @@ internal fun DbManagerPanel(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back to DB Managers",
+                        contentDescription = "返回数据库管理器",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(selected.name, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
@@ -395,7 +395,7 @@ internal fun List<InstalledExtension>.hasScmClient(): Boolean =
     any { it.type == ExtensionType.Scm }
 
 /**
- * Left-drawer "Source Control" panel: embeds the installed SCM extension's web frontend directly
+ * Left-drawer "源代码管理" panel: embeds the installed SCM extension's web frontend directly
  * (VS Code SCM-sidebar style), wired to the Linux runtime so it can drive git via the Extension API.
  */
 @Composable
@@ -438,8 +438,8 @@ internal fun ScmPanel(
     if (ext == null) {
         PanelEmptyState(
             icon = jcIcon(JCodeIcon.Scm),
-            title = "Source Control",
-            message = "Install a Source Control extension to manage Git here.",
+            title = "源代码管理",
+            message = "安装源代码管理扩展以在此处管理 Git。",
             modifier = modifier,
         )
         return
@@ -464,10 +464,10 @@ internal fun ScmPanel(
         return
     }
     // Panel-owned WebView: for the no-project state the SCM extension renders its OWN placeholder (its
-    // "Open a project to use Source Control" notice), and it also serves Manual activation and
+    // "打开项目以使用源代码管理" notice), and it also serves Manual activation and
     // non-decorations extensions. Keyed by (extension id, open project) so it re-creates — re-running
     // the extension's boot()/repo detection — whenever the selected project changes; without the project
-    // in the key, opening a folder would leave it stuck on the stale "Open a project" screen.
+    // in the key, opening a folder would leave it stuck on the stale "打开项目" screen.
     key(ext.id, projectKey) {
         ExtensionWebViewPage(
             extension = ext,
@@ -482,7 +482,7 @@ internal fun ScmPanel(
 /**
  * Compact centered empty state for a left-drawer panel: a tinted rounded icon, a title, one concise
  * line of guidance, and an optional action. Replaces the sparse top-aligned text blocks these panels
- * used to show, and keeps them consistent with the editor's "No file open" state.
+ * used to show, and keeps them consistent with the editor's "未打开文件" state.
  */
 @Composable
 private fun PanelEmptyState(
@@ -546,9 +546,9 @@ internal fun VmPanel(
             modifier = modifier.fillMaxSize().padding(Space.md),
             verticalArrangement = Arrangement.spacedBy(Space.sm),
         ) {
-            Text("VM Manager", style = PanelHeader.titleStyle, fontWeight = PanelHeader.titleWeight)
+            Text("虚拟机管理", style = PanelHeader.titleStyle, fontWeight = PanelHeader.titleWeight)
             Text(
-                "Install a VM Manager extension from Extensions to run virtual machines here.",
+                "从“扩展”面板安装虚拟机管理扩展，即可在此处运行虚拟机。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -661,21 +661,21 @@ internal fun ExtensionDetailPage(
         extra = {
             incompatible?.let { reason ->
                 ManagerNoticeCard(
-                    title = "Not supported on this JCode",
-                    message = "$reason. An installed copy keeps working; this only stops it being installed here.",
+                    title = "此 JCode 不支持",
+                    message = "$reason。已安装的副本可继续使用；此操作仅阻止其在此处安装。",
                 )
             }
             if (uninstalled) {
                 RemovedNotice(
                     text = if (reinstallable) {
-                        "Removed. Install puts it back from its source."
+                        "已移除。重新安装可从其来源装回。"
                     } else {
-                        "Removed. Close this tab to dismiss it — nothing here offers it any more."
+                        "已移除。关闭此选项卡可将其关闭——此处不再提供该内容。"
                     },
                 )
             }
             if (samples.isNotEmpty()) {
-                ManagerSectionCard(title = "Samples", description = "Example usage.") {
+                ManagerSectionCard(title = "示例", description = "用法示例。") {
                     samples.forEach { sample -> SampleBlock(sample) }
                 }
             }
@@ -685,8 +685,8 @@ internal fun ExtensionDetailPage(
             val suggests = installed?.suggests ?: entry?.suggests ?: ExtensionDeps.EMPTY
             if (!requires.isEmpty || !suggests.isEmpty) {
                 ManagerSectionCard(
-                    title = "Requirements",
-                    description = "Toolchains and extensions this extension needs or suggests.",
+                    title = "要求",
+                    description = "此扩展需要或建议的工具链和扩展。",
                 ) {
                     RequirementList(
                         "Required", requires, available, installedIds, autoInstalled = true,
@@ -756,7 +756,7 @@ internal fun ExtensionPermissionsPage(
         verticalArrangement = Arrangement.spacedBy(Space.ms),
     ) {
         Text(
-            text = "Extension settings",
+            text = "扩展设置",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
         )
@@ -765,9 +765,9 @@ internal fun ExtensionPermissionsPage(
                 // Two different nothings, and telling them apart is the whole value of the line:
                 // one means install something, the other means there is nothing to do here.
                 text = if (installed.isEmpty()) {
-                    "No extensions installed yet."
+                    "尚未安装任何扩展。"
                 } else {
-                    "None of your ${installed.size} extensions has anything to configure."
+                    "你的 ${installed.size} 个扩展均无可配置项。"
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -842,7 +842,7 @@ private fun ExtensionSettingsCard(
                 if (ext.type.choosesActivation) ActivationPill(mode)
                 Icon(
                     painter = jcIcon(if (expanded) JCodeIcon.ChevronUp else JCodeIcon.ChevronDown),
-                    contentDescription = if (expanded) "Collapse ${ext.name}" else "Expand ${ext.name}",
+                    contentDescription = if (expanded) "折叠 ${ext.name}" else "展开 ${ext.name}",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(IconSize.md),
                 )
@@ -853,12 +853,12 @@ private fun ExtensionSettingsCard(
                     ExtensionSettingsControls(extensionId = ext.id)
                     if (ext.type == ExtensionType.Scm && ext.hasWebUi) {
                         Text(
-                            "Set up your Git identity (name/email) and authentication for this device.",
+                            "请设置此设备上 Git 的身份（姓名/邮箱）与身份验证。",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         FilledTonalButton(onClick = { onOpenConfig(ext.id) }, modifier = Modifier.fillMaxWidth()) {
-                            Text("Configure Git…")
+                            Text("配置 Git…")
                         }
                     }
                     if (ext.type.choosesActivation) ActivationSelector(extensionId = ext.id)
@@ -909,13 +909,13 @@ private val EXTENSION_TYPE_ORDER = listOf(
 
 private fun extensionTypeLabel(type: ExtensionType): String = when (type) {
     ExtensionType.App -> "Apps"
-    ExtensionType.Language -> "Language packs"
-    ExtensionType.Scm -> "Source control"
-    ExtensionType.DbManager -> "Database managers"
-    ExtensionType.Vm -> "Virtual machines"
+    ExtensionType.Language -> "语言包"
+    ExtensionType.Scm -> "源代码管理"
+    ExtensionType.DbManager -> "数据库管理器"
+    ExtensionType.Vm -> "虚拟机"
     ExtensionType.Formatter -> "Formatters"
     ExtensionType.Templates -> "Templates"
-    ExtensionType.IconPack -> "Icon packs"
+    ExtensionType.IconPack -> "图标包"
     ExtensionType.Unknown -> "Other"
 }
 
@@ -933,7 +933,7 @@ private fun ExtensionSettingsControls(extensionId: String) {
     val group = ui.groups.firstOrNull { it.extensionId == extensionId } ?: return
     if (group.specs.isEmpty()) return
     Text(
-        text = "Settings",
+        text = "设置",
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -1054,7 +1054,7 @@ private fun ExtensionSettingsControls(extensionId: String) {
 private fun CapabilityToggles(extensionId: String, capabilities: List<String>) {
     val grants = LocalExtensionCapabilities.current
     Text(
-        text = "API capabilities",
+        text = "API 功能",
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -1067,10 +1067,10 @@ private fun CapabilityToggles(extensionId: String, capabilities: List<String>) {
                 Text(capability, style = MaterialTheme.typography.bodyMedium)
                 Text(
                     text = when (capability) {
-                        "exec" -> "Run commands in the Linux runtime (as root)"
-                        "fs" -> "Read and write project files"
-                        "workbench" -> "Open files/URLs, show notices, read the focused file"
-                        else -> "Extension-defined capability"
+                        "exec" -> "在 Linux 运行时中运行命令（以 root 身份）"
+                        "fs" -> "读写项目文件"
+                        "workbench" -> "打开文件/网址、显示通知、读取当前文件"
+                        else -> "扩展定义的功能"
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1084,7 +1084,7 @@ private fun CapabilityToggles(extensionId: String, capabilities: List<String>) {
     }
 }
 
-/** "Keep running in background" switch for extensions with a web UI (e.g. the OpenChamber chat
+/** "保持在后台运行" switch for extensions with a web UI (e.g. the OpenChamber chat
  *  keeps its agent session alive when its right-drawer panel is closed). */
 @Composable
 private fun KeepAliveToggle(extensionId: String) {
@@ -1094,9 +1094,9 @@ private fun KeepAliveToggle(extensionId: String) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text("Keep running in background", style = MaterialTheme.typography.bodyMedium)
+            Text("保持在后台运行", style = MaterialTheme.typography.bodyMedium)
             Text(
-                text = "Keep the panel alive (agent session, unsent input) when you close or switch away from it",
+                text = "关闭或切换离开面板时保持其活动（代理会话、未发送的输入）",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -1115,7 +1115,7 @@ private fun ActivationSelector(extensionId: String) {
     val activation = LocalExtensionActivation.current
     val mode = activation.modeFor(extensionId)
     SettingsDropdownRow(
-        label = "Activation",
+        label = "激活",
         options = ExtensionActivation.entries.map { it.name },
         selected = mode.name,
         onSelect = { activation.onChange(extensionId, ExtensionActivation.valueOf(it)) },
@@ -1137,9 +1137,9 @@ private val ExtensionActivation.label: String
 
 private val ExtensionActivation.blurb: String
     get() = when (this) {
-        ExtensionActivation.AutoStart -> "Active from launch — always on."
-        ExtensionActivation.OnDemand -> "Activates when you open a file this extension supports."
-        ExtensionActivation.Manual -> "Disabled — this extension's features stay off until you switch modes."
+        ExtensionActivation.AutoStart -> "随启动激活——始终开启。"
+        ExtensionActivation.OnDemand -> "打开此扩展支持的文件时激活。"
+        ExtensionActivation.Manual -> "已禁用——切换模式前，此扩展的功能保持关闭。"
     }
 
 /** Compact author line for list rows: "by X", "by X, Y", or "by X +N" when the co-author list is long. */
@@ -1186,7 +1186,7 @@ private fun RemovedNotice(text: String) {
 @Composable
 private fun IncompatibleBadge() {
     Text(
-        text = "Unsupported",
+        text = "不受支持",
         style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.error,
         modifier = Modifier
@@ -1349,13 +1349,13 @@ private fun DependencyDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Install ${entry.name}") },
+        title = { Text("安装 ${entry.name}") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Space.md)) {
                 if (!entry.requires.isEmpty) {
                     Text(
-                        "Required items are installed automatically; if any of them fails, the " +
-                            "extension isn't installed.",
+                        "必需项会自动安装；如果其中任何一项失败，" +
+                            "则不会安装该扩展。",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -1365,9 +1365,9 @@ private fun DependencyDialog(
             }
         },
         confirmButton = {
-            CompactFilledButton(text = "Install ${entry.name}", onClick = onProceed, enabled = !busy)
+            CompactFilledButton(text = "安装 ${entry.name}", onClick = onProceed, enabled = !busy)
         },
-        dismissButton = { CompactOutlinedButton(text = "Cancel", onClick = onDismiss) },
+        dismissButton = { CompactOutlinedButton(text = "取消", onClick = onDismiss) },
     )
 }
 
@@ -1378,21 +1378,21 @@ private fun RequiredGroup(
     installedIds: Set<String>,
 ) {
     if (deps.isEmpty) return
-    Text("Required", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+    Text("必填", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
     val status: @Composable (installed: Boolean) -> Unit = { installed ->
         Text(
-            if (installed) "Installed" else "Auto-install",
+            if (installed) "已安装" else "自动安装",
             style = MaterialTheme.typography.labelMedium,
             color = if (installed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
     deps.extensions.forEach { id ->
         val depEntry = available.firstOrNull { it.id == id }
-        DependencyRow(name = depEntry?.name ?: id, kind = "extension") { status(id in installedIds) }
+        DependencyRow(name = depEntry?.name ?: id, kind = "扩展") { status(id in installedIds) }
     }
-    deps.sdks.forEach { id -> DependencyRow(name = id, kind = "toolchain") { status(false) } }
-    deps.lsps.forEach { id -> DependencyRow(name = id, kind = "language server") { status(false) } }
-    deps.dbg.forEach { id -> DependencyRow(name = id, kind = "debugger") { status(false) } }
+    deps.sdks.forEach { id -> DependencyRow(name = id, kind = "工具链") { status(false) } }
+    deps.lsps.forEach { id -> DependencyRow(name = id, kind = "语言服务器") { status(false) } }
+    deps.dbg.forEach { id -> DependencyRow(name = id, kind = "调试器") { status(false) } }
 }
 
 @Composable
@@ -1404,17 +1404,17 @@ private fun SuggestedGroup(
     onInstall: (MarketplaceEntry) -> Unit,
 ) {
     if (deps.isEmpty) return
-    Text("Suggested", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+    Text("推荐", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
     deps.extensions.forEach { id ->
         val depEntry = available.firstOrNull { it.id == id }
-        DependencyRow(name = depEntry?.name ?: id, kind = "extension") {
+        DependencyRow(name = depEntry?.name ?: id, kind = "扩展") {
             when {
                 id in installedIds -> Text(
-                    "Installed",
+                    "已安装",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
-                depEntry != null -> TextButton(onClick = { onInstall(depEntry) }, enabled = !busy) { Text("Install") }
+                depEntry != null -> TextButton(onClick = { onInstall(depEntry) }, enabled = !busy) { Text("安装") }
                 else -> Text(
                     "unavailable",
                     style = MaterialTheme.typography.labelSmall,

@@ -101,7 +101,7 @@ fun ManagerDetailScreen(
                     if (subtitle.isNotBlank()) {
                         Text(text = subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    ManagerStatusChip(status = status, checking = busy, checkingLabel = busyLabel ?: "Checking…", spinner = true)
+                    ManagerStatusChip(status = status, checking = busy, checkingLabel = busyLabel ?: "正在检查…", spinner = true)
                 }
             }
         }
@@ -132,7 +132,7 @@ fun ManagerDetailScreen(
             val installed = status == ManagerItemStatus.Installed || status == ManagerItemStatus.UpdateAvailable
             // Sized to their labels, like every other action pair in the app (a source card's
             // Install/Remove, a version row's Remove). Stretching two buttons across the page put a
-            // 900px "Install" on a landscape tablet. `fill = false` keeps them intrinsic while still
+            // 900px "安装" on a landscape tablet. `fill = false` keeps them intrinsic while still
             // capping each at half the row, so a long version label cannot overflow a narrow phone.
             Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
                 if (hasVersions) {
@@ -143,14 +143,14 @@ fun ManagerDetailScreen(
                     val switchable = canUseVersion && versionInstalled && selectedVersion != activeInstalled
                     if (switchable) {
                         CompactFilledButton(
-                            text = "Use",
+                            text = "使用",
                             onClick = { onUseVersion(selectedVersion) },
                             enabled = actionsEnabled && !versionsLoading,
                             modifier = Modifier.weight(1f, fill = false),
                         )
                     }
                     // Unversioned: the picker directly above already names what these act on.
-                    val reinstallLabel = if (versionInstalled) "Reinstall" else "Install"
+                    val reinstallLabel = if (versionInstalled) "重新安装" else "安装"
                     if (switchable) {
                         CompactOutlinedButton(
                             text = reinstallLabel,
@@ -170,7 +170,7 @@ fun ManagerDetailScreen(
                     // Named with its version so it cannot be read as the whole-toolchain Uninstall.
                     if (versionInstalled && multiVersion) {
                         CompactOutlinedButton(
-                            text = "Remove",
+                            text = "移除",
                             onClick = { onUninstallVersion(selectedVersion) },
                             enabled = actionsEnabled && !versionsLoading,
                             modifier = Modifier.weight(1f, fill = false),
@@ -178,25 +178,25 @@ fun ManagerDetailScreen(
                     }
                 } else if (!installed) {
                     CompactFilledButton(
-                        text = "Install",
+                        text = "安装",
                         onClick = onInstall,
                         enabled = actionsEnabled && installEnabled,
                         modifier = Modifier.weight(1f, fill = false),
                     )
                 } else {
                     CompactFilledButton(
-                        text = if (status == ManagerItemStatus.UpdateAvailable) "Update" else "Reinstall",
+                        text = if (status == ManagerItemStatus.UpdateAvailable) "更新" else "重新安装",
                         onClick = onUpdate,
                         enabled = actionsEnabled && installEnabled,
                         modifier = Modifier.weight(1f, fill = false),
                     )
                 }
                 // Kept for multi-version tools too. Individual versions are removed in the list above,
-                // but "Uninstall" means the whole toolchain — which for something like the Android
+                // but "卸载" means the whole toolchain — which for something like the Android
                 // SDK is more than its versions: removing every platform would still leave the
                 // command-line tools, build-tools and Gradle behind with no way to get rid of them.
                 CompactOutlinedButton(
-                    text = "Uninstall",
+                    text = "卸载",
                     onClick = onUninstall,
                     enabled = installed && actionsEnabled,
                     modifier = Modifier.weight(1f, fill = false),
@@ -226,7 +226,7 @@ private fun ManagerProgress(percent: Int, label: String?) {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.s)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
             Text(
-                text = label?.takeIf { it.isNotBlank() } ?: "Working…",
+                text = label?.takeIf { it.isNotBlank() } ?: "处理中…",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,

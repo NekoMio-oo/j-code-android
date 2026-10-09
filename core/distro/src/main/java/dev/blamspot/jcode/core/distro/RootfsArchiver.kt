@@ -10,7 +10,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
 
 /**
  * Packs an extracted rootfs directory into a `.tar.gz` stream — the reverse of
- * [RootfsManager.extractRootfs] — for the "Back up environment" action. Symlinks are stored as
+ * [RootfsManager.extractRootfs] — for the "备份环境" action. Symlinks are stored as
  * symlink entries (never followed) and the executable bit is preserved; device nodes never exist in
  * the extracted tree so nothing is skipped. Restore reuses [RootfsManager.extractRootfs], which
  * already understands tar.gz + symlinks + hard-links + exec bits, so no separate unpacker is needed.

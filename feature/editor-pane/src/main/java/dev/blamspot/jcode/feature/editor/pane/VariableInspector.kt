@@ -174,13 +174,13 @@ internal fun VariableInspectHeader(
             // Inspect only when there is something the peek could not show; Copy value always, since
             // reading a value off the screen and retyping it is the thing a peek most invites.
             if (hasMore) {
-                CompactOutlinedButton(text = "Inspect", onClick = onInspect, icon = JCodeIcon.Search)
+                CompactOutlinedButton(text = "检查", onClick = onInspect, icon = JCodeIcon.Search)
             }
             // A container copies as JSON — walking it costs a round-trip per level, hence the
             // wait — and a scalar as its own text. Never the peek's rendering: "3 items" describes
             // a list, it isn't one.
             CompactOutlinedButton(
-                text = if (copying) "Copying…" else "Copy value",
+                text = if (copying) "正在复制…" else "复制值",
                 icon = JCodeIcon.Copy,
                 enabled = !copying,
                 onClick = {
@@ -258,7 +258,7 @@ internal fun VariableDetailDialog(
                         openRefs[root.reference] = true
                     }
                     Text(
-                        text = "Fields",
+                        text = "字段",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = Space.ms, bottom = Space.xxs),
@@ -287,7 +287,7 @@ internal fun VariableDetailDialog(
         confirmButton = {
             // Same copy as the peek's, so the two never disagree about what this value is.
             CompactFilledButton(
-                text = if (copying) "Copying…" else "Copy",
+                text = if (copying) "正在复制…" else "复制",
                 enabled = !copying,
                 onClick = {
                     copying = true
@@ -298,7 +298,7 @@ internal fun VariableDetailDialog(
                 },
             )
         },
-        dismissButton = { CompactOutlinedButton(text = "Close", onClick = onDismiss) },
+        dismissButton = { CompactOutlinedButton(text = "关闭", onClick = onDismiss) },
     )
 }
 
@@ -333,7 +333,7 @@ private fun VariableTreeRow(row: TreeRow, onToggle: () -> Unit) {
         if (row.value.expandable) {
             Icon(
                 painter = jcIcon(if (row.open) JCodeIcon.ChevronDown else JCodeIcon.ChevronRight),
-                contentDescription = if (row.open) "Collapse" else "Expand",
+                contentDescription = if (row.open) "折叠" else "展开",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(14.dp),
             )

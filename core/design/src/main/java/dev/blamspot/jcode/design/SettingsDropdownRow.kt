@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
  * [options] and [selected] are raw values; [optionLabel] maps a value to its display text (default:
  * identity), so callers can capitalize or annotate (e.g. "4 spaces") without changing what's stored.
  *
- * Pass [onReset] (with [modified]) to opt into the long-press "Reset this setting" menu and the
+ * Pass [onReset] (with [modified]) to opt into the long-press "重置此设置" menu and the
  * modified-dot from [SettingsResettableRow].
  */
 @Composable

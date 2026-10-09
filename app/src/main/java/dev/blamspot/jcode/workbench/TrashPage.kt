@@ -114,12 +114,12 @@ fun TrashPage(
                 .onSuccess { where ->
                     val landed = where.substringAfterLast('/')
                     onSnackbar(
-                        "Restored '" + entry.name + "'" +
+                        "已恢复 '" + entry.name + "'" +
                             if (landed != entry.name) " as '" + landed + "'" else "",
                     )
                     scmUi.onFsActivity?.invoke()
                 }
-                .onFailure { onSnackbar("Restore failed: " + it.message) }
+                .onFailure { onSnackbar("恢复失败：" + it.message) }
             reload()
             busy = false
         }
@@ -208,16 +208,16 @@ fun TrashPage(
         val count = entries.size
         AlertDialog(
             onDismissRequest = { confirmEmpty = false },
-            title = { Text("Empty the Trash?") },
+            title = { Text("清空回收站？") },
             text = {
                 Text(
-                    "This permanently destroys " + count + " item" + (if (count == 1) "" else "s") +
+                    "这将永久销毁 " + count + " 项" + (if (count == 1) "" else "s") +
                         " (" + humanSize(entries.sumOf { it.sizeBytes }) + "). It cannot be undone.",
                 )
             },
             confirmButton = {
                 CompactDestructiveButton(
-                    text = "Empty",
+                    text = "清空",
                     onClick = {
                         confirmEmpty = false
                         busy = true
@@ -225,12 +225,12 @@ fun TrashPage(
                             trash.empty()
                             reload()
                             busy = false
-                            onSnackbar("Trash emptied")
+                            onSnackbar("回收站已清空")
                         }
                     },
                 )
             },
-            dismissButton = { CompactFilledButton(text = "Cancel", onClick = { confirmEmpty = false }) },
+            dismissButton = { CompactFilledButton(text = "取消", onClick = { confirmEmpty = false }) },
         )
     }
 }
@@ -251,12 +251,12 @@ private fun TrashBar(
         horizontalArrangement = Arrangement.spacedBy(Space.sm),
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = "Trash", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            Text(text = "回收站", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
             Text(
                 text = when {
-                    loading -> "Reading the Trash…"
-                    count == 0 -> "Empty"
-                    else -> count.toString() + " item" + (if (count == 1) "" else "s") + " · " +
+                    loading -> "正在读取回收站…"
+                    count == 0 -> "清空"
+                    else -> count.toString() + " 项" + (if (count == 1) "" else "s") + " · " +
                         humanSize(bytes) + " · kept for " + trashRetentionLabel(retentionDays).lowercase()
                 },
                 style = MaterialTheme.typography.labelSmall,
@@ -264,7 +264,7 @@ private fun TrashBar(
             )
         }
         if (count > 0) {
-            CompactDestructiveButton(text = "Empty Trash", onClick = onEmpty, enabled = enabled)
+            CompactDestructiveButton(text = "清空回收站", onClick = onEmpty, enabled = enabled)
         }
     }
 }
@@ -274,9 +274,9 @@ private fun EmptyBin(loading: Boolean, retentionDays: Int, modifier: Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(
             text = if (loading) {
-                "Reading the Trash…"
+                "正在读取回收站…"
             } else {
-                "Nothing here. Deleted files and folders are kept for " +
+                "此处没有内容。已删除的文件和文件夹将保留 " +
                     trashRetentionLabel(retentionDays).lowercase() + "."
             },
             style = MaterialTheme.typography.bodySmall,
@@ -377,11 +377,11 @@ private fun Preview(
             // first, and only then out of the preview itself.
             val back: (() -> Unit)? = if (inside != null) ({ inside = null }) else onBack
             if (back != null) {
-                JcTooltip("Back") {
+                JcTooltip("返回") {
                     IconButton(onClick = back, modifier = Modifier.size(32.dp)) {
                         Icon(
                             painter = jcIcon(JCodeIcon.ArrowBack),
-                            contentDescription = "Back",
+                            contentDescription = "返回",
                             modifier = Modifier.size(IconSize.md),
                         )
                     }
@@ -407,10 +407,10 @@ private fun Preview(
                 )
             }
             // The actions restore or destroy the whole entry, so they stay out of a file inside it:
-            // "Restore" while looking at one file of a folder would read as restoring that file.
+            // "恢复" while looking at one file of a folder would read as restoring that file.
             if (inside == null) {
-                CompactOutlinedButton(text = "Restore", onClick = onRestore, enabled = !busy)
-                CompactDestructiveButton(text = "Delete forever", onClick = onPurge, enabled = !busy)
+                CompactOutlinedButton(text = "恢复", onClick = onRestore, enabled = !busy)
+                CompactDestructiveButton(text = "永久删除", onClick = onPurge, enabled = !busy)
             }
         }
         HorizontalDivider(
@@ -454,7 +454,7 @@ private fun TextPeek(state: Peek.Text) {
         }
         if (state.truncated) {
             Text(
-                text = "… preview truncated; the whole file is restored intact.",
+                text = "… 预览已截断；整个文件将完整恢复。",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = Space.md, vertical = Space.sm),
@@ -466,7 +466,7 @@ private fun TextPeek(state: Peek.Text) {
 @Composable
 private fun FolderPeek(listing: TrashListing, onOpen: (String) -> Unit) {
     if (listing.children.isEmpty()) {
-        Note("This folder is empty.")
+        Note("此文件夹为空。")
         return
     }
     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -476,7 +476,7 @@ private fun FolderPeek(listing: TrashListing, onOpen: (String) -> Unit) {
         if (listing.truncated) {
             item {
                 Text(
-                    text = "… and " + (listing.total - listing.children.size) + " more.",
+                    text = "… 还有 " + (listing.total - listing.children.size) + " 个。",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = Space.md, vertical = Space.sm),
@@ -540,7 +540,7 @@ private suspend fun load(trash: Trash, entry: TrashEntry, inside: String?): Peek
     withContext(Dispatchers.IO) {
         if (entry.isDirectory && inside == null) return@withContext Peek.Folder(trash.listInside(entry))
         val bytes = trash.read(entry, inside)
-            ?: return@withContext Peek.Opaque("This file is no longer in the Trash.")
+            ?: return@withContext Peek.Opaque("此文件已不在回收站中。")
         if (bytes.isEmpty()) return@withContext Peek.Text("", truncated = false)
         val name = inside ?: entry.name
         if (name.substringAfterLast('.', "").lowercase() in PICTURE_TYPES) {
@@ -548,7 +548,7 @@ private suspend fun load(trash: Trash, entry: TrashEntry, inside: String?): Peek
             if (bitmap != null) return@withContext Peek.Picture(bitmap)
         }
         if (bytes.any { it == 0.toByte() }) {
-            return@withContext Peek.Opaque("Binary file — nothing to show, but it restores intact.")
+            return@withContext Peek.Opaque("二进制文件——无内容可显示，但可以完整还原。")
         }
         val whole = if (inside == null) entry.sizeBytes else -1L
         Peek.Text(

@@ -43,7 +43,7 @@ internal val LocalCatalogProgress = compositionLocalOf<dev.blamspot.jcode.core.d
  *  requires is being installed first. Same register-limit rationale as [LocalCatalogProgress]. */
 internal val LocalSdkInstallRequestedId = compositionLocalOf<String?> { null }
 
-/** Per-extension install phase labels ("Installing…", "Installing required tools…", "Verifying…"),
+/** Per-extension install phase labels ("Installing…", "正在安装所需工具…", "Verifying…"),
  *  keyed by extension id. A CompositionLocal so the giant [dev.blamspot.jcode.JCodeShell] composable stays
  *  under the ART register limit. */
 internal val LocalExtensionInstallPhases = compositionLocalOf<Map<String, String>> { emptyMap() }
@@ -202,7 +202,7 @@ internal data class WorkbenchManagerActions(
     val onOpenExtensionConfig: (String) -> Unit,
     /** Runs `adb pair <target> <code>` in the Linux runtime; null = paired, else the failure text. */
     val onAdbPair: suspend (target: String, code: String) -> String? =
-        { _, _ -> "ADB pairing is unavailable." },
+        { _, _ -> "ADB 配对不可用。" },
     /** Runs a command in the Linux runtime for an extension web frontend; returns a JSON result. */
     val onExtensionExec: suspend (command: String, timeoutMs: Long) -> String,
     /** Spawns a long-lived runtime process with stdio attached, used to run an imported `.vsix`. */
@@ -225,16 +225,16 @@ internal enum class WorkbenchTool(
     /** Hidden from the activity bar until it has a working UI (kept in the enum for `when` exhaustiveness). */
     val available: Boolean = true,
 ) {
-    Explorer("Explorer", JCodeIcon.Files, "Files"),
-    Search("Search", JCodeIcon.Search, "Find"),
+    Explorer("资源管理器", JCodeIcon.Files, "Files"),
+    Search("搜索", JCodeIcon.Search, "Find"),
     Scm("SCM", JCodeIcon.Scm, "SCM"),
-    RunDebug("Run", JCodeIcon.Run, "Run"),
-    Extensions("Extensions", JCodeIcon.Extensions, "Ext"),
+    RunDebug("运行", JCodeIcon.Run, "运行"),
+    Extensions("扩展", JCodeIcon.Extensions, "Ext"),
     /** SDKs + language servers + debug engines, merged into one searchable/filterable catalog. */
-    ToolchainManager("Toolchains", JCodeIcon.Sdk, "Tools"),
-    DbManager("DB Managers", JCodeIcon.Database, "DB"),
-    VmManager("VM Manager", JCodeIcon.Vm, "VM"),
-    Settings("Settings", JCodeIcon.Settings, "Settings"),
+    ToolchainManager("工具链", JCodeIcon.Sdk, "工具"),
+    DbManager("数据库管理器", JCodeIcon.Database, "DB"),
+    VmManager("虚拟机管理", JCodeIcon.Vm, "VM"),
+    Settings("设置", JCodeIcon.Settings, "设置"),
 }
 
 internal enum class RightPanelTab(
@@ -242,17 +242,17 @@ internal enum class RightPanelTab(
     val icon: JCodeIcon,
     val enabled: Boolean = true,
 ) {
-    Terminal("Terminal", JCodeIcon.Terminal, enabled = true),
+    Terminal("终端", JCodeIcon.Terminal, enabled = true),
     Output("Output", JCodeIcon.Logs, enabled = true),
     Problems("Issues", JCodeIcon.Problems, enabled = true),
-    DebugConsole("Debug", JCodeIcon.Debug, enabled = true),
+    DebugConsole("调试", JCodeIcon.Debug, enabled = true),
     Tasks("Tasks", JCodeIcon.Tasks, enabled = true),
     /** Built-in browser DevTools (console / network / elements); only shown once the in-app browser
      *  has been opened this session (see [dev.blamspot.jcode.workbench.BuiltinBrowser]). */
     Devtools("DevTools", JCodeIcon.DevTools, enabled = true),
     /** Extension-authoring tools (inspector / manifest validator / live log); shown only when
      *  Developer options is enabled (see [dev.blamspot.jcode.design.LocalDeveloperSetting]). */
-    ExtensionDev("Ext Dev", JCodeIcon.Extensions, enabled = true),
+    ExtensionDev("扩展开发", JCodeIcon.Extensions, enabled = true),
 
     /**
      * The Android Dev Pack's virtual device, when its `deviceSurface` setting puts it here.

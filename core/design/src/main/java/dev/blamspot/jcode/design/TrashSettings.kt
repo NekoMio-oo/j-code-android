@@ -25,7 +25,7 @@ val LocalTrashSettings = compositionLocalOf { TrashSettings() }
 val TRASH_RETENTION_CHOICES: List<Int> = listOf(1, 7, 14, 30, 90, 0)
 
 fun trashRetentionLabel(days: Int): String = when (days) {
-    0 -> "Until I empty it"
+    0 -> "直到我清空为止"
     1 -> "1 day"
     else -> "$days days"
 }

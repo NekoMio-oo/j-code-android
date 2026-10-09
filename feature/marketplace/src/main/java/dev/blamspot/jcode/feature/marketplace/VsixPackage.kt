@@ -303,13 +303,13 @@ object VsixPackage {
         val unsupported = manifest.contributeKeys.filterNot { it in SUPPORTED_CONTRIBUTES }
         val warnings = buildList {
             if (manifest.main == null) {
-                add("Declares no \"main\", so there is no extension code to run.")
+                add("未声明“main”，因此没有可运行的扩展代码。")
             }
             if (unsupported.isNotEmpty()) {
-                add("JCode does not implement these contribution points: ${unsupported.joinToString(", ")}.")
+                add("JCode 未实现以下贡献点：${unsupported.joinToString(", ")}。", ")}.")
             }
             if (manifest.contributeKeys.none { it == "views" || it == "viewsContainers" }) {
-                add("Contributes no view, so it may have no visible surface in JCode.")
+                add("未贡献任何视图，因此在 JCode 中可能没有可见界面。")
             }
         }
         return VsixCompatibility(

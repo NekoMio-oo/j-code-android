@@ -47,7 +47,7 @@ internal class AndroidDebugAttach(
             )
         }
         forwardedPort = port
-        log("Attaching to $packageName (pid $pid) on $serial through 127.0.0.1:$port…\n")
+        log("正在通过 127.0.0.1:$port 在 $serial 上附加到 $packageName（pid $pid）…\n")
         return port
     }
 
@@ -67,7 +67,7 @@ internal class AndroidDebugAttach(
     /** The application id and launcher activity, read back out of the built APK. */
     private suspend fun readBadging(module: File): Pair<String, String?> {
         val apk = AndroidAppProject.debugApk(module) ?: throw DebugException(
-            "No debug APK under ${module.name}/${AndroidAppProject.APK_DIR} — run the app once " +
+            "在 ${module.name}/${AndroidAppProject.APK_DIR} 下没有调试 APK——请先运行一次应用" +
                 "(Run → \"Run on this device\") so Gradle builds and installs it, then Debug.",
         )
         // Never parsed from Gradle: flavors, `applicationIdSuffix` and build types all rewrite the
@@ -84,15 +84,15 @@ internal class AndroidDebugAttach(
             )
         }
         val packageName = BADGING_PACKAGE.find(badging.stdout)?.groupValues?.get(1)
-            ?: throw DebugException("Could not read a package name from ${apk.name}.")
+            ?: throw DebugException("无法从 ${apk.name} 读取包名。")
         return packageName to BADGING_ACTIVITY.find(badging.stdout)?.groupValues?.get(1)
     }
 
     private suspend fun onlineSerial(): String {
         if (client.version() == null) {
             throw DebugException(
-                "The ADB bridge isn't running — open the Android Device page, connect this device, " +
-                    "then start Debug again.",
+                "ADB 桥未运行——请打开 Android 设备页面，连接此设备，" +
+                    "然后再次启动调试。",
             )
         }
         val devices = runCatching { client.devices() }.getOrDefault(emptyList()).filter { it.isOnline }
@@ -100,8 +100,8 @@ internal class AndroidDebugAttach(
         return devices.firstOrNull { it.serial.startsWith(AdbHostClient.LOOPBACK) }?.serial
             ?: devices.firstOrNull()?.serial
             ?: throw DebugException(
-                "No device is paired with the ADB bridge — open the Android Device page and connect, " +
-                    "then start Debug again.",
+                "没有设备与 ADB 桥配对——请打开 Android 设备页面进行连接，" +
+                    "然后再次启动调试。",
             )
     }
 
@@ -120,7 +120,7 @@ internal class AndroidDebugAttach(
         pidOf(serial, packageName)?.let { return it }
         val start = launchActivity?.let { "am start -n $packageName/$it" }
             ?: "monkey -p $packageName -c android.intent.category.LAUNCHER 1"
-        log("Starting $packageName — it will wait for the debugger…\n")
+        log("正在启动 $packageName——它将等待调试器…\n")
         val started = runCatching { client.shellV2(serial, start) }.getOrNull()
         val deadline = System.currentTimeMillis() + PID_WAIT_MS
         while (System.currentTimeMillis() < deadline) {
@@ -129,7 +129,7 @@ internal class AndroidDebugAttach(
         }
         throw DebugException(
             "$packageName is installed but no process appeared after `$start` — check the device " +
-                "screen for a crash or a permission prompt." + detail(started?.stderr, started?.stdout),
+                "屏幕，查看是否有崩溃或权限提示。" + detail(started?.stderr, started?.stdout),
         )
     }
 

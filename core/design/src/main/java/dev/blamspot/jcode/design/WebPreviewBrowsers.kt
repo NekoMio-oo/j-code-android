@@ -6,7 +6,7 @@ import androidx.compose.runtime.compositionLocalOf
 data class BrowserApp(val packageName: String, val label: String)
 
 /**
- * "Open web previews in" preferences, shared (via [LocalWebPreviewBrowsers]) with the settings screen
+ * "Web 预览打开位置" preferences, shared (via [LocalWebPreviewBrowsers]) with the settings screen
  * (global default) and the Build & Run panel (per-project override). A choice is [SYSTEM] (the device
  * default browser), [ASK] (the Android chooser), a browser package name, or [INHERIT] (per-project only:
  * fall back to the global default). [available] is the installed-browser list for the picker.
@@ -27,10 +27,10 @@ class WebPreviewBrowsers(
 
     /** Human label for a stored choice value. */
     fun label(choice: String): String = when (choice) {
-        INHERIT -> "Use global default"
-        SYSTEM -> "System default"
-        ASK -> "Always ask"
-        BUILTIN -> "Built-in browser"
+        INHERIT -> "使用全局默认"
+        SYSTEM -> "系统默认"
+        ASK -> "始终询问"
+        BUILTIN -> "内置浏览器"
         else -> available.firstOrNull { it.packageName == choice }?.label ?: choice
     }
 

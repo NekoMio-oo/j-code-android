@@ -105,7 +105,7 @@ fun EditorPane(
 ) {
     Column(modifier = modifier.clipToBounds()) {
         // Tab strip — explicit fixed height so it's never compressed. Collapses together with the
-        // workbench header when the palette's "Hide Header and Tabs" mode is on.
+        // workbench header when the palette's "隐藏标题栏和选项卡" mode is on.
         AnimatedVisibility(
             visible = !LocalChromeControls.current.chromeHidden,
             enter = expandVertically(animationSpec = tween(200)),
@@ -157,12 +157,12 @@ fun EditorPane(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(Space.sm)) {
                     Text(
-                        text = "No file open",
+                        text = "未打开文件",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        text = "Open a file to start editing",
+                        text = "打开文件开始编辑",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -204,7 +204,7 @@ private fun TabStrip(
             }
 
             // Open file button
-            JcTooltip("Open file") {
+            JcTooltip("打开文件") {
                 IconButton(
                     onClick = onOpenFile,
                     modifier = Modifier
@@ -256,7 +256,7 @@ private fun TabItem(
             if (tab.pinned) {
                 Icon(
                     painter = jcIcon(JCodeIcon.Pin),
-                    contentDescription = "Pinned",
+                    contentDescription = "已固定",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(13.dp),
                 )
@@ -288,14 +288,14 @@ private fun TabItem(
                     horizontalArrangement = Arrangement.spacedBy(Space.xxs),
                 ) {
                     if (tab.isDirty) {
-                        JcTooltip("Unsaved changes") {
+                        JcTooltip("未保存的更改") {
                             Box(modifier = Modifier.size(16.dp), contentAlignment = Alignment.Center) {
                                 ModifiedDot()
                             }
                         }
                     }
                     if (showClose) {
-                        JcTooltip("Close tab") {
+                        JcTooltip("关闭选项卡") {
                             // Plain clickable Box (not IconButton) so the touch target stays a tight 20dp;
                             // an IconButton's enforced 48dp minimum spills over the title and closes the
                             // tab on a title tap.
@@ -324,11 +324,11 @@ private fun TabItem(
                 add(ContextAction(JCodeIcon.Pin, if (tab.pinned) "Unpin" else "Pin") { tabActions.onTogglePin(tab.id) })
                 // Real file tabs only (non-blank path), and hidden when tab coloring is Disabled.
                 if (!tab.isPage && tab.filePath.path.isNotBlank() && tabColors.pickerEnabled) {
-                    add(ContextAction(JCodeIcon.Palette, "Change Tab Color") { colorDialogOpen = true })
+                    add(ContextAction(JCodeIcon.Palette, "更改选项卡颜色") { colorDialogOpen = true })
                 }
-                add(ContextAction(JCodeIcon.Close, "Close") { onClosed() })
-                add(ContextAction(JCodeIcon.Close, "Close others") { tabActions.onCloseOthers(tab.id) })
-                add(ContextAction(JCodeIcon.Close, "Close to the right") { tabActions.onCloseToRight(tab.id) })
+                add(ContextAction(JCodeIcon.Close, "关闭") { onClosed() })
+                add(ContextAction(JCodeIcon.Close, "关闭其他") { tabActions.onCloseOthers(tab.id) })
+                add(ContextAction(JCodeIcon.Close, "关闭右侧选项卡") { tabActions.onCloseToRight(tab.id) })
             },
         )
         if (colorDialogOpen) {
@@ -596,18 +596,18 @@ fun EditorViewHost(
                     }
                 },
                 quickActions = listOf(
-                    ContextAction(JCodeIcon.Copy, "Copy") { view?.copySelection() },
+                    ContextAction(JCodeIcon.Copy, "复制") { view?.copySelection() },
                     ContextAction(JCodeIcon.Cut, "Cut") { view?.cutSelection() },
                     ContextAction(JCodeIcon.Paste, "Paste") { view?.pasteClipboard() },
                 ),
                 listActions = buildList {
-                    add(ContextAction(JCodeIcon.Cursor, "Select Text") { view?.beginTextSelection() })
-                    add(ContextAction(JCodeIcon.SelectAll, "Select all") { view?.selectAll() })
+                    add(ContextAction(JCodeIcon.Cursor, "选择文本") { view?.beginTextSelection() })
+                    add(ContextAction(JCodeIcon.SelectAll, "全选") { view?.selectAll() })
                     menuExtras.onGoToLine?.let { go ->
-                        add(ContextAction(JCodeIcon.GoToLine, "Go to line") { go() })
+                        add(ContextAction(JCodeIcon.GoToLine, "转到行") { go() })
                     }
                     menuExtras.onFindText?.let { find ->
-                        add(ContextAction(JCodeIcon.Search, "Find text") { find(req.word) })
+                        add(ContextAction(JCodeIcon.Search, "查找文本") { find(req.word) })
                     }
                     menuExtras.previewToggle?.let { toggle ->
                         add(ContextAction(menuExtras.previewIcon, menuExtras.previewLabel) { toggle() })

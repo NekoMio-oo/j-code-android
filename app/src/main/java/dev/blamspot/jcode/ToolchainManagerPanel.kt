@@ -35,7 +35,7 @@ import dev.blamspot.jcode.design.ManagerPanelHeader
 import dev.blamspot.jcode.design.Space
 
 /** How this panel names itself in the Issues pane. */
-private const val NOTICE_SOURCE = "Toolchains"
+private const val NOTICE_SOURCE = "工具链"
 
 /** How much of a failed run's log travels with its message. */
 private const val DETAIL_LINES = 60
@@ -46,8 +46,8 @@ private enum class ToolchainKind(val chip: String, val section: String) {
     // Android SDK Manager is how the platforms, build-tools and NDKs below it get installed at all.
     Manager("Managers", "Managers"),
     Sdk("SDKs", "SDKs"),
-    Lsp("Servers", "Language servers"),
-    Debugger("Debuggers", "Debug engines"),
+    Lsp("Servers", "语言服务器"),
+    Debugger("Debuggers", "调试引擎"),
 }
 
 private data class ToolchainRow(
@@ -58,13 +58,13 @@ private data class ToolchainRow(
     /** Null for a [ToolchainKind.Manager] row: it is opened, never installed. */
     val status: ManagerItemStatus?,
     val checking: Boolean,
-    val checkingLabel: String = "Checking…",
+    val checkingLabel: String = "正在检查…",
     /** Manager rows only: which extension owns the page this row opens. */
     val extId: String = "",
 )
 
 /**
- * The merged "Toolchains" side panel: SDKs, language servers, and debug engines in one searchable,
+ * The merged "工具链" side panel: SDKs, language servers, and debug engines in one searchable,
  * filterable list. Rows keep their per-catalog detail pages and install machinery — this panel only
  * unifies browsing; a search for "python" surfaces the SDK, Pyright, and debugpy together.
  */
@@ -111,7 +111,7 @@ internal fun ToolchainManagerPanel(
                                 kind = ToolchainKind.Manager,
                                 id = it.id,
                                 name = it.label,
-                                description = "Manager · opens its own page",
+                                description = "管理器 · 打开其专属页面",
                                 status = null,
                                 checking = false,
                                 extId = it.extId,
@@ -195,7 +195,7 @@ internal fun ToolchainManagerPanel(
         // Reported to the Issues pane rather than drawn here: a failure is worth keeping after the
         // user has moved on to another tool, and the list is what this panel is for. Each message is
         // carried with the log of the run it came out of — what a catalog puts in errorMessage is the
-        // first line the script printed, which names the outcome ("Install failed.") far more often
+        // first line the script printed, which names the outcome ("安装失败。") far more often
         // than the cause. The tail rather than all 240 kept lines: a failure explains itself at the
         // end, and the beginning is the previous action.
         val notices = listOfNotNull(
@@ -206,7 +206,7 @@ internal fun ToolchainManagerPanel(
         LaunchedEffect(notices) { WorkbenchNotices.set(NOTICE_SOURCE, notices) }
 
         ManagerPanelHeader(
-            title = "Toolchains",
+            title = "工具链",
             installedCount = installedTotal,
             onRefresh = onRefreshAll,
             busy = busy,
@@ -216,7 +216,7 @@ internal fun ToolchainManagerPanel(
             onToggleSearch = { searchActive = !searchActive; if (!searchActive) query = "" },
             query = query,
             onQueryChange = { query = it },
-            searchPlaceholder = "Search SDKs, servers, debuggers",
+            searchPlaceholder = "搜索 SDK、服务器、调试器",
         )
         // Outside the scroll, like Source Control's: the panel's name and its refresh should not
         // scroll away with the list they describe.
@@ -236,7 +236,7 @@ internal fun ToolchainManagerPanel(
         ) {
             ManagerFilterChip(
                 selected = filter == null,
-                label = "All",
+                label = "全部",
                 onClick = { filterName = "" },
             )
             // Managers is the one kind that can be legitimately empty: the others are catalog-backed
@@ -254,8 +254,8 @@ internal fun ToolchainManagerPanel(
 
         if (!environmentReady) {
             ManagerNoticeCard(
-                title = "Environment required",
-                message = "Set up the Linux environment in Settings before installing.",
+                title = "需要先配置环境",
+                message = "请先在设置中完成 Linux 环境配置，再进行安装。",
             )
         }
 
@@ -266,7 +266,7 @@ internal fun ToolchainManagerPanel(
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.12f),
             ) {
                 Text(
-                    text = if (query.isBlank()) "Nothing available." else "Nothing matches “$query”.",
+                    text = if (query.isBlank()) "暂无可用项。" else "没有与「$query」匹配的内容。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(Space.md),
@@ -319,14 +319,14 @@ internal fun ToolchainManagerPanel(
 /**
  * Chip text while a row is busy. The row that is actually running names its action and — once the
  * script has reported any — the percentage ("Installing… 42%"); every other row is only ever busy
- * because of a catalog-wide refresh, which is "Checking…".
+ * because of a catalog-wide refresh, which is "正在检查…".
  */
 private fun runningLabel(isRunning: Boolean, actionLabel: String?, progress: CatalogProgress?): String {
-    if (!isRunning) return "Checking…"
+    if (!isRunning) return "正在检查…"
     val verb = when (actionLabel) {
-        "Install" -> "Installing"
-        "Remove" -> "Removing"
-        else -> "Working"
+        "安装" -> "正在安装"
+        "移除" -> "正在移除"
+        else -> "处理中"
     }
     return verb + "…" + (progress?.percent?.let { " $it%" }.orEmpty())
 }

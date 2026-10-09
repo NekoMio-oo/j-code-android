@@ -159,7 +159,7 @@ class SetupTerminalRunner(
             when {
                 exit != null -> return ExecResult(exitCode = exit)
                 manager.getSession(sessionId) == null -> return ExecResult(
-                    internalError = "The Setup terminal closed before \"$label\" finished.",
+                    internalError = "安装终端在 \"$label\" 完成之前关闭。",
                     exitCode = null,
                 )
                 System.currentTimeMillis() >= deadline -> {
@@ -185,7 +185,7 @@ class SetupTerminalRunner(
             workdir = "/workspace",
             user = "root",
             rootfsArch = runtime.selectedDistro.arch,
-            label = "Setup",
+            label = "安装",
         ) ?: return null
         TerminalSessionHost.onSessionStarted(appContext, session.id, session.label)
         _sessionId.value = session.id

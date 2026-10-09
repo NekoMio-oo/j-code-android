@@ -72,7 +72,7 @@ interface ExtraKeysTarget {
      *  sticky modifiers. */
     val keys: List<ExtraKey>
 
-    /** Whether the surface consumes F1-F12 — gates the "Function keys" setting so the chips only
+    /** Whether the surface consumes F1-F12 — gates the "功能键" setting so the chips only
      *  appear where they do something (the terminal; the editor has no F-key bindings). */
     val supportsFunctionKeys: Boolean get() = false
 

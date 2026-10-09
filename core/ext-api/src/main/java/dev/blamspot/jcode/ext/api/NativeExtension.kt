@@ -196,7 +196,7 @@ interface NativeHost {
     /**
      * Move files into JCode's Trash instead of destroying them, and report how many went.
      *
-     * For a plugin whose own action deletes the user's work — Source Control's "Discard" throws away
+     * For a plugin whose own action deletes the user's work — Source Control's "放弃" throws away
      * every uncommitted edit in a file, which git cannot give back. Call it *before* the destructive
      * command runs; what is trashed is the state as it is now.
      *

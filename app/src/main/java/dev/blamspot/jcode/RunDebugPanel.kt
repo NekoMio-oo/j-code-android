@@ -72,7 +72,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * The "Run" side-panel. In a User Workspace it first lists projects; tapping one opens a Build | Run
+ * The "运行" side-panel. In a User Workspace it first lists projects; tapping one opens a Build | Run
  * segmented detail. In the Default Workspace it goes straight to the open project's detail. The Run
  * segment lists run configs (each with Run ▷ / Debug 🐞 / Configure), the device those launch on, and
  * the live debug session; the Build segment lists build tasks (each with Build ▷ / Configure).
@@ -128,14 +128,14 @@ internal fun RunPanel(
                 IconButton(onClick = { pickedId = null }, modifier = Modifier.size(PanelHeader.iconButton)) {
                     Icon(
                         Icons.AutoMirrored.Rounded.ArrowBack,
-                        contentDescription = "Back to projects",
+                        contentDescription = "返回项目列表",
                         modifier = Modifier.size(PanelHeader.icon),
                     )
                 }
             }
-            // No leading icon: the drawer's own "Run" tab chip already carries one directly above.
+            // No leading icon: the drawer's own "运行" tab chip already carries one directly above.
             Text(
-                text = activeProject?.name ?: "Run",
+                text = activeProject?.name ?: "运行",
                 style = PanelHeader.titleStyle,
                 fontWeight = PanelHeader.titleWeight,
                 maxLines = 1,
@@ -155,7 +155,7 @@ internal fun RunPanel(
             verticalArrangement = Arrangement.spacedBy(Space.s),
         ) {
         when {
-            projects.isEmpty() -> HintText("Open a project to build & run.")
+            projects.isEmpty() -> HintText("打开一个项目以进行构建与运行。")
             inUserWorkspace && activeProject == null -> projects.forEach { project ->
                 ProjectPickRow(project, running = runningProjectId == project.id, onClick = { pickedId = project.id })
             }
@@ -236,7 +236,7 @@ private fun ProjectRunBuildDetail(
             if (runs.any { run -> run.terminals.any { it.command.contains("adb ") } }) {
                 AndroidTargetRow(project)
             }
-            if (runs.isEmpty()) HintText("No run config yet — add one.")
+            if (runs.isEmpty()) HintText("还没有运行配置——添加一个。")
             runs.forEachIndexed { index, config ->
                 val running = isRunning && (runningRunName == null || runningRunName == config.name)
                 RunConfigRow(
@@ -253,7 +253,7 @@ private fun ProjectRunBuildDetail(
                     onDelete = { onDeleteRun(project, index) },
                 )
             }
-            AddRow("Add run config", onClick = { showAddRun = true })
+            AddRow("添加运行配置", onClick = { showAddRun = true })
             // While a session runs this is the debugger — steps, stack, variables — and nothing else
             // shows it, so it gets the whole section. Idle it is only a way to start one on the open
             // file, which every run config's own Debug button already falls through to, so it
@@ -273,7 +273,7 @@ private fun ProjectRunBuildDetail(
             }
         }
         Segment.Build -> {
-            if (builds.isEmpty()) HintText("No build task yet — add one (e.g. dotnet publish).")
+            if (builds.isEmpty()) HintText("还没有构建任务——添加一个（例如 dotnet publish）。")
             builds.forEachIndexed { index, config ->
                 BuildConfigRow(
                     config = config,
@@ -283,16 +283,16 @@ private fun ProjectRunBuildDetail(
                     onDelete = { onDeleteBuild(project, index) },
                 )
             }
-            AddRow("Add build task", onClick = { showAddBuild = true })
+            AddRow("添加构建任务", onClick = { showAddBuild = true })
         }
     }
 
     if (showAddRun) {
         AddConfigDialog(
-            title = "Add run config",
-            groupHint = "Pick a framework, then a project file.",
-            entryHint = "Pick a project file — every run config it offers is added.",
-            emptyHint = "No run trigger detected — start from a blank config.",
+            title = "添加运行配置",
+            groupHint = "先选择框架，再选择项目文件。",
+            entryHint = "选择项目文件 — 其提供的所有运行配置都会被添加。",
+            emptyHint = "未检测到运行触发器——从空白配置开始。",
             load = {
                 withContext(Dispatchers.IO) { ProjectRunner.suggestRunTriggers(project, runPresets) }
                     .groupBy { it.kind }
@@ -314,10 +314,10 @@ private fun ProjectRunBuildDetail(
     }
     if (showAddBuild) {
         AddConfigDialog(
-            title = "Add build task",
-            groupHint = "Pick where the task comes from, then the task.",
-            entryHint = "Pick a task to add it.",
-            emptyHint = "No build trigger detected — start from a blank task.",
+            title = "添加构建任务",
+            groupHint = "先选择任务来源，再选择任务。",
+            entryHint = "选择要添加的任务。",
+            emptyHint = "未检测到构建触发器——从空白任务开始。",
             load = {
                 withContext(Dispatchers.IO) { ProjectRunner.suggestBuildChoices(project, runPresets) }
                     .groupBy { it.source }
@@ -382,7 +382,7 @@ private fun AddConfigDialog(
                     // A collapsed single group has nowhere to go back to, so it keeps the plain title.
                     if (shown != null && single == null) {
                         IconButton(onClick = { openGroup = null }, modifier = Modifier.size(28.dp)) {
-                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", modifier = Modifier.size(IconSize.lg))
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "返回", modifier = Modifier.size(IconSize.lg))
                         }
                     }
                     Text(
@@ -394,16 +394,16 @@ private fun AddConfigDialog(
                     )
                 }
                 when {
-                    list == null -> HintText("Scanning project…")
+                    list == null -> HintText("正在扫描项目…")
                     list.isEmpty() -> {
                         HintText(emptyHint)
-                        ChoiceRow("Custom (blank)", "Start from an empty config", onClick = onCustom)
+                        ChoiceRow("自定义（空白）", "从空配置开始", onClick = onCustom)
                     }
                     shown != null -> {
                         HintText(entryHint)
                         PickerList(listMaxHeight) {
                             shown.entries.forEach { ChoiceRow(it.label, it.detail, onClick = it.onPick) }
-                            if (single != null) ChoiceRow("Custom (blank)", "Start from an empty config", onClick = onCustom)
+                            if (single != null) ChoiceRow("自定义（空白）", "从空配置开始", onClick = onCustom)
                         }
                     }
                     else -> {
@@ -412,16 +412,16 @@ private fun AddConfigDialog(
                             list.forEach { group ->
                                 ChoiceRow(
                                     label = group.name,
-                                    subtitle = "${group.entries.size} available",
+                                    subtitle = "${group.entries.size} 个可用",
                                     onClick = { openGroup = group.name },
                                     trailing = rememberVectorPainter(Icons.AutoMirrored.Rounded.KeyboardArrowRight),
                                 )
                             }
-                            ChoiceRow("Custom (blank)", "Start from an empty config", onClick = onCustom)
+                            ChoiceRow("自定义（空白）", "从空配置开始", onClick = onCustom)
                         }
                     }
                 }
-                CompactOutlinedButton(text = "Cancel", onClick = onDismiss, modifier = Modifier.fillMaxWidth())
+                CompactOutlinedButton(text = "取消", onClick = onDismiss, modifier = Modifier.fillMaxWidth())
             }
         }
     }
@@ -520,18 +520,18 @@ private fun RunConfigRow(
             ) {
                 Text(config.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
                 if (running && runUrl != null) {
-                    IconAction(rememberVectorPainter(Icons.AutoMirrored.Rounded.OpenInNew), "Open in browser", MaterialTheme.colorScheme.onSurfaceVariant, onOpenInBrowser)
+                    IconAction(rememberVectorPainter(Icons.AutoMirrored.Rounded.OpenInNew), "在浏览器中打开", MaterialTheme.colorScheme.onSurfaceVariant, onOpenInBrowser)
                 }
                 if (running) {
-                    IconAction(jcIcon(JCodeIcon.Stop), "Stop", MaterialTheme.colorScheme.error, onStop)
+                    IconAction(jcIcon(JCodeIcon.Stop), "停止", MaterialTheme.colorScheme.error, onStop)
                 } else {
-                    IconAction(jcIcon(JCodeIcon.Run), "Run", MaterialTheme.colorScheme.primary, onRun, enabled = config.terminals.any { it.command.isNotBlank() })
+                    IconAction(jcIcon(JCodeIcon.Run), "运行", MaterialTheme.colorScheme.primary, onRun, enabled = config.terminals.any { it.command.isNotBlank() })
                     // Launch under the debugger (VS-style): set gutter breakpoints, tap Debug, pause on hit.
                     // The entry is auto-derived from the command / active file — no manual field to fill in.
-                    IconAction(jcIcon(JCodeIcon.Debug), "Debug", MaterialTheme.colorScheme.tertiary, onDebug)
+                    IconAction(jcIcon(JCodeIcon.Debug), "调试", MaterialTheme.colorScheme.tertiary, onDebug)
                 }
                 IconAction(jcIcon(JCodeIcon.Settings), "Configure", MaterialTheme.colorScheme.onSurfaceVariant, onConfigure, size = 17)
-                if (!running && deletable) IconAction(rememberVectorPainter(Icons.Rounded.DeleteOutline), "Delete", MaterialTheme.colorScheme.onSurfaceVariant, onDelete, size = 17)
+                if (!running && deletable) IconAction(rememberVectorPainter(Icons.Rounded.DeleteOutline), "删除", MaterialTheme.colorScheme.onSurfaceVariant, onDelete, size = 17)
             }
             // Row 2: thin status + port line.
             Row(
@@ -557,7 +557,7 @@ private fun BuildConfigRow(config: BuildConfig, deletable: Boolean, onBuild: () 
             Text(config.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
             IconAction(jcIcon(JCodeIcon.Run), "Build", MaterialTheme.colorScheme.primary, onBuild, enabled = config.command.isNotBlank())
             IconAction(jcIcon(JCodeIcon.Settings), "Configure", MaterialTheme.colorScheme.onSurfaceVariant, onConfigure, size = 17)
-            if (deletable) IconAction(rememberVectorPainter(Icons.Rounded.DeleteOutline), "Delete", MaterialTheme.colorScheme.onSurfaceVariant, onDelete, size = 17)
+            if (deletable) IconAction(rememberVectorPainter(Icons.Rounded.DeleteOutline), "删除", MaterialTheme.colorScheme.onSurfaceVariant, onDelete, size = 17)
         }
     }
 }
@@ -586,7 +586,7 @@ private fun AndroidTargetRow(project: Project) {
         )
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Space.hairline)) {
             Text(
-                text = current?.label ?: "No device",
+                text = current?.label ?: "无设备",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1,
@@ -594,7 +594,7 @@ private fun AndroidTargetRow(project: Project) {
             )
             Text(
                 text = when {
-                    current == null && targets.loading -> "Looking for devices…"
+                    current == null && targets.loading -> "正在查找设备…"
                     current == null -> device.status
                     else -> current.serial
                 },
@@ -605,7 +605,7 @@ private fun AndroidTargetRow(project: Project) {
             )
         }
         when {
-            current == null -> Text("Set up", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+            current == null -> Text("设置", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             // Only say how many when there is in fact a choice to make.
             targets.available.size > 1 -> RunStatusChip("${targets.available.size} devices", active = current.isOnline)
             else -> RunStatusChip(current.state, active = current.isOnline)
@@ -645,24 +645,24 @@ private fun AndroidTargetDialog(
             Column(modifier = Modifier.padding(Space.lg), verticalArrangement = Arrangement.spacedBy(Space.ms)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        "Run on",
+                        "运行于",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f),
                     )
-                    IconAction(rememberVectorPainter(Icons.Rounded.Refresh), "Refresh devices", MaterialTheme.colorScheme.onSurfaceVariant, onRefresh, enabled = !loading, size = 17)
+                    IconAction(rememberVectorPainter(Icons.Rounded.Refresh), "刷新设备", MaterialTheme.colorScheme.onSurfaceVariant, onRefresh, enabled = !loading, size = 17)
                 }
                 if (targets.isEmpty()) {
-                    HintText(if (loading) "Looking for devices…" else "The runtime's adb server lists no device.")
+                    HintText(if (loading) "正在查找设备…" else "运行时的 adb 服务器未列出任何设备。")
                 } else {
-                    HintText("This project's runs and debugs go to the device picked here.")
+                    HintText("此项目的运行和调试将使用此处选择的设备。")
                     PickerList(listMaxHeight) {
                         targets.forEach { target ->
                             TargetChoiceRow(target, chosen = target.serial == selected?.serial, onClick = { onPick(target.serial) })
                         }
                     }
                 }
-                CompactOutlinedButton(text = "Cancel", onClick = onDismiss, modifier = Modifier.fillMaxWidth())
+                CompactOutlinedButton(text = "取消", onClick = onDismiss, modifier = Modifier.fillMaxWidth())
             }
         }
     }
@@ -696,7 +696,7 @@ private fun TargetChoiceRow(target: AndroidRunTarget, chosen: Boolean, onClick: 
                 )
             }
             if (chosen) {
-                Icon(Icons.Rounded.Check, contentDescription = "Selected", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(IconSize.md))
+                Icon(Icons.Rounded.Check, contentDescription = "已选中", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(IconSize.md))
             }
         }
     }
@@ -704,7 +704,7 @@ private fun TargetChoiceRow(target: AndroidRunTarget, chosen: Boolean, onClick: 
 
 /** Opens the device sandbox tab, which is otherwise only reached when a virtual-device build finishes.
  *  Named after the tab rather than the device, since the target row above it can be showing the very
- *  same virtual device as an adb target and two rows reading "Virtual device" say nothing apart. */
+ *  same virtual device as an adb target and two rows reading "虚拟设备" say nothing apart. */
 @Composable
 private fun VirtualDeviceRow() {
     PanelRow(onClick = { VirtualDeviceBridge.requestOpen(null) }) {
@@ -715,16 +715,16 @@ private fun VirtualDeviceRow() {
             modifier = Modifier.size(18.dp),
         )
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Space.hairline)) {
-            Text("Device sandbox", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 1)
+            Text("设备沙盒", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 1)
             Text(
-                text = "Run a built APK in a tab — no install, no ADB",
+                text = "在选项卡中运行已构建的 APK — 无需安装，无需 ADB",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
         }
-        Text("Open", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+        Text("打开", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
     }
 }
 

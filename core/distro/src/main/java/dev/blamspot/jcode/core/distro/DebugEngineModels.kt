@@ -33,8 +33,8 @@ data class DebugEngineEntry(
 )
 
 enum class DebugEngineAction(val label: String) {
-    Install("Install"),
-    Uninstall("Remove"),
+    Install("安装"),
+    Uninstall("移除"),
 }
 
 data class DebugEngineCatalogState(
@@ -64,7 +64,7 @@ object DebugEngineCatalog {
             id = "debugpy",
             category = "Scripting",
             name = "debugpy (Python)",
-            description = "Python debug adapter. Breakpoints, stepping, variables, and evaluate for Python.",
+            description = "Python 调试适配器。支持断点、单步执行、变量查看与求值。",
             installCommand = "jcode_apt 0 100 'Installing debugpy' python3-debugpy",
             verifyCommand = "python3 -c 'import debugpy, sys; print(debugpy.__version__)'",
             uninstallCommand = "sudo apt-get remove -y python3-debugpy",
@@ -79,7 +79,7 @@ object DebugEngineCatalog {
             id = "lldb-dap",
             category = "Systems",
             name = "lldb-dap (C / C++ / Rust)",
-            description = "LLVM's native debug adapter for C, C++, and Rust. Installed with the LLDB package.",
+            description = "LLVM 官方的 C、C++ 和 Rust 调试适配器。随 LLDB 软件包一起安装。",
             installCommand = "set -e; jcode_apt 0 90 'Installing LLDB' lldb; " +
                 "TARGET=\$(command -v lldb-dap || command -v lldb-dap-18 || ls /usr/bin/lldb-dap-* 2>/dev/null | head -1); " +
                 "[ -n \"\$TARGET\" ] && sudo ln -sf \"\$TARGET\" /usr/local/bin/lldb-dap || true; " +
@@ -101,7 +101,7 @@ object DebugEngineCatalog {
             id = "netcoredbg",
             category = ".NET",
             name = "netcoredbg (.NET / C#)",
-            description = "Samsung's DAP debugger for .NET. Download the ARM64 release; needs the .NET runtime.",
+            description = "三星为 .NET 打造的 DAP 调试器。请下载 ARM64 版本；需要 .NET 运行时。",
             // curl (not wget) for the download: the required dotnet SDK guarantees curl; wget is
             // absent from the minimal base rootfs and no SDK in the chain installs it.
             installCommand = "set -e; sudo mkdir -p /opt/netcoredbg; " +
@@ -124,7 +124,7 @@ object DebugEngineCatalog {
             id = "js-debug",
             category = "Web",
             name = "js-debug (Node.js / JS / TS)",
-            description = "VS Code's JavaScript/Node debug adapter (DAP over TCP), newest release resolved at install time. Needs Node.js.",
+            description = "VS Code 的 JavaScript/Node 调试适配器（基于 TCP 的 DAP），安装时解析最新版本。需要 Node.js。",
             // Not every vscode-js-debug release attaches the js-debug-dap tarball; take the newest
             // release that has one (the API lists releases newest-first).
             installCommand = "set -e; " +

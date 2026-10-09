@@ -7,7 +7,7 @@ import dev.blamspot.jcode.core.distro.EnvironmentInfo
  * Bridges the installed-environments list + switch/delete actions into [OnboardingFeature.EnvironmentSetupPage]
  * without threading them through the (register-pressured) workbench shell composable. The app provides this at
  * the same level as the other workbench CompositionLocals; the setup page consumes it to render the
- * "Installed environments" switcher.
+ * "已安装的环境" switcher.
  */
 data class EnvironmentManagerActions(
     val environments: List<EnvironmentInfo> = emptyList(),

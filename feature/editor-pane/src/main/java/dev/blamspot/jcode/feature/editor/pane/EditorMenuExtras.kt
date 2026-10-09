@@ -21,7 +21,7 @@ data class EditorMenuContribution(
 data class EditorMenuExtras(
     val previewToggle: (() -> Unit)? = null,
     /** What to call that toggle. A rendered Markdown file is previewed; a layout is designed. */
-    val previewLabel: String = "Preview",
+    val previewLabel: String = "预览",
     /** And what it looks like, so a claiming extension describes the whole item. */
     val previewIcon: JCodeIcon = JCodeIcon.Preview,
     /** Opens the shared Go-to-line dialog for the active file tab. */

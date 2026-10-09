@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JCode</string>
+    <string name="backend_service_channel_name">后台会话</string>
+    <string name="backend_service_channel_description">保持终端、语言服务器和调试会话在后台运行。</string>
+    <string name="backend_service_notification_title">JCode 后台运行中</string>
+    <plurals name="backend_service_active_sessions">
+        <item quantity="one">%d 个活动会话</item>
+        <item quantity="other">%d 个活动会话</item>
+    </plurals>
+    <plurals name="backend_service_terminals">
+        <item quantity="one">%d 个终端</item>
+        <item quantity="other">%d 个终端</item>
+    </plurals>
+    <string name="backend_service_memory">已使用 %s</string>
+    <string name="backend_service_stop_action">退出 JCode</string>
+</resources>

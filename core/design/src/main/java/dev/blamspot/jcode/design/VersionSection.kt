@@ -45,7 +45,7 @@ internal fun VersionSection(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Space.sm), modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = if (multiVersion) "Versions" else "Version",
+            text = if (multiVersion) "版本" else "版本",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
         )
@@ -95,7 +95,7 @@ private fun VersionDropdown(
                 if (loading) {
                     CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(16.dp))
                     Text(
-                        text = "Loading versions…",
+                        text = "正在加载版本…",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f),

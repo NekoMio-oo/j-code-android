@@ -81,7 +81,7 @@ object BuiltinBrowser {
     val revealSignal = mutableStateOf(0)
 
     /** Bumped only when an open should ALSO surface the DevTools drawer — an open that arrived holding
-     *  a URL (a preview, a terminal link), where DevTools is part of the intent. A plain "Open Browser"
+     *  a URL (a preview, a terminal link), where DevTools is part of the intent. A plain "打开浏览器"
      *  from the Command Palette bumps only [revealSignal], so it opens the browser without forcing the
      *  DevTools drawer open over it. */
     val devToolsRevealSignal = mutableStateOf(0)
@@ -90,7 +90,7 @@ object BuiltinBrowser {
     val pendingUrl = mutableStateOf<String?>(null)
 
     val currentUrl = mutableStateOf("")
-    val title = mutableStateOf("Browser")
+    val title = mutableStateOf("浏览器")
     val loading = mutableStateOf(false)
     val progress = mutableStateOf(0)
     val canGoBack = mutableStateOf(false)

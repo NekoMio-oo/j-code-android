@@ -26,7 +26,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
-/** Hosts one settings row: long-press opens a "Reset this setting" menu at the touch point, and a
+/** Hosts one settings row: long-press opens a "重置此设置" menu at the touch point, and a
  *  small dot in the enclosing card's left padding gutter marks a value that differs from its
  *  default (or, on a scoped tab, has an override saved). Interactive children (switches, buttons,
  *  dropdown pills) keep their own gestures — the long-press lands on the row's label area.
@@ -62,7 +62,7 @@ fun SettingsResettableRow(
                 if (modified) {
                     stateDescription = "Modified"
                     customActions = listOf(
-                        CustomAccessibilityAction("Reset this setting") { onReset(); true },
+                        CustomAccessibilityAction("重置此设置") { onReset(); true },
                     )
                 }
             },
@@ -83,7 +83,7 @@ fun SettingsResettableRow(
                 onDismissRequest = { menuAt = null },
                 offset = at,
                 listActions = listOf(
-                    ContextAction(JCodeIcon.Discard, "Reset this setting", enabled = modified) { onReset() },
+                    ContextAction(JCodeIcon.Discard, "重置此设置", enabled = modified) { onReset() },
                 ),
             )
         }

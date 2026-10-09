@@ -60,12 +60,12 @@ internal fun IssuesSidebarContent(modifier: Modifier = Modifier) {
     if (files.isEmpty() && notices.isEmpty()) {
         Column(modifier = modifier.fillMaxSize().padding(Space.md)) {
             Text(
-                "No issues detected.",
+                "未检测到问题。",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                "Configuration errors and on-save syntax checks appear here.",
+                "配置错误和保存时的语法检查结果将显示在这里。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 modifier = Modifier.padding(top = Space.xs),
@@ -160,7 +160,7 @@ internal fun IssuesSidebarContent(modifier: Modifier = Modifier) {
                     )
                     // Diagnostics count from 0; editors (and the status bar) count from 1.
                     Text(
-                        text = "Ln ${d.startLine + 1}, Col ${d.startCol + 1}",
+                        text = "行 ${d.startLine + 1}，列 ${d.startCol + 1}",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -206,7 +206,7 @@ private fun NoticeRow(notice: WorkbenchNotices.Notice) {
             if (hasDetail) {
                 Icon(
                     painter = jcIcon(if (expanded) JCodeIcon.ChevronUp else JCodeIcon.ChevronDown),
-                    contentDescription = if (expanded) "Hide details" else "Show details",
+                    contentDescription = if (expanded) "隐藏详情" else "显示详情",
                     modifier = Modifier.padding(top = Space.xxs).size(16.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

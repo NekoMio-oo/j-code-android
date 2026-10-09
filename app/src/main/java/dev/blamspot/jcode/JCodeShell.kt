@@ -760,42 +760,42 @@ fun JCodeApp(
         // Developer options changes what you can do with an unsigned package, never whether you may
         // have one — so this last paragraph is the only part the dialog works out rather than states.
         val signingNote = if (LocalDeveloperSetting.current.enabled) {
-            "An unsigned package is marked as a dev extension and can be debugged from the Ext Dev tab; " +
-                "a signed .jext installs normally but cannot be debugged here."
+            "未签名的软件包会被标记为开发扩展，可从「扩展开发」选项卡进行调试； " +
+                "而带签名的 .jext 可正常安装，但无法在此处调试。"
         } else {
-            "An unsigned package installs and runs, and is flagged as unsigned when it lands. Turn on " +
-                "Settings → Developer options to debug one."
+            "未签名的软件包可以安装并运行，安装后会被标记为未签名。请打开 " +
+                "「设置」→「开发者选项」以调试它。"
         }
         AlertDialog(
             onDismissRequest = { showImportInfo = false },
-            title = { Text("Import an extension") },
+            title = { Text("导入扩展") },
             text = {
                 // Scrollable: this is the longest dialog in the app and it must stay readable in
                 // landscape, where there is far less height to work with.
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                     Text(
-                        "Choose a JCode extension (.jext) or a VS Code extension (.vsix). Which one it " +
-                            "is comes from what is inside the file, so a package saved under any name " +
-                            "still lands where it belongs.\n\n" +
-                            "Neither is verified by the marketplace and both run code in the Linux " +
-                            "runtime, so import one only from a publisher you trust.\n\n" +
-                            "From a .vsix, JCode runs the part of the VS Code API that extensions built " +
-                            "around a webview use — a side panel, commands, settings, and the current " +
-                            "file and theme. Extensions that add languages, themes, snippets, debuggers " +
-                            "or tasks will not work: JCode has its own systems for those, and you will " +
-                            "be told what is missing, both on import and if it is asked for while " +
-                            "running.\n\n" + signingNote,
+                        "选择 JCode 扩展（.jext）或 VS Code 扩展（.vsix）。具体属于哪一种" +
+                            "取决于文件内部的内容，因此即使软件包以任意名称保存" +
+                            "也仍会被放到正确的位置。\n\n" +
+                            "这两者都未经过扩展市场验证，且都会在 Linux " +
+                            "运行时中运行代码，因此请仅从您信任的发布者处导入。\n\n" +
+                            "对于 .vsix 文件，JCode 运行 VS Code API 中围绕网页视图构建的扩展所用的那部分" +
+                            "——侧边面板、命令、设置以及当前" +
+                            "文件和主题。添加语言、主题、代码片段、调试器的扩展 " +
+                            "或任务将无法工作：JCode 对这些有自己的实现，你" +
+                            "将会被告知缺少了什么——无论是在导入时，还是在运行" +
+                            "。\n\n" + signingNote,
                     )
                 }
             },
             confirmButton = {
                 CompactFilledButton(
-                    text = "Choose file",
+                    text = "选择文件",
                     onClick = { showImportInfo = false; extensionPicker.launch("*/*") },
                 )
             },
             dismissButton = {
-                CompactOutlinedButton(text = "Cancel", onClick = { showImportInfo = false })
+                CompactOutlinedButton(text = "取消", onClick = { showImportInfo = false })
             },
         )
     }
@@ -805,16 +805,16 @@ fun JCodeApp(
     migrationCleanup?.let { cleanup ->
         AlertDialog(
             onDismissRequest = { viewModel.dismissMigrationCleanup() },
-            title = { Text("Finish moving from ${cleanup.sourcePackage}") },
+            title = { Text("完成从 ${cleanup.sourcePackage} 的迁移") },
             text = {
                 Text(
                     buildString {
-                        append("Your environment, projects, extensions and settings are now here.\n\n")
-                        append("The ${cleanup.bytes / (1024 * 1024)} MB migration bundle in the shared JCode folder ")
+                        append("您的环境、项目、扩展和设置现在都已迁移到这里。\n\n")
+                        append("共享 JCode 文件夹中 ${cleanup.bytes / (1024 * 1024)} MB 的迁移包 ")
                         append("is a copy and can go — ")
                         if (cleanup.oldAppInstalled) {
                             append("the old app still has everything until you remove it.\n\n")
-                            append("Removing it frees the rest of the space it is using. Android will ask you ")
+                            append("删除它可释放其余占用的空间。Android 会要求您 ")
                             append("to confirm the uninstall itself.")
                         } else {
                             append("nothing else needs it.")
@@ -824,13 +824,13 @@ fun JCodeApp(
             },
             confirmButton = {
                 CompactFilledButton(
-                    text = if (cleanup.oldAppInstalled) "Clean up and uninstall" else "Remove the bundle",
+                    text = if (cleanup.oldAppInstalled) "清理并卸载" else "移除安装包",
                     onClick = { viewModel.cleanUpAfterMigration() },
                 )
             },
             dismissButton = {
                 CompactOutlinedButton(
-                    text = "Keep for now",
+                    text = "暂时保留",
                     onClick = { viewModel.dismissMigrationCleanup() },
                 )
             },
@@ -842,19 +842,19 @@ fun JCodeApp(
     (updateInstallState as? AppUpdateInstaller.State.MigrationUnavailable)?.let { blocked ->
         AlertDialog(
             onDismissRequest = { viewModel.resetUpdateInstall() },
-            title = { Text("Update without your environment?") },
+            title = { Text("不带环境更新？") },
             text = {
                 Text(
-                    "This update installs as a new app, so your Linux environment, projects, " +
-                        "extensions and settings have to be copied across first — and " +
+                    "此次更新会作为新应用安装，因此需要先迁移 Linux 环境、项目、" +
+                        "扩展和设置也需要先迁移——而且 " +
                         "${blocked.reason}.\n\n" +
-                        "Installing now gives you the new version with nothing in it. This one is " +
-                        "left as it is, so you can free up space and update again instead.",
+                        "现在安装将得到一个空的新版本。这个版本 " +
+                        "保持不动，腾出空间后再更新。",
                 )
             },
             confirmButton = {
                 CompactFilledButton(
-                    text = "Install anyway",
+                    text = "仍然安装",
                     onClick = {
                         viewModel.resetUpdateInstall()
                         viewModel.installUpdateWithoutMigration(blocked.apkPath)
@@ -862,7 +862,7 @@ fun JCodeApp(
                 )
             },
             dismissButton = {
-                CompactOutlinedButton(text = "Not now", onClick = { viewModel.resetUpdateInstall() })
+                CompactOutlinedButton(text = "暂不", onClick = { viewModel.resetUpdateInstall() })
             },
         )
     }
@@ -1031,7 +1031,7 @@ fun JCodeApp(
             TerminalSessionHost.setUiOpenUrlListener(null)
         }
     }
-    // Surface the built-in browser editor tab whenever something requests it (a "Built-in browser"
+    // Surface the built-in browser editor tab whenever something requests it (a "内置浏览器"
     // preview, or a terminal-URL tap, bumps BuiltinBrowser.revealSignal). Handled here because this is
     // where the view model is in scope; the inner run handlers only touch the BuiltinBrowser singleton.
     LaunchedEffect(Unit) {
@@ -1088,7 +1088,7 @@ fun JCodeApp(
     val openFolderLauncher = rememberOpenFolderLauncher(
         onFolderPicked = viewModel::openExternalFolder,
     )
-    // Project/recent "Export to storage": a SAF tree picker chooses the destination folder, then the
+    // Project/recent "导出到存储空间": a SAF tree picker chooses the destination folder, then the
     // view model copies the tree. The pending request is a saveable "<name>\n<source dir>" token (a
     // lambda would be dropped if the process dies behind the picker, silently ignoring the pick);
     // an empty dir segment marks a non-local source, which exportDirTo rejects with a message.
@@ -1105,9 +1105,9 @@ fun JCodeApp(
     }
     val openFolderTypePrompt by viewModel.openFolderTypePrompt.collectAsStateWithLifecycle()
     val environmentNotConfigured = environmentState.smokeTestPassed != true
-    // The first-run screen latches once shown and stays up until the user taps "Done" (which defers).
+    // The first-run screen latches once shown and stays up until the user taps "完成" (which defers).
     // Without this it would vanish the instant setup finishes — smokeTestPassed flips true at the end of
-    // runAllPendingSteps, just before AllDone is emitted — skipping the "Done" confirmation. Saveable so
+    // runAllPendingSteps, just before AllDone is emitted — skipping the "完成" confirmation. Saveable so
     // it survives a rotation mid-setup.
     var firstRunScreenLatched by rememberSaveable { mutableStateOf(false) }
     if (environmentNotConfigured && !environmentState.firstRunSetupDeferred) {
@@ -1135,7 +1135,7 @@ fun JCodeApp(
                 is WorkbenchPrompt.RestartApp -> {
                     val result = snackbarHostState.showSnackbar(
                         message = prompt.message,
-                        actionLabel = "Restart",
+                        actionLabel = "重新启动",
                         duration = SnackbarDuration.Long,
                     )
                     if (result == SnackbarResult.ActionPerformed) viewModel.restartApp()
@@ -1143,26 +1143,26 @@ fun JCodeApp(
                 is WorkbenchPrompt.ReloadExtension -> {
                     val result = snackbarHostState.showSnackbar(
                         message = prompt.message,
-                        actionLabel = "Reload",
+                        actionLabel = "重新加载",
                         duration = SnackbarDuration.Long,
                     )
                     if (result == SnackbarResult.ActionPerformed) viewModel.unloadRemovedExtension(prompt.id)
                 }
                 WorkbenchPrompt.ProcessLimit -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = "Android stopped the Linux environment (background process limit).",
-                        actionLabel = "Details",
+                        message = "Android 已停止 Linux 环境（后台进程数量超限）。",
+                        actionLabel = "详情",
                         duration = SnackbarDuration.Long,
                     )
                     if (result == SnackbarResult.ActionPerformed) {
                         viewModel.openSettingsPage()
-                        SettingsFeature.revealGroup("Environment")
+                        SettingsFeature.revealGroup("环境")
                     }
                 }
                 is WorkbenchPrompt.StaleTerminalDistro -> {
                     snackbarHostState.showSnackbar(
-                        message = "Open terminals run ${prompt.sessionDistro}; toolchains install " +
-                            "into ${prompt.installedInto}. Open a new terminal to use it.",
+                        message = "已打开的终端运行的是 ${prompt.sessionDistro}；工具链安装到了" +
+                            "${prompt.installedInto}。打开新的终端即可使用。",
                         duration = SnackbarDuration.Long,
                     )
                 }
@@ -1177,8 +1177,8 @@ fun JCodeApp(
     LaunchedEffect(viewModel) {
         viewModel.lspMissingServer.collect { entry ->
             val result = snackbarHostState.showSnackbar(
-                message = "${entry.name} isn't installed — code intelligence is off for these files.",
-                actionLabel = "Install",
+                message = "${entry.name} 尚未安装 — 这些文件的代码智能功能已关闭。",
+                actionLabel = "安装",
                 duration = SnackbarDuration.Long,
             )
             if (result == SnackbarResult.ActionPerformed) viewModel.installLspCatalogEntry(entry.id)
@@ -1193,8 +1193,8 @@ fun JCodeApp(
         if (info?.updateAvailable == true && !updateToastShown) {
             updateToastShown = true
             val result = snackbarHostState.showSnackbar(
-                message = "Update available: v${info.latestVersion}",
-                actionLabel = "Update",
+                message = "有可用更新：v${info.latestVersion}",
+                actionLabel = "更新",
                 duration = SnackbarDuration.Long,
             )
             if (result == SnackbarResult.ActionPerformed) {
@@ -1209,21 +1209,21 @@ fun JCodeApp(
     }
 
     // In-app updater feedback: prompt for the "install unknown apps" permission, surface a failure,
-    // and confirm success. Download progress shows on the Settings → About "Update" button.
+    // and confirm success. Download progress shows on the Settings → About "更新" button.
     LaunchedEffect(updateInstallState) {
         when (val s = updateInstallState) {
             is AppUpdateInstaller.State.NeedsUnknownSourcePermission -> {
                 viewModel.resetUpdateInstall()
                 AppUpdateInstaller.openUnknownSourceSettings(updateContext)
-                snackbarHostState.showSnackbar("Allow JCode to install apps, then tap Update again.")
+                snackbarHostState.showSnackbar("允许 JCode 安装应用，然后再次点击「更新」。")
             }
             is AppUpdateInstaller.State.Failed -> {
                 viewModel.resetUpdateInstall()
-                snackbarHostState.showSnackbar("Update failed: ${s.message}")
+                snackbarHostState.showSnackbar("更新失败：${s.message}")
             }
             is AppUpdateInstaller.State.Success -> {
                 viewModel.resetUpdateInstall()
-                snackbarHostState.showSnackbar("Update installed — v${updateInfo?.latestVersion ?: ""}.")
+                snackbarHostState.showSnackbar("更新已安装 — v${updateInfo?.latestVersion ?: ""}。")
             }
             else -> Unit
         }
@@ -1267,12 +1267,12 @@ fun JCodeApp(
     val contributedToolchainManagers by viewModel.contributedToolchainActions.collectAsStateWithLifecycle()
     val contributedContextActions by viewModel.contributedEditorContextActions.collectAsStateWithLifecycle()
     // Extra items for the editor's long-press context menu, computed for the ACTIVE tab: the built-in
-    // Markdown "Preview" toggle plus extension-contributed actions matching the file's extension.
+    // Markdown "预览" toggle plus extension-contributed actions matching the file's extension.
     val menuTab = editorGroup.activeTab
     val menuTabId = menuTab?.id
     val menuIsFileTab = menuTab?.editorState != null
     val menuFileName = menuTab?.let { t -> t.filePath.name.ifBlank { t.title } }.orEmpty()
-    // "Go to line" / "Find text" from the editor menu. The menu is built in this parent scope but the
+    // "转到行" / "查找文本" from the editor menu. The menu is built in this parent scope but the
     // go-to-line dialog and search panel live inside JCodeShell, so the taps bump trigger state that
     // is passed down as params and reacted to there (find carries a nonce so the same word re-seeds).
     var editorGoToLineNonce by remember { mutableStateOf(0) }
@@ -1298,7 +1298,7 @@ fun JCodeApp(
             } else {
                 null
             },
-            previewLabel = nativeClaim?.previewLabel ?: "Preview",
+            previewLabel = nativeClaim?.previewLabel ?: "预览",
             previewIcon = nativeClaim?.previewIcon
                 ?.let { contributedMenuIcon(it) }
                 ?: JCodeIcon.Preview,
@@ -1439,11 +1439,11 @@ fun JCodeApp(
                 val json = viewModel.exportSettingsJson()
                 withContext(Dispatchers.IO) {
                     updateContext.contentResolver.openOutputStream(uri)?.use { it.write(json.toByteArray()) }
-                        ?: error("Could not open the file for writing")
+                        ?: error("无法打开文件进行写入")
                 }
             }
             snackbarHostState.showSnackbar(
-                outcome.fold({ "Settings exported" }, { "Export failed: ${it.message}" }),
+                outcome.fold({ "设置已导出" }, { "导出失败：${it.message}" }),
             )
         }
     }
@@ -1454,12 +1454,12 @@ fun JCodeApp(
             val outcome = runCatching {
                 val text = withContext(Dispatchers.IO) {
                     updateContext.contentResolver.openInputStream(uri)?.use { it.readBytes().decodeToString() }
-                        ?: error("Could not read the file")
+                        ?: error("无法读取文件")
                 }
                 viewModel.importSettingsJson(text)
             }
             snackbarHostState.showSnackbar(
-                outcome.fold({ "Imported $it settings" }, { "Import failed: ${it.message}" }),
+                outcome.fold({ "已导入 $it 项设置" }, { "导入失败：${it.message}" }),
             )
         }
     }
@@ -1480,15 +1480,15 @@ fun JCodeApp(
     ) { uri ->
         if (uri != null) backupScope.launch {
             val outcome = runCatching {
-                val source = DiagnosticLog.currentFile() ?: error("Nothing has been recorded yet")
+                val source = DiagnosticLog.currentFile() ?: error("尚未记录任何内容")
                 withContext(Dispatchers.IO) {
                     updateContext.contentResolver.openOutputStream(uri)?.use { out ->
                         source.inputStream().use { it.copyTo(out) }
-                    } ?: error("Could not open the file for writing")
+                    } ?: error("无法打开文件进行写入")
                 }
             }
             snackbarHostState.showSnackbar(
-                outcome.fold({ "Diagnostic log exported" }, { "Export failed: ${it.message}" }),
+                outcome.fold({ "诊断日志已导出" }, { "导出失败：${it.message}" }),
             )
         }
     }
@@ -1529,7 +1529,7 @@ fun JCodeApp(
     val migrationBundle by viewModel.migrationBundle.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) { viewModel.refreshMigrationBundle() }
     val migrationSummary = migrationBundle?.let {
-        "Found a ${it.bytes / (1024 * 1024)} MB bundle from ${it.sourcePackage} " +
+        "发现了一个来自 ${it.sourcePackage} 的 ${it.bytes / (1024 * 1024)} MB 迁移包 " +
             "(${it.versionName}) holding ${it.parts.size} parts."
     }
     val environmentBackupActions = remember(systemPackagesUpdating, migrationSummary) {
@@ -1596,7 +1596,7 @@ fun JCodeApp(
         AlertDialog(
             onDismissRequest = {},
             confirmButton = {},
-            title = { Text("Environment") },
+            title = { Text("环境") },
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(modifier = Modifier.size(22.dp))
@@ -1839,7 +1839,7 @@ fun JCodeApp(
             onImportExtension = { showImportInfo = true },
             // The Source Control extension renders its git-identity + GitHub-auth screen at its
             // `#github` route (a global-config screen that works with no project open).
-            onOpenExtensionConfig = { id -> viewModel.openExtensionViewPage(id, "github", "Git Configuration") },
+            onOpenExtensionConfig = { id -> viewModel.openExtensionViewPage(id, "github", "Git 配置") },
             onAdbPair = viewModel::pairAdbDevice,
             onExtensionExec = viewModel::runtimeExecJson,
             onSpawnRuntimeProcess = viewModel::spawnRuntimeProcess,
@@ -1910,13 +1910,13 @@ fun JCodeApp(
     }
 
     // Closing tabs with unsaved changes: Save / Discard / Close Saved (dismiss = keep everything).
-    // "Close Saved" only appears when the set actually holds saved tabs to close — closing one dirty
+    // "关闭已保存" only appears when the set actually holds saved tabs to close — closing one dirty
     // tab leaves it nothing to do, so a bulk close is the only place it earns its slot.
     pendingEditorClose?.let { pending ->
         val canCloseSaved = pending.savedCount > 0
         UnsavedChangesDialog(
             titles = pending.dirtyTitles,
-            thirdLabel = "Close Saved".takeIf { canCloseSaved },
+            thirdLabel = "关闭已保存".takeIf { canCloseSaved },
             onSave = { viewModel.resolveEditorClose(EditorCloseChoice.SAVE) },
             onDiscard = { viewModel.resolveEditorClose(EditorCloseChoice.DISCARD) },
             onThird = { viewModel.resolveEditorClose(EditorCloseChoice.CLOSE_SAVED) }.takeIf { canCloseSaved },
@@ -1930,24 +1930,25 @@ fun JCodeApp(
     pendingEnvironmentSwitch?.let { pending ->
         AlertDialog(
             onDismissRequest = { viewModel.cancelEnvironmentSwitch() },
-            title = { Text("Switch environment?") },
+            title = { Text("切换环境？") },
             text = {
                 Text(
-                    "JCode restarts to switch to ${pending.environmentId}. Editors and unsaved changes " +
-                        "are kept; these will be stopped:\n" +
+                    "JCode 将重启以切换到 ${pending.environmentId}。编辑器和未保存的更改" +
+                        "将被保留；以下各项将被停止：
+" +
                         pending.running.joinToString("\n") { "•  $it" },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
             // Same slot order as TerminalRunningDialog: the destructive action stays out of the
-            // rightmost (reflexive-tap) position, "Cancel" is the safe default at the end.
+            // rightmost (reflexive-tap) position, "取消" is the safe default at the end.
             confirmButton = {
                 CompactDestructiveButton(
-                    text = "Restart",
+                    text = "重新启动",
                     onClick = { viewModel.confirmEnvironmentSwitch() },
                 )
-                CompactFilledButton(text = "Cancel", onClick = { viewModel.cancelEnvironmentSwitch() })
+                CompactFilledButton(text = "取消", onClick = { viewModel.cancelEnvironmentSwitch() })
             },
             dismissButton = {},
         )
@@ -2066,10 +2067,10 @@ private fun NoVirtualDeviceNotice(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize().padding(Space.lg),
         verticalArrangement = Arrangement.spacedBy(Space.s),
     ) {
-        Text("No virtual device", style = MaterialTheme.typography.titleSmall)
+        Text("没有虚拟设备", style = MaterialTheme.typography.titleSmall)
         Text(
-            text = "Running an APK inside JCode comes from the Android Dev Pack. " +
-                "Install it from the Marketplace and open this again.",
+            text = "在 JCode 中运行 APK 需要 Android Dev Pack。" +
+                "请从扩展市场安装它，然后重新打开。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -2209,7 +2210,7 @@ private fun JCodeShell(
     var selectedTool by rememberSaveable { mutableStateOf(WorkbenchTool.Explorer) }
     // A previously-persisted selection may point at a now-hidden destination; fall back to Explorer.
     LaunchedEffect(Unit) { if (!selectedTool.available) selectedTool = WorkbenchTool.Explorer }
-    // The "DB Managers" tool is hidden until a DB-manager client extension is installed; if it's
+    // The "数据库管理器" tool is hidden until a DB-manager client extension is installed; if it's
     // selected when none is present (or the client is removed), fall back to the Explorer.
     val dbManagerAvailable = installedExtensions.hasDbManagerClient()
     LaunchedEffect(dbManagerAvailable) {
@@ -2438,7 +2439,7 @@ private fun JCodeShell(
         }
     }
     // Read once here so the run handlers below (defined before the settings block) can resolve the
-    // per-project "Open web previews in" choice when opening a dev-server URL.
+    // per-project "Web 预览打开位置" choice when opening a dev-server URL.
     val webPreviewBrowsersLocal = LocalWebPreviewBrowsers.current
     // Likewise for the device an Android run launches on, so the handlers can force ANDROID_SERIAL.
     val androidRunTargetsLocal = LocalAndroidRunTargets.current
@@ -2461,7 +2462,7 @@ private fun JCodeShell(
     var goToLineVisible by remember { mutableStateOf(false) }
     var colorPickActive by remember { mutableStateOf(false) }
     var sampledColor by remember { mutableStateOf<Int?>(null) }
-    // Seed for the Find-in-Files panel when "Find text" is chosen from the editor menu, threaded down
+    // Seed for the Find-in-Files panel when "查找文本" is chosen from the editor menu, threaded down
     // to the search panel. Driven by the parent's editor-menu trigger params.
     var editorSearchSeed by remember { mutableStateOf<Pair<Int, String>?>(null) }
     LaunchedEffect(editorGoToLineNonce) {
@@ -2569,7 +2570,7 @@ private fun JCodeShell(
     fun spawnTerminalSession(label: String? = null): dev.blamspot.jcode.core.term.TerminalSessionManager.Session? {
         if (!terminalReady) {
             scope.launch {
-                snackbarHostState.showSnackbar("Finish environment setup before opening the terminal.")
+                snackbarHostState.showSnackbar("请先完成环境设置，再打开终端。")
             }
             return null
         }
@@ -2605,9 +2606,9 @@ private fun JCodeShell(
         if (session == null) {
             scope.launch {
                 val message = if (terminalSessionManager.sessionCount >= terminalSessionManager.maxSessions) {
-                    "Maximum terminal sessions reached (${terminalSessionManager.maxSessions})."
+                    "已达到终端会话数上限（${terminalSessionManager.maxSessions}）。"
                 } else {
-                    "Failed to start terminal session."
+                    "终端会话启动失败。"
                 }
                 snackbarHostState.showSnackbar(message)
             }
@@ -2662,7 +2663,7 @@ private fun JCodeShell(
         }
     }
 
-    // Run state: the URL of the most recent run (for "Open in browser") and whether we're still
+    // Run state: the URL of the most recent run (for "在浏览器中打开") and whether we're still
     // waiting for the dev frontend to come up. [runSessionIds] are the run's terminals (e.g. Server +
     // Client), torn down and respawned on each run and stopped together by handleStopRun.
     var runUrl by rememberSaveable { mutableStateOf<String?>(null) }
@@ -2746,16 +2747,16 @@ private fun JCodeShell(
             scope.launch { snackbarHostState.showSnackbar(message) }
         }
         if (exitCode != 0) {
-            fail("Build failed (exit $exitCode) — nothing started in the virtual device.")
+            fail("构建失败（退出码 $exitCode）——虚拟设备中未启动任何内容。")
             return
         }
         val apk = ProjectRunner.freshestApk(apkDir)
         if (apk == null) {
-            fail("Build reported success but left no APK in ${apkDir.absolutePath}.")
+            fail("构建报告成功，但在 ${apkDir.absolutePath} 中未找到 APK。")
             return
         }
         if (!VirtualDeviceBridge.isAvailable) {
-            fail("No virtual device — install the Android Dev Pack to run this APK here.")
+            fail("没有虚拟设备——请安装 Android Dev Pack 以在此处运行此 APK。")
             return
         }
         // Reading the APK's identity, logging what is opening and reporting a file that is not one
@@ -2787,12 +2788,12 @@ private fun JCodeShell(
     // compile/run output into it, then open the device browser once the server is reachable.
     fun handleRun(project: Project, config: RunConfig, saved: Boolean = false) {
         if (!terminalReady) {
-            scope.launch { snackbarHostState.showSnackbar("Finish environment setup before running.") }
+            scope.launch { snackbarHostState.showSnackbar("请先完成环境设置，再运行。") }
             return
         }
         val plan = ProjectRunner.runConfigToPlan(config)
         if (plan.terminals.isEmpty()) {
-            scope.launch { snackbarHostState.showSnackbar("'${config.name}' has no terminals. Tap Configure to set it up.") }
+            scope.launch { snackbarHostState.showSnackbar("「${config.name}」没有终端。点击「配置」进行设置。") }
             return
         }
         // Everything a run touches is read off disk, so unsaved buffers go there first — building
@@ -2850,7 +2851,7 @@ private fun JCodeShell(
         pendingVirtualDeviceApkDir = virtualApkDir?.takeIf { virtualDevice.enabled }
         if (virtualApkDir != null && !virtualDevice.enabled) {
             OutputLog.append(
-                "'${config.name}' only builds the APK — turn on Settings → Environment → " +
+                "“${config.name}”仅构建 APK——请打开「设置」→「环境」→ " +
                     "\"Run in a virtual device\" to start it here.",
             )
         }
@@ -2872,7 +2873,7 @@ private fun JCodeShell(
                     else ProjectRunner.openInBrowser(appContext, plan.url, choice)
                 } else {
                     OutputLog.append("✗ Dev server didn't start in time; check the run terminals.", OutputKind.Error)
-                    snackbarHostState.showSnackbar("Dev server didn't start in time; check the run terminals.")
+                    snackbarHostState.showSnackbar("开发服务器未能在规定时间内启动；请检查运行终端。")
                 }
             }
         } else {
@@ -2898,11 +2899,11 @@ private fun JCodeShell(
     /** Run a build task in its own terminal (fire-and-forget — not tracked as a run). */
     fun handleBuild(project: Project, config: RunBuildConfig, saved: Boolean = false) {
         if (!terminalReady) {
-            scope.launch { snackbarHostState.showSnackbar("Finish environment setup before building.") }
+            scope.launch { snackbarHostState.showSnackbar("请先完成环境设置，再进行构建。") }
             return
         }
         if (config.command.isBlank()) {
-            scope.launch { snackbarHostState.showSnackbar("'${config.name}' has no command. Tap Configure to set it up.") }
+            scope.launch { snackbarHostState.showSnackbar("「${config.name}」没有命令。点击「配置」进行设置。") }
             return
         }
         // A build compiles what is on disk exactly as a run does, so it saves on the same terms.
@@ -3025,10 +3026,10 @@ private fun JCodeShell(
     var pendingUnsavedSwitch by remember { mutableStateOf<CloseTarget?>(null) }
 
     fun runningItems(): List<String> = buildList {
-        terminalSessionManager.foregroundSessions().forEach { (_, prog) -> add("Terminal: $prog") }
-        if (runInProgress || runningProjectId != null) add("Build & Run")
+        terminalSessionManager.foregroundSessions().forEach { (_, prog) -> add("终端：$prog") }
+        if (runInProgress || runningProjectId != null) add("构建并运行")
         val dbgState = debugSessionUiLocal.state
-        if (dbgState != DebugState.DISCONNECTED && dbgState != DebugState.TERMINATED) add("Debug session")
+        if (dbgState != DebugState.DISCONNECTED && dbgState != DebugState.TERMINATED) add("调试会话")
     }
 
     fun teardownRunning() {
@@ -3087,21 +3088,21 @@ private fun JCodeShell(
         val items = runningItems()
         AlertDialog(
             onDismissRequest = { pendingCloseTarget = null },
-            title = { Text(if (target == CloseTarget.Workspace) "Close workspace?" else "Close project?") },
+            title = { Text(if (target == CloseTarget.Workspace) "关闭工作区？" else "关闭项目？") },
             text = {
                 Text(
-                    "Still running — closing will stop:\n" +
+                    "以下进程仍在运行 — 关闭将会停止它们：\n" +
                         items.joinToString("\n") { "•  $it" },
                 )
             },
             confirmButton = {
                 CompactFilledButton(
-                    text = "Close anyway",
+                    text = "仍然关闭",
                     onClick = { pendingCloseTarget = null; performClose(target) },
                 )
             },
             dismissButton = {
-                CompactOutlinedButton(text = "Cancel", onClick = { pendingCloseTarget = null })
+                CompactOutlinedButton(text = "取消", onClick = { pendingCloseTarget = null })
             },
         )
     }
@@ -3113,7 +3114,7 @@ private fun JCodeShell(
         val titles = editorGroup.tabs.filter { !it.isPage && it.isDirty }.map { it.title }
         UnsavedChangesDialog(
             titles = titles,
-            thirdLabel = "Cancel",
+            thirdLabel = "取消",
             onSave = {
                 pendingUnsavedSwitch = null
                 scope.launch {
@@ -3222,61 +3223,61 @@ private fun JCodeShell(
         }
         registerConfigurable(
             id = "view.orientationLock",
-            title = if (orientationLockedMode) "Unlock Screen Orientation" else "Lock Screen Orientation",
-            group = "View",
+            title = if (orientationLockedMode) "解锁屏幕方向" else "锁定屏幕方向",
+            group = "查看",
             icon = JCodeIcon.ScreenRotation,
         ) { WindowModeState.orientationLocked.value = !orientationLockedMode }
         registerConfigurable(
             id = "view.fullscreen",
-            title = if (fullscreenMode) "Exit Fullscreen" else "Enter Fullscreen",
-            group = "View",
+            title = if (fullscreenMode) "退出全屏" else "进入全屏",
+            group = "查看",
             icon = JCodeIcon.Fullscreen,
         ) { WindowModeState.fullscreen.value = !fullscreenMode }
         registerConfigurable(
             id = "view.keepAwake",
-            title = if (keepAwakeMode) "Keep Awake: Turn Off" else "Keep Awake: Turn On",
-            group = "View",
+            title = if (keepAwakeMode) "保持唤醒：关闭" else "保持唤醒：开启",
+            group = "查看",
             icon = JCodeIcon.KeepAwake,
         ) { WindowModeState.keepAwake.value = !keepAwakeMode }
         registerConfigurable(
             id = "view.hideChrome",
-            title = if (chromeHidden) "Show Header and Tabs" else "Hide Header and Tabs",
-            group = "View",
+            title = if (chromeHidden) "显示标题栏和选项卡" else "隐藏标题栏和选项卡",
+            group = "查看",
             icon = JCodeIcon.Collapse,
             visible = paletteHasTabs,
         ) { chromeHidden = !chromeHidden }
         registerConfigurable(
             id = "editor.goToLine",
-            title = "Go to Line…",
-            group = "Editor",
+            title = "转到行…",
+            group = "编辑器",
             icon = JCodeIcon.Cursor,
             visible = paletteEditorActive,
         ) { goToLineVisible = true }
         registerConfigurable(
             id = "editor.formatDocument",
-            title = "Format Document",
-            group = "Editor",
+            title = "格式化文档",
+            group = "编辑器",
             icon = JCodeIcon.Format,
             visible = paletteEditorActive && paletteLanguageIdentified,
         ) { paletteSaveActions.onFormat() }
         registerConfigurable(
             id = "editor.fontSizeIncrease",
-            title = "Increase Editor Font Size",
-            group = "Editor",
+            title = "增大编辑器字号",
+            group = "编辑器",
             icon = JCodeIcon.TextIncrease,
             visible = paletteEditorActive,
         ) { onUpdateEditorFontSize(paletteFontScope, (paletteFontSize + 1f).coerceIn(8f, 72f)) }
         registerConfigurable(
             id = "editor.fontSizeDecrease",
-            title = "Decrease Editor Font Size",
-            group = "Editor",
+            title = "减小编辑器字号",
+            group = "编辑器",
             icon = JCodeIcon.TextDecrease,
             visible = paletteEditorActive,
         ) { onUpdateEditorFontSize(paletteFontScope, (paletteFontSize - 1f).coerceIn(8f, 72f)) }
         registerConfigurable(
             id = "tools.colorSearch",
-            title = "Color Search (pick from screen)",
-            group = "Tools",
+            title = "颜色搜索（从屏幕取色）",
+            group = "工具",
             icon = JCodeIcon.Palette,
         ) { colorPickActive = true }
         // The device is worth opening on its own now that it has a launcher on it: without this it
@@ -3284,8 +3285,8 @@ private fun JCodeShell(
         // apps already installed on it — or at the screen `adb` is driving.
         registerConfigurable(
             id = "tools.virtualDevice",
-            title = "Open Virtual Device",
-            group = "Tools",
+            title = "打开虚拟设备",
+            group = "工具",
             icon = JCodeIcon.Destinations,
         ) { VirtualDeviceBridge.requestOpen(null) }
         // The browser had a toolbar and nothing else. That is fine while you are looking at it and no
@@ -3294,14 +3295,14 @@ private fun JCodeShell(
         // editor's are: a command anybody can find beats a button only the right screen has.
         registerConfigurable(
             id = "browser.open",
-            title = "Open Browser",
-            group = "Tools",
+            title = "打开浏览器",
+            group = "工具",
             icon = JCodeIcon.Browser,
         ) { BuiltinBrowser.requestOpen() }
         registerConfigurable(
             id = "browser.back",
-            title = "Browser: Back",
-            group = "Browser",
+            title = "浏览器：后退",
+            group = "浏览器",
             icon = JCodeIcon.ArrowBack,
             // Not merely "the browser exists": a Back with nowhere to go is a command that answers a
             // search and then does nothing, which is worse than not being offered.
@@ -3309,8 +3310,8 @@ private fun JCodeShell(
         ) { BuiltinBrowser.controller?.goBack() }
         registerConfigurable(
             id = "browser.forward",
-            title = "Browser: Forward",
-            group = "Browser",
+            title = "浏览器：前进",
+            group = "浏览器",
             icon = JCodeIcon.ArrowForward,
             visible = paletteBrowserActive && paletteBrowserForward,
         ) { BuiltinBrowser.controller?.goForward() }
@@ -3319,8 +3320,8 @@ private fun JCodeShell(
             // One command wearing the state, the way the browser's own button does — and the way
             // Fullscreen above does. A page is either loading or it is not, so the two are never both
             // worth offering.
-            title = if (paletteBrowserLoading) "Browser: Stop Loading" else "Browser: Reload Page",
-            group = "Browser",
+            title = if (paletteBrowserLoading) "浏览器：停止加载" else "浏览器：重新加载页面",
+            group = "浏览器",
             icon = if (paletteBrowserLoading) JCodeIcon.Stop else JCodeIcon.Refresh,
             visible = paletteBrowserActive,
         ) {
@@ -3329,43 +3330,43 @@ private fun JCodeShell(
         }
         CommandRegistry.register(
             id = "workspace.newFolder",
-            title = "New Folder",
-            group = "Workspace",
+            title = "新建文件夹",
+            group = "工作区",
             action = onCreateProject,
             icon = JCodeIcon.NewFolder,
         )
         CommandRegistry.register(
             id = "workspace.openFolder",
-            title = "Open Folder",
-            group = "Workspace",
+            title = "打开文件夹",
+            group = "工作区",
             action = { openFolderLauncher.launch(null) },
             icon = JCodeIcon.Files,
         )
         CommandRegistry.register(
             id = "workspace.autoSetupEnvironment",
-            title = "Auto-Setup Environment",
-            group = "Workspace",
+            title = "自动设置环境",
+            group = "工作区",
             action = onAutoSetup,
             icon = JCodeIcon.Sdk,
         )
         CommandRegistry.register(
             id = "workbench.focusExplorer",
-            title = "Focus Explorer",
-            group = "Workbench",
+            title = "聚焦资源管理器",
+            group = "工作台",
             action = { selectedTool = WorkbenchTool.Explorer },
             icon = JCodeIcon.Files,
         )
         CommandRegistry.register(
             id = "workbench.showSearch",
-            title = "Show Search Placeholder",
-            group = "Workbench",
+            title = "显示搜索占位符",
+            group = "工作台",
             action = { selectedTool = WorkbenchTool.Search },
             icon = JCodeIcon.Search,
         )
         CommandRegistry.register(
             id = "vdevice.reconnectAdb",
-            title = "Reconnect the virtual device to adb",
-            group = "Virtual device",
+            title = "将虚拟设备重新连接到 adb",
+            group = "虚拟设备",
             // The pack's settings screen names this command; the palette offers it too. Both
             // reach the same place, and neither has to know that the daemon is JCode's.
             action = virtualDevice.onReconnect,
@@ -3374,22 +3375,22 @@ private fun JCodeShell(
         )
         CommandRegistry.register(
             id = "settings.openPage",
-            title = "Open Settings",
-            group = "Settings",
+            title = "打开设置",
+            group = "设置",
             action = onOpenSettingsPage,
             icon = JCodeIcon.Settings,
         )
         CommandRegistry.register(
             id = "settings.openWorkspaceYaml",
-            title = "Open Workspace YAML",
-            group = "Settings",
+            title = "打开工作区 YAML",
+            group = "设置",
             action = onOpenWorkspaceConfig,
             icon = JCodeIcon.Code,
         )
         CommandRegistry.register(
             id = "settings.openProjectYaml",
-            title = "Open Project YAML",
-            group = "Settings",
+            title = "打开项目 YAML",
+            group = "设置",
             action = onOpenProjectConfig,
             whenPredicate = { selectedProject?.fsPath is FsPath.Local },
             icon = JCodeIcon.Code,
@@ -3959,7 +3960,7 @@ private fun JCodeShell(
                                     }
                                 }
                                 EditorPageKind.None -> if (tab.previewMode && tab.editorState != null) {
-                                    // "Preview" is per file type, not one renderer: an extension that
+                                    // "预览" is per file type, not one renderer: an extension that
                                     // ships native UI claiming this file (a layout designer for
                                     // res/layout/*.xml) takes the toggle; everything else is Markdown.
                                     val nativeOwner = installedExtensions.firstOrNull {
@@ -4544,7 +4545,7 @@ private fun EditorWorkspace(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // The palette's "Hide Header and Tabs" mode collapses the header (the tab strip hides
+            // The palette's "隐藏标题栏和选项卡" mode collapses the header (the tab strip hides
             // inside EditorPane via the same local); the floating pill below restores it.
             AnimatedVisibility(
                 visible = !chrome.chromeHidden,
@@ -4653,7 +4654,7 @@ private fun EditorWorkspace(
         if (chrome.chromeHidden) {
             FloatingRestorePill(
                 icon = jcIcon(JCodeIcon.ChevronDown),
-                contentDescription = "Show header and tabs",
+                contentDescription = "显示标题栏和选项卡",
                 onClick = { chrome.onSetChromeHidden(false) },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -4703,7 +4704,7 @@ internal data class EditorEmptyActions(
 internal val LocalEditorEmptyActions = compositionLocalOf { EditorEmptyActions() }
 
 /**
- * Clone / Remote-Repo state + callbacks for the VCS editor pages and the drawer "Open Folder" dropdown.
+ * Clone / Remote-Repo state + callbacks for the VCS editor pages and the drawer "打开文件夹" dropdown.
  * Provided by [JCodeApp] (which holds the ViewModel) and read by the inner shell via CompositionLocal.
  */
 internal data class VcsActions(
@@ -4725,9 +4726,9 @@ private fun EditorEmptyState(
 ) {
     if (hasProject) {
         EditorEmptyHint(
-            title = "No file open",
-            message = "Pick a file from the Explorer to start editing.",
-            actionLabel = "Open Explorer",
+            title = "未打开文件",
+            message = "从资源管理器中选择文件开始编辑。",
+            actionLabel = "打开资源管理器",
             onAction = onOpenFileRequest,
             modifier = modifier,
         )
@@ -4790,8 +4791,8 @@ private fun EditorRecents(actions: EditorEmptyActions, modifier: Modifier = Modi
             Column(verticalArrangement = Arrangement.spacedBy(Space.s)) {
                 StartSectionLabel("Start")
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.sm), verticalArrangement = Arrangement.spacedBy(Space.sm)) {
-                    WorkbenchActionButton(text = "New Folder", onClick = actions.onNewProject, active = true)
-                    WorkbenchActionButton(text = "Open Folder", onClick = actions.onOpenFolder)
+                    WorkbenchActionButton(text = "新建文件夹", onClick = actions.onNewProject, active = true)
+                    WorkbenchActionButton(text = "打开文件夹", onClick = actions.onOpenFolder)
                     actions.startActions.forEach { action ->
                         WorkbenchActionButton(text = action.label, onClick = { actions.onAction(action) })
                     }
@@ -4800,7 +4801,7 @@ private fun EditorRecents(actions: EditorEmptyActions, modifier: Modifier = Modi
             if (actions.recents.isEmpty()) {
                 // No "open or create a folder to get started": that is the row of buttons directly above.
                 Text(
-                    text = "No recent projects yet.",
+                    text = "暂无最近的项目。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -4823,15 +4824,15 @@ private fun EditorRecents(actions: EditorEmptyActions, modifier: Modifier = Modi
 /**
  * Identity line for the cold-start screen: the app's mark, its name, and its version.
  *
- * It replaces an "Open a project" title that sat on top of a row of buttons already saying exactly
- * that - including one labelled "Open Folder" - under a copy of the same folder icon those buttons
+ * It replaces an "打开项目" title that sat on top of a row of buttons already saying exactly
+ * that - including one labelled "打开文件夹" - under a copy of the same folder icon those buttons
  * and every recent row use. This is the only screen the app gets to itself, so it says which build
  * you are in instead of repeating the controls below it.
  *
  * The mark is the launcher icon's foreground layer alone, without the tile a launcher masks it
  * into: on a page this is a logo, not an app entry in a grid. Both it and the name come from the
  * installed icon rather than a fixed resource, so each build answers for itself - debug draws the
- * whole mark hollow and says "JCode (debug)", beta hollows out the J. The version is otherwise
+ * whole mark hollow and says "JCode（调试版）", beta hollows out the J. The version is otherwise
  * only reachable through Settings > Updates.
  */
 @Composable
@@ -4868,7 +4869,7 @@ private fun EditorStartHeader() {
         Column {
             Text(label, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(
-                text = "Version ${BuildConfig.VERSION_NAME}",
+                text = "版本 ${BuildConfig.VERSION_NAME}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -4939,7 +4940,7 @@ private fun RecentRow(recent: RecentEntity, onOpen: () -> Unit, onExport: () -> 
                     IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(32.dp)) {
                         Icon(
                             painter = jcIcon(JCodeIcon.MoreVert),
-                            contentDescription = "Recent project actions",
+                            contentDescription = "最近项目的操作",
                             modifier = Modifier.size(IconSize.md),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -4948,7 +4949,7 @@ private fun RecentRow(recent: RecentEntity, onOpen: () -> Unit, onExport: () -> 
                         expanded = menuOpen,
                         onDismissRequest = { menuOpen = false },
                         listActions = listOf(
-                            ContextAction(JCodeIcon.Save, "Export to storage") { onExport() },
+                            ContextAction(JCodeIcon.Save, "导出到存储空间") { onExport() },
                         ),
                     )
                 }
@@ -4966,7 +4967,7 @@ private fun recentDisplayName(recent: RecentEntity): String = when (recent.kind)
 
 private fun recentSubtitle(recent: RecentEntity): String = when (recent.kind) {
     ProjectKind.Local -> File(recent.uri).parent ?: recent.uri
-    ProjectKind.Saf -> "External folder"
+    ProjectKind.Saf -> "外部文件夹"
 }
 
 /** A live terminal instance shown in the Terminal-button long-press list. */
@@ -5027,7 +5028,7 @@ private fun WorkbenchRightSidebar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Tabs scroll within their own weighted area so the trailing actions below stay
-                // pinned to the right edge — no scrolling to reach "Hide". Butted together with no
+                // pinned to the right edge — no scrolling to reach "隐藏". Butted together with no
                 // gap, because a tab strip's tabs share edges; the gap is what made these read as
                 // buttons that happened to be in a row.
                 Row(
@@ -5074,7 +5075,7 @@ private fun WorkbenchRightSidebar(
                 }
                 WorkbenchIconActionButton(
                     icon = jcIcon(JCodeIcon.Close),
-                    contentDescription = "Close",
+                    contentDescription = "关闭",
                     onClick = onHide,
                 )
             }
@@ -5148,7 +5149,7 @@ private fun WorkspaceSplitHandle(onDrag: (Float) -> Unit, onDragStopped: () -> U
                 state = rememberDraggableState { delta -> onDragState.value(delta) },
                 onDragStopped = { onDragStopped() },
             )
-            .semantics { contentDescription = "Resize editor and panel" },
+            .semantics { contentDescription = "调整编辑器和面板大小" },
         contentAlignment = Alignment.Center,
     ) {
         // A short bar at the midpoint, so the strip reads as something to grab rather than a border.
@@ -5232,7 +5233,7 @@ private fun VsixTitleActionsMenu(extension: dev.blamspot.jcode.feature.marketpla
     Box {
         WorkbenchIconActionButton(
             icon = jcIcon(JCodeIcon.MoreVert),
-            contentDescription = "${extension.name} actions",
+            contentDescription = "${extension.name} 的操作",
             onClick = {
                 canPasteImage = hasClipboardImage(context)
                 expanded = true
@@ -5245,7 +5246,7 @@ private fun VsixTitleActionsMenu(extension: dev.blamspot.jcode.feature.marketpla
                 // Ctrl+V covers a hardware keyboard; this is the same paste for touch, where
                 // Chromium's own menu offers nothing for an image on the clipboard.
                 if (canPasteImage) {
-                    add(ContextAction(JCodeIcon.Paste, "Paste image") { session.pasteClipboardImage() })
+                    add(ContextAction(JCodeIcon.Paste, "粘贴图片") { session.pasteClipboardImage() })
                 }
                 actions.forEach { action ->
                     add(ContextAction(contributedMenuIcon(action.codicon), action.title) { session.execute(action.id) })
@@ -5335,11 +5336,11 @@ private fun WorkbenchRightSidebarBody(
 
 /**
  * Prompt for closing editor tab(s) that have unsaved changes. Save persists then closes; Discard closes
- * and loses the edits; the third action differs by context — "Close Saved" for a tab close (keep the
- * dirty tabs open, close the already-saved ones) or "Cancel" for a workspace/project switch (where the
+ * and loses the edits; the third action differs by context — "关闭已保存" for a tab close (keep the
+ * dirty tabs open, close the already-saved ones) or "取消" for a workspace/project switch (where the
  * tabs can't be kept). Dismissing keeps everything as-is.
  *
- * The third action is omitted entirely when the caller passes no label/handler: "Close Saved" has
+ * The third action is omitted entirely when the caller passes no label/handler: "关闭已保存" has
  * nothing to close unless the closing set also holds already-saved tabs, which only a bulk close
  * (Close others / Close to the right) produces.
  */
@@ -5351,33 +5352,33 @@ private fun UnsavedChangesDialog(
     onDiscard: () -> Unit,
     onThird: (() -> Unit)?,
     onDismiss: () -> Unit,
-    // When set, a visible "Cancel" button that aborts the close (keeping everything). Omitted where the
+    // When set, a visible "取消" button that aborts the close (keeping everything). Omitted where the
     // third button already serves as Cancel, so the row never shows two cancels.
     onCancel: (() -> Unit)? = null,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Unsaved changes") },
+        title = { Text("未保存的更改") },
         text = {
             Text(
-                if (titles.size == 1) "\"${titles.first()}\" has unsaved changes."
-                else "These files have unsaved changes:\n" + titles.joinToString("\n") { "•  $it" },
+                if (titles.size == 1) "「${titles.first()}」有未保存的更改。"
+                else "以下文件有未保存的更改：\n" + titles.joinToString("\n") { "•  $it" },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
-        // Destructive "Discard" is kept out of the rightmost (reflexive-tap) slot; "Save" is the safe
+        // Destructive "放弃" is kept out of the rightmost (reflexive-tap) slot; "保存" is the safe
         // primary at the end.
         confirmButton = {
-            CompactDestructiveButton(text = "Discard", onClick = onDiscard)
+            CompactDestructiveButton(text = "放弃", onClick = onDiscard)
             if (thirdLabel != null && onThird != null) {
                 CompactOutlinedButton(text = thirdLabel, onClick = onThird)
             }
-            CompactFilledButton(text = "Save", onClick = onSave)
+            CompactFilledButton(text = "保存", onClick = onSave)
         },
         dismissButton = {
             onCancel?.let { cancel ->
-                CompactOutlinedButton(text = "Cancel", onClick = cancel)
+                CompactOutlinedButton(text = "取消", onClick = cancel)
             }
         },
     )
@@ -5398,24 +5399,24 @@ private fun TerminalRunningDialog(
 ) {
     AlertDialog(
         onDismissRequest = onCancel,
-        title = { Text(if (runningNames.size == 1) "Running process" else "Running processes") },
+        title = { Text(if (runningNames.size == 1) "正在运行的进程" else "正在运行的进程") },
         text = {
             Text(
-                "Still running:\n" + runningNames.joinToString("\n") { "•  $it" },
+                "以下进程仍在运行：\n" + runningNames.joinToString("\n") { "•  $it" },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
-        // Destructive "Kill" is kept out of the rightmost (reflexive-tap) slot; "Cancel" is the safe
+        // Destructive "终止" is kept out of the rightmost (reflexive-tap) slot; "取消" is the safe
         // default at the end.
         confirmButton = {
-            CompactDestructiveButton(text = "Kill", onClick = onKill)
+            CompactDestructiveButton(text = "终止", onClick = onKill)
             CompactOutlinedButton(
-                text = "Close Unbusy",
+                text = "关闭空闲进程",
                 onClick = onCloseUnbusy,
                 enabled = closeUnbusyEnabled,
             )
-            CompactFilledButton(text = "Cancel", onClick = onCancel)
+            CompactFilledButton(text = "取消", onClick = onCancel)
         },
         dismissButton = {},
     )
@@ -5505,7 +5506,7 @@ private fun TerminalSidebarContent(
                             if (isPinned) {
                                 Icon(
                                     painter = jcIcon(JCodeIcon.Pin),
-                                    contentDescription = "Pinned",
+                                    contentDescription = "已固定",
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(IconSize.xxs),
                                 )
@@ -5533,7 +5534,7 @@ private fun TerminalSidebarContent(
                             // tab to switch can't close it). A plain clickable Box keeps the touch target
                             // tight (18dp) — an IconButton's 48dp minimum would spill over the title.
                             if (isActive && !isPinned && !LocalTabCloseButtonSetting.current.hidden) {
-                                JcTooltip("Close terminal") {
+                                JcTooltip("关闭终端") {
                                     Box(
                                         modifier = Modifier
                                             .size(18.dp)
@@ -5554,7 +5555,7 @@ private fun TerminalSidebarContent(
                             expanded = menuForId == sessionId,
                             onDismissRequest = { menuForId = null },
                             quickActions = listOf(
-                                ContextAction(JCodeIcon.Close, "Close") { requestCloseTerminals(listOf(sessionId)) },
+                                ContextAction(JCodeIcon.Close, "关闭") { requestCloseTerminals(listOf(sessionId)) },
                             ),
                             listActions = buildList {
                                 if (!isRelocated) {
@@ -5562,20 +5563,20 @@ private fun TerminalSidebarContent(
                                         onSetTerminalPinned(sessionId, !isPinned)
                                     })
                                 }
-                                add(ContextAction(JCodeIcon.Clear, "Clear") {
+                                add(ContextAction(JCodeIcon.Clear, "清除") {
                                     terminalSessionFor(sessionId)?.pty?.write(byteArrayOf(0x0C))
                                 })
-                                add(ContextAction(JCodeIcon.Close, "Close others") {
+                                add(ContextAction(JCodeIcon.Close, "关闭其他") {
                                     requestCloseTerminals(terminalSessionIds.filter { it != sessionId && it !in pinnedTerminalIds })
                                 })
-                                add(ContextAction(JCodeIcon.Close, "Close all") {
+                                add(ContextAction(JCodeIcon.Close, "全部关闭") {
                                     requestCloseTerminals(terminalSessionIds.filter { it !in pinnedTerminalIds })
                                 })
                             },
                         )
                     }
                 }
-                JcTooltip("New terminal") {
+                JcTooltip("新建终端") {
                     IconButton(
                         onClick = onAddTerminalSession,
                         modifier = Modifier.size(width = 32.dp, height = 30.dp),
@@ -5608,20 +5609,20 @@ private fun TerminalSidebarContent(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Terminal unavailable",
+                    text = "终端不可用",
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Finish distro setup first, then open the terminal again.",
+                    text = "请先完成发行版设置，然后重新打开终端。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 FilledTonalButton(onClick = onOpenEnvironmentWizard) {
-                    Text("Open setup")
+                    Text("打开环境设置")
                 }
             }
         } else if (terminalSessionIds.isNotEmpty() && activeTerminalPty != null) {
@@ -5705,14 +5706,14 @@ private fun TerminalSidebarContent(
                         offset = menuOffset,
                         quickActions = buildList {
                             if (req.view.hasSelection()) {
-                                add(ContextAction(JCodeIcon.Copy, "Copy") { req.view.contextCopy() })
+                                add(ContextAction(JCodeIcon.Copy, "复制") { req.view.contextCopy() })
                             }
                             add(ContextAction(JCodeIcon.Paste, "Paste") { req.view.contextPaste() })
                         },
                         listActions = listOf(
-                            ContextAction(JCodeIcon.Cursor, "Select Text") { req.view.beginTextSelection() },
-                            ContextAction(JCodeIcon.SelectAll, "Select all") { req.view.contextSelectAll() },
-                            ContextAction(JCodeIcon.Clear, "Clear") { req.view.contextClear() },
+                            ContextAction(JCodeIcon.Cursor, "选择文本") { req.view.beginTextSelection() },
+                            ContextAction(JCodeIcon.SelectAll, "全选") { req.view.contextSelectAll() },
+                            ContextAction(JCodeIcon.Clear, "清除") { req.view.contextClear() },
                         ),
                     )
                 }
@@ -5734,18 +5735,18 @@ private fun TerminalSidebarContent(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
                     )
                     Text(
-                        text = "No terminal sessions",
+                        text = "没有终端会话",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     )
                     Text(
-                        text = "Tap + to start a new terminal",
+                        text = "点击 + 启动新终端",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
                     )
                     selectedProject?.distroBindTarget?.let { target ->
                         Text(
-                            text = "Workspace target: $target",
+                            text = "工作区目标：$target",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
                         )
@@ -5764,7 +5765,7 @@ private fun OutputSidebarContent(
     Box(modifier = modifier.fillMaxSize()) {
         if (lines.isEmpty()) {
             Text(
-                text = "Build logs and tool output will appear here.",
+                text = "构建日志和工具输出将显示在此处。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(Space.md),
@@ -5802,7 +5803,7 @@ private fun OutputSidebarContent(
             Box(modifier = Modifier.align(Alignment.TopEnd).padding(Space.xs)) {
                 WorkbenchIconActionButton(
                     icon = jcIcon(JCodeIcon.Clear),
-                    contentDescription = "Clear output",
+                    contentDescription = "清除输出",
                     onClick = { OutputLog.clear() },
                 )
             }
@@ -5871,7 +5872,7 @@ private fun WorkbenchBackHandler(
                     }
                 } else {
                     lastBackAt = now
-                    scope.launch { snackbarHostState.showSnackbar("Press back again to exit") }
+                    scope.launch { snackbarHostState.showSnackbar("再按一次返回键退出") }
                 }
             }
         }
@@ -5879,15 +5880,15 @@ private fun WorkbenchBackHandler(
     exitPromptItems?.let { items ->
         AlertDialog(
             onDismissRequest = { exitPromptItems = null },
-            title = { Text("Exit JCode?") },
+            title = { Text("退出 JCode？") },
             text = {
-                Text("Still running:\n" + items.joinToString("\n") { "•  $it" })
+                Text("以下进程仍在运行：\n" + items.joinToString("\n") { "•  $it" })
             },
-            // Destructive "Terminate & exit" is kept out of the rightmost (reflexive-tap) slot, the
+            // Destructive "终止并退出" is kept out of the rightmost (reflexive-tap) slot, the
             // same way the unsaved-changes and running-process prompts order theirs.
             confirmButton = {
                 CompactDestructiveButton(
-                    text = "Terminate & exit",
+                    text = "终止并退出",
                     onClick = {
                         exitPromptItems = null
                         onTerminateAll()
@@ -5895,12 +5896,12 @@ private fun WorkbenchBackHandler(
                     },
                 )
                 CompactFilledButton(
-                    text = "Run in background",
+                    text = "在后台运行",
                     onClick = { exitPromptItems = null; activity?.moveTaskToBack(true) },
                 )
             },
             dismissButton = {
-                CompactOutlinedButton(text = "Cancel", onClick = { exitPromptItems = null })
+                CompactOutlinedButton(text = "取消", onClick = { exitPromptItems = null })
             },
         )
     }

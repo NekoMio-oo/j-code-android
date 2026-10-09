@@ -88,7 +88,7 @@ class DebugSession(
         try {
             val escaped = adapterCommand.replace("'", "'\\''")
             transport = transportFactory("exec bash --noprofile --norc -c '$escaped'")
-                ?: throw DebugException("Could not start debug adapter")
+                ?: throw DebugException("无法启动调试适配器")
             readJob = scope.launch { readLoop() }
             _state.value = DebugState.INITIALIZING
 
@@ -220,7 +220,7 @@ class DebugSession(
      */
     private fun onAdapterGone(detail: String?) {
         val why = detail?.let { " ($it)" } ?: ""
-        val message = "The debug adapter exited before answering$why."
+        val message = "调试适配器在应答前退出$why。"
         val state = _state.value
         val live = state != DebugState.TERMINATED && state != DebugState.DISCONNECTED &&
             state != DebugState.ERROR
@@ -273,7 +273,7 @@ class DebugSession(
                 if (json.optBoolean("success", false)) {
                     deferred?.complete(json.optJSONObject("body") ?: JSONObject())
                 } else {
-                    deferred?.completeExceptionally(DebugException(json.optString("message", "DAP request failed")))
+                    deferred?.completeExceptionally(DebugException(json.optString("message", "DAP 请求失败")))
                 }
             }
             "event" -> handleEvent(json.optString("event"), json.optJSONObject("body") ?: JSONObject())
@@ -302,7 +302,7 @@ class DebugSession(
                 scope.launch { runCatching { sendResponse(requestSeq, command, success = true) } }
             }
             else -> scope.launch {
-                runCatching { sendResponse(requestSeq, command, success = false, message = "$command is not supported") }
+                runCatching { sendResponse(requestSeq, command, success = false, message = "$command 不受支持") }
             }
         }
     }

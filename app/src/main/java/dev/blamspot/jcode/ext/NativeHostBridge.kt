@@ -98,7 +98,7 @@ internal class NativeHostBridge(
         if (workdir != null) payload.put("workdir", workdir)
         if (env.isNotEmpty()) payload.put("env", JSONObject(env.toMap<String, Any>()))
         val data = call("exec.run", payload)
-            ?: return NativeExecResult(error = "the workbench could not run the command")
+            ?: return NativeExecResult(error = "工作台无法运行此命令")
         return NativeExecResult(
             stdout = data.optString("stdout"),
             stderr = data.optString("stderr"),

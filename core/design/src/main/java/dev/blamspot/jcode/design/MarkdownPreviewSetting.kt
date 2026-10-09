@@ -6,7 +6,7 @@ import androidx.compose.runtime.compositionLocalOf
 /**
  * Markdown preview options. [wrapInPortrait] (default on) wraps prose to the viewport as usual;
  * when off, a portrait preview lays out at landscape width — the screen height, honoring the
- * "Respect device cutout" setting — and pans horizontally, so wide tables/code read unbroken.
+ * "适配设备挖孔" setting — and pans horizontally, so wide tables/code read unbroken.
  */
 @Immutable
 class MarkdownPreviewSetting(

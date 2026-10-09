@@ -217,14 +217,14 @@ fun BrowserPage(modifier: Modifier = Modifier) {
                 enabled = BuiltinBrowser.canGoBack.value,
                 modifier = Modifier.size(30.dp),
             ) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "Back", modifier = Modifier.size(IconSize.md))
+                Icon(Icons.AutoMirrored.Rounded.ArrowBack, contentDescription = "返回", modifier = Modifier.size(IconSize.md))
             }
             IconButton(
                 onClick = { webView?.goForward() },
                 enabled = BuiltinBrowser.canGoForward.value,
                 modifier = Modifier.size(30.dp),
             ) {
-                Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = "Forward", modifier = Modifier.size(IconSize.md))
+                Icon(Icons.AutoMirrored.Rounded.ArrowForward, contentDescription = "前进", modifier = Modifier.size(IconSize.md))
             }
             IconButton(
                 onClick = { if (BuiltinBrowser.loading.value) webView?.stopLoading() else webView?.reload() },
@@ -232,7 +232,7 @@ fun BrowserPage(modifier: Modifier = Modifier) {
             ) {
                 Icon(
                     if (BuiltinBrowser.loading.value) Icons.Rounded.Close else Icons.Rounded.Refresh,
-                    contentDescription = if (BuiltinBrowser.loading.value) "Stop" else "Reload",
+                    contentDescription = if (BuiltinBrowser.loading.value) "停止" else "重新加载",
                     modifier = Modifier.size(IconSize.sm),
                 )
             }
@@ -250,7 +250,7 @@ fun BrowserPage(modifier: Modifier = Modifier) {
                         ) {
                             Icon(
                                 jcIcon(trust.icon),
-                                contentDescription = "Site information: ${trust.summary}",
+                                contentDescription = "网站信息：${trust.summary}",
                                 tint = trust.tint(),
                                 modifier = Modifier.size(IconSize.xs),
                             )
@@ -281,7 +281,7 @@ fun BrowserPage(modifier: Modifier = Modifier) {
                 IconButton(onClick = { menuOpen = true }, modifier = Modifier.size(30.dp)) {
                     Icon(
                         jcIcon(JCodeIcon.MoreVert),
-                        contentDescription = "More browser options",
+                        contentDescription = "更多浏览器选项",
                         modifier = Modifier.size(IconSize.md),
                     )
                 }
@@ -410,7 +410,7 @@ fun BrowserPage(modifier: Modifier = Modifier) {
                             BuiltinBrowser.favicon.value = icon
                         }
                         override fun onReceivedTitle(view: WebView, title: String?) {
-                            BuiltinBrowser.title.value = title?.ifBlank { "Browser" } ?: "Browser"
+                            BuiltinBrowser.title.value = title?.ifBlank { "浏览器" } ?: "浏览器"
                         }
                         override fun onConsoleMessage(msg: ConsoleMessage): Boolean {
                             BuiltinBrowser.addConsole(
@@ -462,23 +462,23 @@ private enum class SiteTrust(val icon: JCodeIcon, val summary: String, val detai
     Secure(
         JCodeIcon.Lock,
         "connection is secure",
-        "Encrypted between this device and the site. What was sent cannot be read or changed on the way.",
+        "此设备与网站之间已加密。传输中的数据无法被读取或篡改。",
     ),
     Insecure(
         JCodeIcon.LockOpen,
         "connection is not secure",
-        "Sent in the clear over HTTP. Anything on the network between here and the server can read it " +
-            "and change it — ordinary for a dev server on this machine, and worth noticing anywhere else.",
+        "通过 HTTP 明文发送。此处与服务器之间的网络上的任何人都可以读取" +
+            "并篡改它——对于本机上的开发服务器而言很平常，但在其他任何地方都值得留意。",
     ),
     Local(
         JCodeIcon.Files,
         "local file",
-        "Loaded from this device rather than fetched over a network.",
+        "从此设备加载，而非通过网络获取。",
     ),
     Blank(
         JCodeIcon.Browser,
         "no page loaded",
-        "Nothing has been loaded into this tab yet.",
+        "此选项卡尚未加载任何内容。",
     );
 
     @Composable
@@ -586,16 +586,16 @@ private fun SiteInfoPanel(
             }
             // Who says so. Only https has an answer, and it is the answer a padlock is shorthand for.
             webView?.certificate?.let { cert ->
-                SiteInfoRow("Issued to", cert.issuedTo?.cName?.ifBlank { host } ?: host)
-                SiteInfoRow("Issued by", cert.issuedBy?.oName?.ifBlank { "—" } ?: "—")
+                SiteInfoRow("颁发给", cert.issuedTo?.cName?.ifBlank { host } ?: host)
+                SiteInfoRow("颁发者", cert.issuedBy?.oName?.ifBlank { "—" } ?: "—")
                 SiteInfoRow("Expires", cert.validNotAfterDate?.let { DateFormat.getDateInstance().format(it) } ?: "—")
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = Space.sm))
             SiteInfoRow("Cookies", if (cookies == 0) "None" else "$cookies for this site")
-            SiteInfoRow("Site data", storage ?: "Reading…")
+            SiteInfoRow("网站数据", storage ?: "Reading…")
             TextButton(
                 onClick = {
-                    // This origin only. The overflow menu is where "forget everything" lives.
+                    // This origin only. The overflow menu is where "清除全部数据" lives.
                     runCatching { CookieManager.getInstance().getCookie(url) }.getOrNull()
                         ?.split(';')
                         ?.mapNotNull { it.substringBefore('=').trim().takeIf(String::isNotBlank) }
@@ -617,7 +617,7 @@ private fun SiteInfoPanel(
                 enabled = trust != SiteTrust.Blank,
                 modifier = Modifier.padding(top = Space.xxs),
             ) {
-                Text("Clear this site's data", style = MaterialTheme.typography.bodySmall)
+                Text("清除此网站的数据", style = MaterialTheme.typography.bodySmall)
             }
         }
     }
@@ -668,9 +668,9 @@ private fun BrowserMenu(
         listActions = listOf(
             ContextAction(
                 icon = JCodeIcon.Preview,
-                // The action, not the state: a row that reads "Desktop site" with no tick beside it
+                // The action, not the state: a row that reads "桌面版网站" with no tick beside it
                 // is a question about which of the two it is telling you.
-                label = if (desktop) "Request mobile site" else "Request desktop site",
+                label = if (desktop) "请求移动版网站" else "请求桌面版网站",
                 enabled = webView != null,
             ) {
                 BuiltinBrowser.desktopMode.value = !desktop
@@ -685,7 +685,7 @@ private fun BrowserMenu(
             },
             ContextAction(
                 icon = JCodeIcon.Refresh,
-                label = "Reload without cache",
+                label = "忽略缓存重新加载",
                 enabled = webView != null,
             ) {
                 // The one a dev server asks for by the hour: a preview that keeps serving last
@@ -695,7 +695,7 @@ private fun BrowserMenu(
             },
             ContextAction(
                 icon = JCodeIcon.Delete,
-                label = "Clear cookies and site data",
+                label = "清除 Cookie 和网站数据",
                 destructive = true,
                 enabled = webView != null,
             ) {
@@ -707,11 +707,11 @@ private fun BrowserMenu(
                 // localStorage shows on a page that is still the one it was drawn from.
                 webView?.reload()
             },
-            ContextAction(icon = JCodeIcon.Copy, label = "Copy URL", onClick = onCopyUrl),
-            ContextAction(icon = JCodeIcon.Open, label = "Open in system browser") {
+            ContextAction(icon = JCodeIcon.Copy, label = "复制 URL", onClick = onCopyUrl),
+            ContextAction(icon = JCodeIcon.Open, label = "在系统浏览器中打开") {
                 ProjectRunner.openInBrowser(context, BuiltinBrowser.currentUrl.value)
             },
-            ContextAction(icon = JCodeIcon.DevTools, label = "DevTools") {
+            ContextAction(icon = JCodeIcon.DevTools, label = "开发者工具") {
                 // The same signal a preview sends, which is what reveals the drawer panel; the
                 // browser tab it also focuses is the one already in front.
                 BuiltinBrowser.requestOpen()
@@ -764,7 +764,7 @@ private fun desktopScalePercent(view: WebView): Int {
 }
 
 /**
- * The other half of "Request desktop site": lay the page out at a desktop *width*.
+ * The other half of "请求桌面版网站": lay the page out at a desktop *width*.
  *
  * Swapping the user agent only changes what the server is told. The layout viewport stays the phone's
  * — measured on-device: with the desktop UA in place, `innerWidth` was still 468 — so a site that reads

@@ -24,11 +24,11 @@ fun ManagerListRow(
     name: String,
     description: String,
     /** Null for a row that is not an installable thing — a manager the list only opens. Every one of
-     *  the three states would be a lie about it, and "Not installed" is the one it would tell. */
+     *  the three states would be a lie about it, and "未安装" is the one it would tell. */
     status: ManagerItemStatus?,
     onClick: () -> Unit,
     checking: Boolean = false,
-    checkingLabel: String = "Checking…",
+    checkingLabel: String = "正在检查…",
     modifier: Modifier = Modifier,
     leading: (@Composable () -> Unit)? = null,
     /** Shown just before the status chip, for a row that needs a word about what it is. */
@@ -57,7 +57,7 @@ fun ManagerListRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 // Two lines, because one loses the sentence. The status chip beside this column is
-                // as wide as its longest word ("Update available"), so a single line left roughly
+                // as wide as its longest word ("有可用更新"), so a single line left roughly
                 // three words of a description before the ellipsis — every row read the same.
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,

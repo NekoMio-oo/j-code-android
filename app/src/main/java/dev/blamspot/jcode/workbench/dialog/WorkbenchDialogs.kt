@@ -60,7 +60,7 @@ internal fun OpenFolderTypeDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Set folder type") },
+        title = { Text("设置文件夹类型") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Space.md)) {
                 Text(
@@ -70,13 +70,13 @@ internal fun OpenFolderTypeDialog(
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     TypeOption(
-                        label = "Project",
+                        label = "项目",
                         selected = !isWorkspace,
                         onSelect = { isWorkspace = false },
                         modifier = Modifier.weight(1f),
                     )
                     TypeOption(
-                        label = "Workspace",
+                        label = "工作区",
                         selected = isWorkspace,
                         onSelect = { isWorkspace = true },
                         modifier = Modifier.weight(1f),
@@ -85,10 +85,10 @@ internal fun OpenFolderTypeDialog(
             }
         },
         confirmButton = {
-            CompactFilledButton(text = "Open", onClick = { onConfirm(isWorkspace) })
+            CompactFilledButton(text = "打开", onClick = { onConfirm(isWorkspace) })
         },
         dismissButton = {
-            CompactOutlinedButton(text = "Cancel", onClick = onDismiss)
+            CompactOutlinedButton(text = "取消", onClick = onDismiss)
         },
     )
 }
@@ -124,7 +124,7 @@ internal fun ImportProgressDialog(progress: ImportProgress) {
                 verticalArrangement = Arrangement.spacedBy(Space.md),
             ) {
                 Text(
-                    text = if (progress.phase == ImportPhase.Scanning) "Scanning folder" else "Importing folder",
+                    text = if (progress.phase == ImportPhase.Scanning) "正在扫描文件夹" else "正在导入文件夹",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -139,14 +139,14 @@ internal fun ImportProgressDialog(progress: ImportProgress) {
                     val fraction = (progress.done.toFloat() / progress.total).coerceIn(0f, 1f)
                     LinearProgressIndicator(progress = { fraction }, modifier = Modifier.fillMaxWidth())
                     Text(
-                        text = "${progress.done} / ${progress.total} files",
+                        text = "${progress.done} / ${progress.total} 个文件",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 } else {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     Text(
-                        text = "Reading contents…",
+                        text = "正在读取内容…",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -168,16 +168,16 @@ internal fun PostCloneDialog(
 ) {
     AlertDialog(
         onDismissRequest = onAdd,
-        title = { Text("Cloned '$projectName'") },
+        title = { Text("已克隆“$projectName”") },
         text = {
             Text(
-                "It was added to this workspace. Open it now, or keep it in the workspace to open later?",
+                "已将其添加到此工作区。现在打开，还是保留在工作区中稍后打开？",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
-        confirmButton = { CompactFilledButton(text = "Open folder", onClick = onOpen) },
-        dismissButton = { CompactOutlinedButton(text = "Add to workspace", onClick = onAdd) },
+        confirmButton = { CompactFilledButton(text = "打开文件夹", onClick = onOpen) },
+        dismissButton = { CompactOutlinedButton(text = "添加到工作区", onClick = onAdd) },
     )
 }
 
@@ -237,16 +237,16 @@ internal fun NewItemDialog(
     // Left column: folder type + name. Right column (Project): template list; (Workspace): a hint.
     val primarySection: @Composable () -> Unit = {
         if (allowWorkspaceType) {
-            Text("Folder type", style = MaterialTheme.typography.labelLarge)
+            Text("文件夹类型", style = MaterialTheme.typography.labelLarge)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TypeOption(
-                    label = "Project",
+                    label = "项目",
                     selected = !isWorkspace,
                     onSelect = { isWorkspace = false },
                     modifier = Modifier.weight(1f),
                 )
                 TypeOption(
-                    label = "Workspace",
+                    label = "工作区",
                     selected = isWorkspace,
                     onSelect = { isWorkspace = true },
                     modifier = Modifier.weight(1f),
@@ -254,23 +254,23 @@ internal fun NewItemDialog(
             }
         }
         SettingsTextFieldRow(
-            label = "Name",
+            label = "名称",
             value = name,
             onValueChange = { name = it },
-            placeholder = if (isWorkspace) "Workspace name" else "Project name",
+            placeholder = if (isWorkspace) "工作区名称" else "项目名称",
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
         )
     }
     val detailSection: @Composable () -> Unit = {
         if (isWorkspace) {
-            Text("Workspace", style = MaterialTheme.typography.labelLarge)
+            Text("工作区", style = MaterialTheme.typography.labelLarge)
             Text(
-                "A workspace is a container folder that holds multiple projects.",
+                "工作区是一个可容纳多个项目的容器文件夹。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
-            Text("Template", style = MaterialTheme.typography.labelLarge)
+            Text("模板", style = MaterialTheme.typography.labelLarge)
             templates.forEach { template ->
                 TemplateOption(
                     template = template,
@@ -288,7 +288,7 @@ internal fun NewItemDialog(
             Text(
                 when {
                     step == 1 && selectedTemplate != null -> selectedTemplate.name
-                    !allowWorkspaceType -> "New Project"
+                    !allowWorkspaceType -> "新建项目"
                     else -> "New"
                 },
             )
@@ -300,7 +300,7 @@ internal fun NewItemDialog(
                     verticalArrangement = Arrangement.spacedBy(Space.lg),
                 ) {
                     Text(
-                        "Configure this project, then create it.",
+                        "先配置此项目，然后创建它。",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -347,7 +347,7 @@ internal fun NewItemDialog(
             val gallery = selectedTemplate?.gallery.orEmpty()
             val handsOff = !isWorkspace && gallery.isNotBlank() && selectedTemplate?.extensionId?.isNotBlank() == true
             CompactFilledButton(
-                text = if (handsOff || (step == 0 && hasInputs)) "Next" else "Create",
+                text = if (handsOff || (step == 0 && hasInputs)) "下一步" else "创建",
                 onClick = {
                     if (handsOff) {
                         // The extension takes it from here: it draws the variants, asks whatever it
@@ -373,7 +373,7 @@ internal fun NewItemDialog(
         },
         dismissButton = {
             CompactOutlinedButton(
-                text = if (step == 1) "Back" else "Cancel",
+                text = if (step == 1) "返回" else "取消",
                 onClick = { if (step == 1) step = 0 else onDismiss() },
             )
         },
@@ -448,7 +448,7 @@ private fun TemplateOption(
                 )
             }
             if (template.requires.isNotEmpty()) {
-                val requires = "Requires: ${template.requires.joinToString(", ")}"
+                val requires = "需要：${template.requires.joinToString(", ")}"
                 Text(
                     if (missing.isEmpty()) requires
                     else "$requires — ${missing.joinToString(", ")} will be installed during setup",

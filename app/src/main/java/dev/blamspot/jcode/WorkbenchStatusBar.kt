@@ -52,7 +52,7 @@ import java.io.File
 internal data class EditorMetrics(
     val line: Int = 1,
     val column: Int = 1,
-    val language: String = "Plain Text",
+    val language: String = "纯文本",
     val encoding: String = "UTF-8",
     val lineEnding: String = "LF",
 )
@@ -229,7 +229,7 @@ private fun EncodingCell(encoding: String) {
                 onClick = { menu = false },
             )
             DropdownMenuItem(
-                text = { Text("Other encodings aren't supported yet", style = MaterialTheme.typography.bodySmall) },
+                text = { Text("暂不支持其他编码", style = MaterialTheme.typography.bodySmall) },
                 enabled = false,
                 onClick = {},
             )
@@ -279,7 +279,7 @@ internal fun rememberEditorMetrics(activeTab: EditorTab?): EditorMetrics {
     val editorState = activeTab?.editorState
     if (editorState == null) {
         // No file backing (no tab, or a page tab such as Settings): report defaults only.
-        return EditorMetrics(language = activeTab?.languageDescriptor?.name ?: "Plain Text")
+        return EditorMetrics(language = activeTab?.languageDescriptor?.name ?: "纯文本")
     }
 
     val carets by editorState.carets.collectAsStateWithLifecycle()
@@ -304,7 +304,7 @@ internal fun rememberEditorMetrics(activeTab: EditorTab?): EditorMetrics {
     return EditorMetrics(
         line = line + 1,
         column = column + 1,
-        language = activeTab.languageDescriptor?.name ?: "Plain Text",
+        language = activeTab.languageDescriptor?.name ?: "纯文本",
         encoding = "UTF-8",
         lineEnding = lineEnding,
     )

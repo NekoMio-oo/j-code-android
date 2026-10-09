@@ -21,38 +21,38 @@ import androidx.compose.ui.unit.dp
 // (top-to-bottom) populates the map before the bundle reads it.
 
 private val lineIcons: Map<JCodeIcon, ImageVector> = mapOf(
-    JCodeIcon.Add to icon("Add") {
+    JCodeIcon.Add to icon("添加") {
         strokePath { hLine(4f, 20f, 12f); vLine(4f, 20f, 12f) }
     },
-    JCodeIcon.Close to icon("Close") {
+    JCodeIcon.Close to icon("关闭") {
         strokePath { moveTo(6f, 6f); lineTo(18f, 18f); moveTo(18f, 6f); lineTo(6f, 18f) }
     },
-    JCodeIcon.Run to icon("Run") {
+    JCodeIcon.Run to icon("运行") {
         fillPath { moveTo(7f, 5f); lineTo(7f, 19f); lineTo(19f, 12f); close() }
     },
-    JCodeIcon.Stop to icon("Stop") {
+    JCodeIcon.Stop to icon("停止") {
         fillPath { moveTo(7f, 7f); lineTo(17f, 7f); lineTo(17f, 17f); lineTo(7f, 17f); close() }
     },
-    JCodeIcon.Terminal to icon("Terminal") {
+    JCodeIcon.Terminal to icon("终端") {
         strokePath {
             moveTo(3f, 5f); lineTo(21f, 5f); lineTo(21f, 19f); lineTo(3f, 19f); close()
             moveTo(7f, 10f); lineTo(10f, 12.5f); lineTo(7f, 15f)
             moveTo(12f, 15f); lineTo(16f, 15f)
         }
     },
-    JCodeIcon.Search to icon("Search") {
+    JCodeIcon.Search to icon("搜索") {
         strokePath {
             circle(11f, 11f, 5.5f)
             moveTo(15.5f, 15.5f); lineTo(20f, 20f)
         }
     },
-    JCodeIcon.Settings to icon("Settings") {
+    JCodeIcon.Settings to icon("设置") {
         strokePath {
             hLine(4f, 20f, 7f); hLine(4f, 20f, 12f); hLine(4f, 20f, 17f)
         }
         fillPath { circle(9f, 7f, 2f); circle(15f, 12f, 2f); circle(8f, 17f, 2f) }
     },
-    JCodeIcon.Extensions to icon("Extensions") {
+    JCodeIcon.Extensions to icon("扩展") {
         strokePath {
             box(4f, 4f, 10f, 10f)
             box(14f, 4f, 20f, 10f)
@@ -127,7 +127,7 @@ private val lineIcons: Map<JCodeIcon, ImageVector> = mapOf(
 private val jcodeLineIconSet = UiIconSet.ofVectors(
     id = "jcode-line",
     name = "JCode Line",
-    description = "Custom minimal line icons.",
+    description = "自定义极简线条图标。",
     overrides = lineIcons,
     fallback = defaultUiIconSet,
 )

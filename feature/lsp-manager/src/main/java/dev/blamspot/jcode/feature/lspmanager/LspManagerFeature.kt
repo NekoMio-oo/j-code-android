@@ -39,7 +39,7 @@ object LspManagerFeature {
             busyLabel = when (state.runningAction.takeIf { running }) {
                 LspCatalogAction.Install -> "Installing…"
                 LspCatalogAction.Uninstall -> "Removing…"
-                null -> "Checking…"
+                null -> "正在检查…"
             },
             // A status sweep across the whole catalog is background work — it must not freeze the
             // page's actions. Only an action actually running does that, and the service serializes

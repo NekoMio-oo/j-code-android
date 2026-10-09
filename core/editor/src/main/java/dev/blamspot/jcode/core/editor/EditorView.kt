@@ -51,10 +51,10 @@ data class CompletionAnchor(
 
 /** Language-aware context actions (resolved by the host; semantic ones need a language server). */
 enum class EditorLanguageAction(val label: String) {
-    GoToDefinition("Go to Definition"),
-    FindReferences("Find References"),
-    RenameSymbol("Rename Symbol"),
-    FormatDocument("Format Document"),
+    GoToDefinition("转到定义"),
+    FindReferences("查找引用"),
+    RenameSymbol("重命名符号"),
+    FormatDocument("格式化文档"),
 }
 
 /**
@@ -332,7 +332,7 @@ class EditorView @JvmOverloads constructor(
         removeCallbacks(flingRunnable)
     }
 
-    // --- text-selection handles ("Select Text" in the context menu) -----------------------------
+    // --- text-selection handles ("选择文本" in the context menu) -----------------------------
     // While on, two draggable teardrop anchors mark the selection ends; dragging one adjusts that
     // end while the other stays pinned. Cleared when the selection collapses, the text changes, or
     // the state detaches.
@@ -564,7 +564,7 @@ class EditorView @JvmOverloads constructor(
         val snapshot = state.snapshot.value
         val targetLine = line.coerceIn(0, max(0, snapshot.lineCount - 1))
         // Clamp the column to the target line's own byte range so an over-long column (e.g. a
-        // hand-typed "Go to Line" of 5:999) snaps to the line end instead of walking past the
+        // hand-typed "转到行" of 5:999) snaps to the line end instead of walking past the
         // newline onto a later line. lineAt returns [start, end) excluding the trailing newline.
         val (lineStart, lineEnd) = snapshot.lineAt(targetLine)
         val offset = (lineStart + column.coerceAtLeast(0)).coerceIn(lineStart, lineEnd)
@@ -902,7 +902,7 @@ class EditorView @JvmOverloads constructor(
         runBlocking { state.setSelection(listOf(Caret(dragFixedOffset, moved))) }
     }
 
-    /** Turn on the draggable selection handles ("Select Text" in the context menu). Preserves an
+    /** Turn on the draggable selection handles ("选择文本" in the context menu). Preserves an
      *  existing selection; otherwise selects the word at the caret, falling back to the caret's line. */
     fun beginTextSelection() {
         val state = editorState ?: return

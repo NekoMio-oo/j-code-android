@@ -48,12 +48,12 @@ object SdkManagerFeature {
             status = statusOf(entry.id, state),
             busy = state.checking || running || prerequisite,
             busyLabel = when {
-                prerequisite -> "Installing ${prerequisiteName ?: "required tools"}…"
+                prerequisite -> "正在安装${prerequisiteName ?: "所需工具"}…"
                 else -> when (state.runningAction.takeIf { running }) {
                     SdkCatalogAction.Install -> "Installing…"
                     SdkCatalogAction.Uninstall -> "Removing…"
                     SdkCatalogAction.Use -> "Switching…"
-                    null -> "Checking…"
+                    null -> "正在检查…"
                 }
             },
             // A status sweep across the whole catalog is background work — it must not freeze the

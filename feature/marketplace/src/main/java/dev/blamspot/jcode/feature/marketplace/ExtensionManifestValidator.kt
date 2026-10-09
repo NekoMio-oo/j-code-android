@@ -35,16 +35,16 @@ object ExtensionManifestValidator {
         fun info(msg: String, path: String? = null) = issues.add(ManifestIssue(ManifestIssue.Severity.Info, msg, path))
 
         // --- identity ---
-        if (ext.version.isNullOrBlank()) warn("No `version` — updates and marketplace publishing need one.", "version")
+        if (ext.version.isNullOrBlank()) warn("未提供 `version` —— 更新和扩展市场发布都需要它。", "version")
         if (ext.name == ext.id) warn("`name` equals `id` — set a human-readable display name.", "name")
         if (ext.type == ExtensionType.Unknown) {
-            warn("Unrecognized `type` — falls back to a generic extension (no type-specific surfaces).", "type")
+            warn("无法识别的 `type` —— 将回退为通用扩展（无特定类型界面）。", "type")
         }
 
         // --- unknown top-level keys (typos that silently drop a whole section) ---
         val rawMap = runCatching { parseYamlMapping(File(ext.dir, "extension.yaml").readText()) }.getOrNull()
         rawMap?.keys?.forEach { key ->
-            if (key !in KNOWN_TOP_LEVEL) warn("Unknown top-level key `$key` — ignored (typo?).", key)
+            if (key !in KNOWN_TOP_LEVEL) warn("未知的顶层键 `$key` —— 已忽略（拼写错误？）。", key)
         }
         // A typo'd entry.ui resolves to webUiEntry=null (the installer only sets it when the file
         // exists), so check the RAW value against disk to actually catch the broken path.
@@ -59,14 +59,14 @@ object ExtensionManifestValidator {
         }
         ext.apiCapabilities.forEach { cap ->
             if (cap !in KNOWN_CAPABILITIES) {
-                warn("Unknown API capability `$cap` (known: ${KNOWN_CAPABILITIES.joinToString(", ")}).", "api.capabilities")
+                warn("未知的 API 能力 `$cap`（已知：${KNOWN_CAPABILITIES.joinToString(", ")}）。", ")}).", "api.capabilities")
             }
         }
 
         // --- languages ---
         ext.languages.forEachIndexed { i, lang ->
             if (lang.fileExtensions.isEmpty()) {
-                warn("Language `${lang.languageId}` declares no file `extensions` — it can't match any file.", "languages[$i].extensions")
+                warn("语言 `${lang.languageId}` 未声明文件 `extensions` —— 无法匹配任何文件。", "languages[$i].extensions")
             }
         }
 
@@ -76,19 +76,19 @@ object ExtensionManifestValidator {
         // --- run presets ---
         ext.contributes.runConfigPresets.forEachIndexed { i, preset ->
             val base = "contributes.runConfigPresets[$i]"
-            if (preset.requires.isEmpty()) err("Preset `${preset.id}` has no `requires` globs — never offered.", "$base.requires")
-            if (preset.terminals.isEmpty()) err("Preset `${preset.id}` has no `terminals`.", "$base.terminals")
+            if (preset.requires.isEmpty()) err("预设 `${preset.id}` 缺少 `requires` 通配模式，因此不会被展示。", "$base.requires")
+            if (preset.terminals.isEmpty()) err("预设 `${preset.id}` 缺少 `terminals`。", "$base.terminals")
             // A build task is one command with nothing to poll, so both extras are dropped rather than
             // honoured — worth saying, since the manifest gives no other sign of it.
             if (preset.kind == RunPresetKind.Build) {
                 if (preset.terminals.size > 1) {
-                    warn("Preset `${preset.id}` is a build task, so only its first terminal runs.", "$base.terminals")
+                    warn("预设 `${preset.id}` 是构建任务，因此只有其第一个终端会运行。", "$base.terminals")
                 }
-                if (preset.readyPort > 0) warn("Preset `${preset.id}` is a build task; `readyPort` is ignored.", "$base.readyPort")
+                if (preset.readyPort > 0) warn("预设 `${preset.id}` 是构建任务；`readyPort` 会被忽略。", "$base.readyPort")
             }
             preset.requires.forEach { glob ->
                 if (runCatching { globToRegexOrNull(glob) }.getOrNull() == null) {
-                    warn("Preset `${preset.id}`: glob `$glob` is invalid.", "$base.requires")
+                    warn("预设 `${preset.id}`：通配模式 `$glob` 无效。", "$base.requires")
                 }
             }
             // {{fileN}}/{{dirN}} beyond the number of required files never resolves. Scan for the
@@ -105,7 +105,7 @@ object ExtensionManifestValidator {
                     val inner = cmd.substring(i + 2, end)
                     innerRe.matchEntire(inner)?.groupValues?.get(1)?.toIntOrNull()?.let { n ->
                         if (n < 1 || n > maxIndex) {
-                            warn("Preset `${preset.id}`: `{{$inner}}` has no matching require (there are $maxIndex).", "$base.terminals")
+                            warn("预设 `${preset.id}`：`{{$inner}}` 没有匹配的 require（共 $maxIndex 个）。", "$base.terminals")
                         }
                     }
                     i = cmd.indexOf("{{", end + 2)
@@ -115,7 +115,7 @@ object ExtensionManifestValidator {
 
         // --- deps (informational) ---
         val allDeps = ext.requires.sdks + ext.requires.lsps + ext.requires.dbg
-        if (allDeps.isNotEmpty()) info("Requires toolchains: ${allDeps.joinToString(", ")} (installed with the extension).", "requires")
+        if (allDeps.isNotEmpty()) info("需要工具链：${allDeps.joinToString(", ")}（随扩展一同安装）。", ")} (installed with the extension).", "requires")
 
         return issues.sortedBy { it.severity.ordinal }
     }
@@ -145,18 +145,18 @@ object ExtensionManifestValidator {
             )
         }
         if (ext.type != ExtensionType.IconPack && !sets.isEmpty) {
-            info("Provides icon sets; `type: iconpack` classifies it as one in the marketplace.", "type")
+            info("提供图标集；`type: iconpack` 会将其在扩展市场中归类为图标包。", "type")
         }
         if (sets.filesIndexes.isNotEmpty() && sets.uiIndexes.isEmpty()) {
-            info("Provides file icons only; UI icons stay as chosen.", "contributes.iconSets")
+            info("仅提供文件图标；界面图标保持当前选择。", "contributes.iconSets")
         }
         if (sets.uiIndexes.isNotEmpty() && sets.filesIndexes.isEmpty()) {
-            info("Provides UI icons only; file icons stay as chosen.", "contributes.iconSets")
+            info("仅提供界面图标；文件图标保持当前选择。", "contributes.iconSets")
         }
         if (sets.uiIndexes.size + sets.filesIndexes.size > 1) {
             info(
-                "Provides ${sets.uiIndexes.size} UI and ${sets.filesIndexes.size} file icon " +
-                    "set(s); each is offered separately in Settings.",
+                "提供 ${sets.uiIndexes.size} 个界面图标和 ${sets.filesIndexes.size} 个文件图标 " +
+                    "集；每个图标集都会在「设置」中单独提供。",
                 "contributes.iconSets",
             )
         }

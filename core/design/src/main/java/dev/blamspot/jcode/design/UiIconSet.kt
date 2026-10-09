@@ -158,7 +158,7 @@ class UiIconSet(
 val defaultUiIconSet = UiIconSet.ofVectors(
     id = "material",
     name = "Material Rounded",
-    description = "The built-in Material rounded icon set.",
+    description = "内置的 Material 圆角图标集。",
     overrides = mapOf(
         JCodeIcon.Run to Icons.Rounded.PlayArrow,
         JCodeIcon.Stop to Icons.Rounded.Stop,

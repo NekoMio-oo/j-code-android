@@ -56,8 +56,8 @@ internal const val ADB_CATALOG_ID = "adb"
 
 /** Short label for an [AdbBridgeState], shared with the Settings row and the Run panel affordance. */
 internal fun adbStatusLabel(state: AdbBridgeState): String = when (state) {
-    is AdbBridgeState.Stopped -> "Not set up"
-    is AdbBridgeState.Discovering -> "Connecting…"
+    is AdbBridgeState.Stopped -> "未设置"
+    is AdbBridgeState.Discovering -> "正在连接…"
     is AdbBridgeState.Ready -> "Connected"
     is AdbBridgeState.Degraded -> state.reason
     is AdbBridgeState.Failed -> state.message
@@ -134,10 +134,10 @@ internal fun AndroidDevicePage(
                 modifier = Modifier.size(28.dp),
             )
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Space.s)) {
-                Text("Android device", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+                Text("Android 设备", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.ms)) {
                     Text(
-                        text = "ADB bridge",
+                        text = "ADB 桥接",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -149,79 +149,79 @@ internal fun AndroidDevicePage(
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
 
         Text(
-            text = "Pair JCode with this phone's own adb. Once connected, adb, ./gradlew installDebug " +
-                "and flutter run inside the runtime install and launch straight onto this device — no " +
-                "computer, no cable.",
+            text = "将 JCode 与本机的 adb 配对。连接成功后，在运行时环境中使用 adb、./gradlew installDebug " +
+                "和 flutter run，即可直接安装并启动到本设备 — 无需" +
+                "电脑，无需数据线。",
             style = MaterialTheme.typography.bodyMedium,
         )
 
         ManagerSectionCard(
-            title = "1. Install adb",
-            description = "The distro's native adb client, installed from the Toolchains manager.",
+            title = "1. 安装 adb",
+            description = "发行版原生 adb 客户端，从工具链管理器安装。",
         ) {
-            ManagerSummaryRow("adb", if (adbInstalled) "Installed" else "Not installed")
+            ManagerSummaryRow("adb", if (adbInstalled) "已安装" else "未安装")
             CompactOutlinedButton(
-                text = if (adbInstalled) "Open in Toolchains" else "Install adb…",
+                text = if (adbInstalled) "在工具链中打开" else "安装 adb…",
                 onClick = onOpenAdbToolchain,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
 
         ManagerSectionCard(
-            title = "2. Enable wireless debugging",
-            description = "Developer options → Wireless debugging. It generally needs Wi-Fi, and Android " +
-                "switches it back off on every reboot.",
+            title = "2. 启用无线调试",
+            description = "开发者选项 → 无线调试。通常需要 Wi-Fi，且 Android " +
+                "会在每次重启后将其关闭。",
         ) {
-            ManagerSummaryRow("Developer options", if (developerOptionsOn) "On" else "Off")
-            ManagerSummaryRow("Wireless debugging", if (wirelessDebuggingOn) "On" else "Off")
+            ManagerSummaryRow("开发者选项", if (developerOptionsOn) "On" else "Off")
+            ManagerSummaryRow("无线调试", if (wirelessDebuggingOn) "On" else "Off")
             if (!developerOptionsOn) {
                 Text(
-                    text = "Developer options are hidden. Open device info and tap Build number seven " +
-                        "times, then come back.",
+                    text = "开发者选项处于隐藏状态。请打开设备信息，连续点击版本号七" +
+                        "次，然后返回。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 CompactFilledButton(
-                    text = "Open device info",
+                    text = "打开设备信息",
                     onClick = { openSettings(context, Settings.ACTION_DEVICE_INFO_SETTINGS) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
             CompactOutlinedButton(
-                text = "Open developer options",
+                text = "打开开发者选项",
                 onClick = { openSettings(context, Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
 
         ManagerSectionCard(
-            title = "3. Pair",
-            description = "Put JCode and Settings side by side in split-screen FIRST, then tap \"Pair " +
-                "device with pairing code\" in Wireless debugging. Android stops listening for the " +
-                "pairing the instant that dialog leaves the foreground, so simply switching back to " +
-                "JCode to type the code cancels it — the code will always be reported as wrong. The " +
-                "port fills itself in while the dialog is up; the code is used once and never stored.",
+            title = "3. 配对",
+            description = "请先将 JCode 和「设置」以分屏方式并排显示，然后点击「使用配对码配对" +
+                "设备」（位于「无线调试」中）。一旦该对话框离开前台，Android 会立即停止监听" +
+                "配对，因此" +
+                "直接切回 JCode 输入配对码会取消配对——配对码将始终被报告为错误。" +
+                "对话框显示期间端口会自动填入；配对码仅使用一次，不会被存储。",
         ) {
             SettingsTextFieldRow(
-                label = "Pairing code",
+                label = "配对码",
                 value = pairingCode,
                 onValueChange = { pairingCode = it.filter(Char::isDigit).take(PAIRING_CODE_LENGTH) },
-                placeholder = "6 digits",
+                placeholder = "6 位数字",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 monospace = true,
             )
             SettingsTextFieldRow(
-                label = "Pairing port",
+                label = "配对端口",
                 value = pairingPort,
                 onValueChange = { pairingPortEdited = true; pairingPort = it.filter(Char::isDigit).take(5) },
-                supporting = "Shown under the pairing code, after the colon.",
+                supporting = "显示在配对码下方，冒号之后。",
                 placeholder = "e.g. 41337",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 monospace = true,
             )
             val port = pairingPort.toIntOrNull()
             CompactFilledButton(
-                text = if (pairing) "Pairing…" else "Pair",
+                text = if (pairing) "正在配对…" else "配对",
                 enabled = !pairing && pairingCode.length == PAIRING_CODE_LENGTH && port != null && port in 1..65_535,
                 onClick = {
                     val target = "${AdbHostClient.LOOPBACK}:$pairingPort"
@@ -243,7 +243,7 @@ internal fun AndroidDevicePage(
             when {
                 pairError != null -> ErrorText(pairError.orEmpty())
                 paired -> Text(
-                    text = "Paired. Continue to step 4.",
+                    text = "已配对。请继续第 4 步。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -251,18 +251,18 @@ internal fun AndroidDevicePage(
         }
 
         ManagerSectionCard(
-            title = "4. Connect",
-            description = "Starts the relay, finds this phone's adbd over mDNS and connects the guest's " +
-                "adb to it.",
+            title = "4. 连接",
+            description = "启动中继服务，通过 mDNS 发现本机的 adbd，并将客户机的 " +
+                "adb 连接到它。",
         ) {
             ManagerSummaryRow("Status", adbStatusLabel(state))
             (state as? AdbBridgeState.Ready)?.let { ready ->
-                ManagerSummaryRow("Relay port", ready.relayPort.toString())
-                ManagerSummaryRow("Device port", ready.backendPort.toString())
+                ManagerSummaryRow("中继端口", ready.relayPort.toString())
+                ManagerSummaryRow("设备端口", ready.backendPort.toString())
             }
             serial?.let { ManagerSummaryRow("Serial", it) }
             CompactFilledButton(
-                text = if (connecting) "Connecting…" else "Connect",
+                text = if (connecting) "正在连接…" else "连接",
                 enabled = !connecting,
                 onClick = {
                     connecting = true
@@ -289,7 +289,7 @@ internal fun AndroidDevicePage(
             deviceError?.let { ErrorText(it) }
             if (devices.isEmpty()) {
                 Text(
-                    text = "No devices listed yet.",
+                    text = "尚未列出任何设备。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -301,9 +301,9 @@ internal fun AndroidDevicePage(
         }
 
         ManagerSectionCard(
-            title = "Backend override",
-            description = "Dial a fixed host:port instead of the one discovered over mDNS. Leave empty " +
-                "unless discovery is failing.",
+            title = "后端覆盖",
+            description = "连接到固定的 host:port，而不是通过 mDNS 发现的地址。除非自动发现" +
+                "失败，否则请留空。",
             collapsible = true,
             defaultExpanded = false,
         ) {
@@ -316,18 +316,18 @@ internal fun AndroidDevicePage(
             )
             Row(horizontalArrangement = Arrangement.spacedBy(Space.sm), modifier = Modifier.fillMaxWidth()) {
                 CompactFilledButton(
-                    text = "Apply",
+                    text = "应用",
                     onClick = {
                         overrideError = if (bridge.setManualBackend(backendOverride)) {
                             null
                         } else {
-                            "Not a valid host:port (or bare port)."
+                            "不是有效的主机:端口（或纯端口）。"
                         }
                     },
                     modifier = Modifier.weight(1f),
                 )
                 CompactOutlinedButton(
-                    text = "Clear",
+                    text = "清除",
                     onClick = {
                         backendOverride = ""
                         overrideError = null

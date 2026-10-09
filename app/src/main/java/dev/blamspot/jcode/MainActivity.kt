@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         // POST_NOTIFICATIONS is a runtime permission at targetSdk 33 and the backend FGS
-        // notification ("Stop & close", session status) starts with the first terminal/run
+        // notification ("停止并关闭", session status) starts with the first terminal/run
         // session — so ask right away rather than dropping notifications silently.
         if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)

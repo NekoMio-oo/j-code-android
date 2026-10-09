@@ -188,7 +188,7 @@ class ConfigService {
     /** Update the project's remembered tab-color maps (per-file and per-directory) in one write.
      *  Project-scoped only (keys are project-relative paths). No-ops when nothing actually changes,
      *  so the auto-remember recompute converges after a single persist. */
-    // Both the manual "Change Tab Color" write and the auto-remember recompute funnel through here;
+    // Both the manual "更改选项卡颜色" write and the auto-remember recompute funnel through here;
     // the mutex makes each read-modify-write atomic so a concurrent write can't drop the other's entry.
     private val tabColorMutex = Mutex()
 
@@ -275,7 +275,7 @@ class ConfigService {
             _workspaceError.value = null
             publishEffective()
         }.onFailure { error ->
-            _workspaceError.value = "Workspace config is invalid: ${error.message ?: "Unable to parse YAML"}"
+            _workspaceError.value = "工作区配置无效：${error.message ?: "无法解析 YAML"}"
             publishEffective()
         }
     }
@@ -298,7 +298,7 @@ class ConfigService {
             _projectError.value = null
             publishEffective()
         }.onFailure { error ->
-            _projectError.value = "Project config is invalid: ${error.message ?: "Unable to parse YAML"}"
+            _projectError.value = "项目配置无效：${error.message ?: "无法解析 YAML"}"
             publishEffective()
         }
     }

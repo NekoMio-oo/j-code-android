@@ -33,7 +33,7 @@ data class SdkCatalogEntry(
     val supportedArches: List<String> = emptyList(),
     /** Other SDK catalog ids that must be installed first (e.g. android-sdk requires android-prereqs). */
     val requiredSdks: List<String> = emptyList(),
-    /** Floor for this entry's install timeout, in minutes. The user's "Toolchain install timeout"
+    /** Floor for this entry's install timeout, in minutes. The user's "工具链安装超时"
      *  setting still applies when it is larger; this only stops an entry that genuinely needs longer
      *  (hundreds of MB over a phone connection) from being killed by a shorter global default.
      *  0 = no floor. */
@@ -51,7 +51,7 @@ data class SdkCatalogEntry(
 
 enum class SdkCatalogCategory(val label: String) {
     Languages("Languages"),
-    BuildTools("Build Tools"),
+    BuildTools("构建工具"),
     Android("Android"),
     DotNet(".NET"),
     Embedded("Embedded"),
@@ -84,10 +84,10 @@ enum class SdkCatalogCategory(val label: String) {
 }
 
 enum class SdkCatalogAction(val label: String) {
-    Install("Install"),
-    Uninstall("Remove"),
+    Install("安装"),
+    Uninstall("移除"),
     /** Switch an installed multi-version tool to a different one of its versions. */
-    Use("Use"),
+    Use("使用"),
 }
 
 /** One installable version, with an optional presentational [tag] (e.g. "LTS Jod") emitted by a

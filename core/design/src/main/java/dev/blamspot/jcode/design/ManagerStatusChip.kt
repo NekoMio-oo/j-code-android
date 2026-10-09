@@ -19,16 +19,16 @@ import androidx.compose.ui.unit.dp
 fun ManagerStatusChip(
     status: ManagerItemStatus,
     checking: Boolean = false,
-    checkingLabel: String = "Checking…",
+    checkingLabel: String = "正在检查…",
     modifier: Modifier = Modifier,
     /** Show a small progress ring alongside the label while [checking] (detail header only). */
     spinner: Boolean = false,
 ) {
     val (text, active) = when {
         checking -> checkingLabel to false
-        status == ManagerItemStatus.UpdateAvailable -> "Update available" to true
-        status == ManagerItemStatus.Installed -> "Installed" to true
-        else -> "Not installed" to false
+        status == ManagerItemStatus.UpdateAvailable -> "有可用更新" to true
+        status == ManagerItemStatus.Installed -> "已安装" to true
+        else -> "未安装" to false
     }
     Surface(
         modifier = modifier,

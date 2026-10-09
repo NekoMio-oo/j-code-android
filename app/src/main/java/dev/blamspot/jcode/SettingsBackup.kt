@@ -59,7 +59,7 @@ object SettingsBackup {
     suspend fun import(dataStore: DataStore<Preferences>, document: String): Int {
         val root = JSONObject(document)
         val entries = root.optJSONArray("settings")
-            ?: throw IllegalArgumentException("Not a JCode settings backup.")
+            ?: throw IllegalArgumentException("不是 JCode 设置备份。")
         var applied = 0
         dataStore.edit { prefs ->
             for (i in 0 until entries.length()) {

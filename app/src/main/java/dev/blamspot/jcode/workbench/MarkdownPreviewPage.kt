@@ -105,7 +105,7 @@ fun MarkdownPreviewPage(
     var pageReady by remember { mutableStateOf(false) }
     var latestBodyJs by remember { mutableStateOf<String?>(null) }
     var menuAt by remember { mutableStateOf<Pair<Float, Float>?>(null) }
-    // What "Select Text" last highlighted (the select script returns it) — Copy uses this directly.
+    // What "选择文本" last highlighted (the select script returns it) — Copy uses this directly.
     // The next long-press's own touch-down collapses the page selection before any query could run,
     // so the selection must be captured when it is MADE, not when the menu reopens.
     var selectedText by remember { mutableStateOf("") }
@@ -182,7 +182,7 @@ fun MarkdownPreviewPage(
         )
     }
 
-    // "Word wrap in portrait" off → lay the portrait preview out at landscape width (the screen
+    // "竖屏时自动换行" off → lay the portrait preview out at landscape width (the screen
     // height, minus the cutout when the app respects it) and let the WebView pan sideways. CSS px in
     // the WebView equal Android dp, so the width is computed in dp. 0 = normal wrapped layout.
     val configuration = LocalConfiguration.current
@@ -340,20 +340,20 @@ fun MarkdownPreviewPage(
                     onDismissRequest = { menuAt = null },
                     offset = offset,
                     quickActions = listOf(
-                        ContextAction(JCodeIcon.Copy, "Copy", enabled = selectedText.isNotEmpty()) {
+                        ContextAction(JCodeIcon.Copy, "复制", enabled = selectedText.isNotEmpty()) {
                             clipboard.setText(AnnotatedString(selectedText))
                         },
                     ),
                     listActions = listOfNotNull(
-                        ContextAction(JCodeIcon.Cursor, "Select Text") {
+                        ContextAction(JCodeIcon.Cursor, "选择文本") {
                             webView?.evaluateJavascript(selectBlockJs(x, y)) { res ->
                                 selectedText = decodeJsString(res)
                             }
                         },
-                        ContextAction(JCodeIcon.Search, "Find text") { findVisible = true },
-                        ContextAction(JCodeIcon.GoToLine, "Go to line") { goToLineVisible = true },
+                        ContextAction(JCodeIcon.Search, "查找文本") { findVisible = true },
+                        ContextAction(JCodeIcon.GoToLine, "转到行") { goToLineVisible = true },
                         menuExtras.previewToggle?.let { toggle ->
-                            ContextAction(JCodeIcon.Code, "View Source Code") { toggle() }
+                            ContextAction(JCodeIcon.Code, "查看源代码") { toggle() }
                         },
                     ),
                 )
@@ -426,7 +426,7 @@ private fun FindBar(
             CompactSearchField(
                 query = query,
                 onQueryChange = onQueryChange,
-                placeholder = "Find",
+                placeholder = "查找",
                 autoFocus = true,
                 onImeAction = onNext,
                 modifier = Modifier.weight(1f),
@@ -437,13 +437,13 @@ private fun FindBar(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             IconButton(onClick = onPrev, enabled = total > 0, modifier = Modifier.size(32.dp)) {
-                Icon(jcIcon(JCodeIcon.ChevronUp), contentDescription = "Previous match")
+                Icon(jcIcon(JCodeIcon.ChevronUp), contentDescription = "上一个匹配项")
             }
             IconButton(onClick = onNext, enabled = total > 0, modifier = Modifier.size(32.dp)) {
-                Icon(jcIcon(JCodeIcon.ChevronDown), contentDescription = "Next match")
+                Icon(jcIcon(JCodeIcon.ChevronDown), contentDescription = "下一个匹配项")
             }
             IconButton(onClick = onClose, modifier = Modifier.size(32.dp)) {
-                Icon(jcIcon(JCodeIcon.Close), contentDescription = "Close find")
+                Icon(jcIcon(JCodeIcon.Close), contentDescription = "关闭查找")
             }
         }
     }

@@ -216,7 +216,7 @@ object SettingsFeature {
             if (projectOverridesAvailable) add(ConfigScope.Project)
             if (size == 1) add(ConfigScope.Workspace)
         }
-        // The trailing "ENV VAR" tab lives at index tabScopes.size (it is not a ConfigScope).
+        // The trailing "环境变量" tab lives at index tabScopes.size (it is not a ConfigScope).
         val safeTab = selectedTab.coerceIn(0, tabScopes.size)
         val isEnvVarTab = safeTab == tabScopes.size
         // Scoped cards also render while a search is active (from any tab); they then edit the most
@@ -312,7 +312,7 @@ object SettingsFeature {
                         unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         text = {
                             Text(
-                                text = "ENV VAR",
+                                text = "环境变量",
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.SemiBold,
                             )
@@ -331,14 +331,14 @@ object SettingsFeature {
             val showGlobalTab = safeTab == 0
             val showScopedTab = safeTab in 1 until tabScopes.size
             if (showGlobalTab) {
-            SettingsGroup("Appearance") {
+            SettingsGroup("外观") {
             SettingsCard(
-                title = "Appearance",
-                description = "System follows your device's light/dark setting.",
-                keywords = "appearance theme dark light system color mode scheme",
+                title = "外观",
+                description = "跟随设备的浅色/深色设置。",
+                keywords = "外观 主题 深色 浅色 系统 颜色 模式 方案 appearance theme dark light system color mode scheme",
             ) {
                 SettingsDropdownRow(
-                    label = "Mode",
+                    label = "模式",
                     options = ThemeMode.entries.map { it.name },
                     selected = themeMode.name,
                     onSelect = { onUpdateThemeMode(ThemeMode.valueOf(it)) },
@@ -348,9 +348,9 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Theme bundle",
-                description = "Color palette applied across the app.",
-                keywords = "theme bundle color palette catppuccin dracula midnight oled black scheme appearance",
+                title = "主题包",
+                description = "应用于整个应用的调色板。",
+                keywords = "主题包 调色板 配色 catppuccin dracula midnight oled 黑色 方案 外观 theme bundle color palette catppuccin dracula midnight oled black scheme appearance",
             ) {
                 val activeBundle = themeBundleId.ifEmpty { ThemeBundleRegistry.default.id }
                 ThemeBundleRegistry.builtIns.forEach { bundle ->
@@ -370,9 +370,9 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "UI icons",
-                description = "Icon set used for the app's own toolbars, tabs and menus.",
-                keywords = "icon bundle icons set ui material rounded jcode line appearance " +
+                title = "界面图标",
+                description = "用于应用自身工具栏、选项卡和菜单的图标集。",
+                keywords = "图标包 图标集 界面 material 圆角 jcode 线条 外观 icon bundle icons set ui material rounded jcode line appearance" +
                     iconSettings.uiSets.joinToString(" ") { it.name },
             ) {
                 val activeUi = iconSettings.activeUiSetId
@@ -389,15 +389,15 @@ object SettingsFeature {
             // extension installed this card would offer exactly one choice — the one already in use.
             if (iconSettings.fileSets.isNotEmpty()) {
                 SettingsCard(
-                    title = "File icons",
-                    description = "Icon set used for files and folders in the Explorer, tabs and search results.",
-                    keywords = "icon bundle icons set file files folder explorer appearance " +
+                    title = "文件图标",
+                    description = "用于资源管理器、选项卡和搜索结果中文件与文件夹的图标集。",
+                    keywords = "图标包 图标集 文件 文件夹 资源管理器 外观 icon bundle icons set file files folder explorer appearance" +
                         iconSettings.fileSets.joinToString(" ") { it.name },
                 ) {
                     val activeFiles = iconSettings.activeFileSetId
                     FileIconSetRow(
                         name = "None",
-                        description = "JCode's own folder and file glyphs, from the UI icon set.",
+                        description = "JCode 自带的文件夹与文件字形，取自界面图标集。",
                         detail = null,
                         selected = activeFiles == FileIconSetRegistry.NONE_ID,
                         onClick = { iconSettings.onSelectFileSet(FileIconSetRegistry.NONE_ID) },
@@ -415,10 +415,10 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Fonts",
-                description = "Monospace typefaces for the code editor and the terminal. More fonts " +
-                    "can be added by extensions.",
-                keywords = "font fonts family typeface monospace editor terminal jetbrains mono system code appearance " +
+                title = "字体",
+                description = "用于代码编辑器和终端的等宽字体。更多字体" +
+                    "可由扩展添加。",
+                keywords = "字体 字形 等宽 编辑器 终端 jetbrains mono 系统 代码 外观 font fonts family typeface monospace editor terminal jetbrains mono system code appearance" +
                     fontSettings.options.joinToString(" ") { it.name },
             ) {
                 // Re-scan the environment's installed fonts each time this card is shown, so fonts the
@@ -428,7 +428,7 @@ object SettingsFeature {
                 val fontLabel: (String) -> String =
                     { id -> fontSettings.options.firstOrNull { it.id == id }?.name ?: id }
                 SettingsDropdownRow(
-                    label = "Editor font",
+                    label = "编辑器字体",
                     options = fontOptionIds,
                     selected = fontSettings.editorFontId,
                     onSelect = fontSettings.onSelectEditorFont,
@@ -437,7 +437,7 @@ object SettingsFeature {
                     onReset = { fontSettings.onSelectEditorFont(fontSettings.editorDefaultId) },
                 )
                 SettingsDropdownRow(
-                    label = "Terminal font",
+                    label = "终端字体",
                     options = fontOptionIds,
                     selected = fontSettings.terminalFontId,
                     onSelect = fontSettings.onSelectTerminalFont,
@@ -448,13 +448,13 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Terminal",
-                description = "Text size for terminal sessions. Applies to every open terminal.",
-                keywords = "terminal font size text scale sp bigger smaller zoom console shell tty readable",
+                title = "终端",
+                description = "终端会话的文字大小。应用于所有已打开的终端。",
+                keywords = "终端 字体大小 文字 缩放 放大 缩小 控制台 shell tty 可读 terminal font size text scale sp bigger smaller zoom console shell tty readable",
             ) {
                 val terminalFontSizeSetting = LocalTerminalFontSizeSetting.current
                 StepperRow(
-                    label = "Font size",
+                    label = "字号",
                     value = "${terminalFontSizeSetting.value.toInt()} sp",
                     onDecrease = { terminalFontSizeSetting.onChange((terminalFontSizeSetting.value - 1f).coerceAtLeast(6f)) },
                     onIncrease = { terminalFontSizeSetting.onChange((terminalFontSizeSetting.value + 1f).coerceAtMost(40f)) },
@@ -464,15 +464,15 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Extensions",
-                description = "Text size inside imported .vsix extensions. A scale rather than a " +
-                    "size, because each extension styles its own page.",
-                keywords = "extension extensions vsix font size text scale zoom bigger smaller " +
-                    "readable webview marketplace imported",
+                title = "扩展",
+                description = "导入的 .vsix 扩展内的文字大小。是缩放比例而非" +
+                    "绝对尺寸，因为每个扩展的页面样式各异。",
+                keywords = "扩展 vsix 字体大小 文字 缩放 放大 缩小 extension extensions vsix font size text scale zoom bigger smaller" +
+                    " 可读 网页视图 扩展市场 已导入 readable webview marketplace imported",
             ) {
                 val extensionFontSize = LocalExtensionFontSizeSetting.current
                 StepperRow(
-                    label = "Font size",
+                    label = "字号",
                     value = "${extensionFontSize.percent}%",
                     onDecrease = { extensionFontSize.onChange((extensionFontSize.percent - 10).coerceAtLeast(50)) },
                     onIncrease = { extensionFontSize.onChange((extensionFontSize.percent + 10).coerceAtMost(300)) },
@@ -484,14 +484,14 @@ object SettingsFeature {
             // Hidden on displays without a cutout (desktop mode, external display, notchless devices).
             if (cutoutSetting.hasCutout) {
                 SettingsCard(
-                    title = "Display cutout",
-                    description = "Keep the app clear of the camera notch or punch-hole. When off, the " +
-                        "app draws into the cutout area for a full-screen layout.",
-                    keywords = "cutout notch punch hole camera display safe area letterbox fullscreen screen edge insets",
+                    title = "屏幕挖孔",
+                    description = "让应用避开摄像头刘海或挖孔。关闭后，" +
+                        "应用将绘制到挖孔区域以实现全屏布局。",
+                    keywords = "挖孔 刘海 打孔 摄像头 显示 安全区域 全屏 屏幕边缘 边衬区 cutout notch punch hole camera display safe area letterbox fullscreen screen edge insets",
                 ) {
                     ToggleRow(
-                        label = "Respect device cutout",
-                        supporting = "Lay out the app inside the cutout's safe area instead of drawing behind it.",
+                        label = "适配设备挖孔",
+                        supporting = "将应用布局在刘海屏安全区域内，而不是绘制在其后方。",
                         checked = cutoutSetting.respect,
                         onCheckedChange = cutoutSetting.onChange,
                         modified = cutoutSetting.respect != SettingsDefaults.RESPECT_DEVICE_CUTOUT,
@@ -501,15 +501,15 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Right drawer",
-                description = "The panel holding the terminal, output, issues and extension views.",
-                keywords = "right drawer panel sidebar persistent dock split half width landscape terminal inspector",
+                title = "右侧抽屉",
+                description = "容纳终端、输出、问题和扩展视图的面板。",
+                keywords = "右侧 抽屉 面板 侧边栏 持久 停靠 分屏 半宽 横屏 终端 检查器 right drawer panel sidebar persistent dock split half width landscape terminal inspector",
             ) {
                 val rightDrawerSetting = LocalRightDrawerSetting.current
                 ToggleRow(
-                    label = "Dock in landscape",
-                    supporting = "In landscape, split the screen with the right drawer instead of " +
-                        "sliding it over the editor, so both stay usable. Portrait is unaffected.",
+                    label = "横屏时停靠",
+                    supporting = "横屏时，与右侧抽屉分屏显示，而不是" +
+                        "将其滑到编辑器上方，从而两者都保持可用。竖屏不受影响。",
                     checked = rightDrawerSetting.enabled,
                     onCheckedChange = rightDrawerSetting.onSetEnabled,
                     modified = rightDrawerSetting.enabled != SettingsDefaults.RIGHT_DRAWER_PERSISTENT,
@@ -518,16 +518,16 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Header",
-                description = "The bar across the top of the workbench, with the project name and " +
-                    "quick actions.",
-                keywords = "header top bar app bar terminal command palette button action hide disable remove",
+                title = "标题栏",
+                description = "工作区顶部的横条，显示项目名称和" +
+                    "快捷操作。",
+                keywords = "标题栏 顶栏 应用栏 终端 命令面板 按钮 操作 隐藏 禁用 移除 header top bar app bar terminal command palette button action hide disable remove",
             ) {
                 val headerActionSetting = LocalHeaderActionSetting.current
                 SettingsDropdownRow(
-                    label = "Action button",
-                    supporting = "The button beside Run. Hiding it leaves the terminal reachable " +
-                        "from the right drawer.",
+                    label = "操作按钮",
+                    supporting = "运行按钮旁边的按钮。隐藏它后，仍可通过" +
+                        "右侧抽屉访问终端。",
                     options = HeaderActionButton.entries.map { it.name },
                     selected = headerActionSetting.button.name,
                     onSelect = { headerActionSetting.onChange(HeaderActionButton.valueOf(it)) },
@@ -538,13 +538,13 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Bottom status bar",
-                description = "The bar at the bottom of the workbench showing branch, distro, and " +
-                    "cursor position.",
-                keywords = "bottom status bar branch distro cursor position hide always show soft keyboard chrome space",
+                title = "底部状态栏",
+                description = "工作区底部的横条，显示分支、发行版和" +
+                    "光标位置。",
+                keywords = "底部 状态栏 分支 发行版 光标位置 隐藏 始终显示 软键盘 bottom status bar branch distro cursor position hide always show soft keyboard chrome space",
             ) {
                 SettingsDropdownRow(
-                    label = "Show",
+                    label = "显示",
                     options = BottomBarVisibility.entries.map { it.name },
                     selected = bottomBarSetting.visibility.name,
                     onSelect = { bottomBarSetting.onChange(BottomBarVisibility.valueOf(it)) },
@@ -555,14 +555,14 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Extra keys row",
-                description = "A Termux-style key row (Esc, Tab, Ctrl, arrows and more) shown above " +
-                    "the keyboard while typing in the terminal or editor. Choose when it appears in " +
-                    "each orientation.",
-                keywords = "extra keys row esc ctrl alt tab arrows home end pgup pgdn page terminal editor keyboard termux orientation portrait landscape hidden always with soft keyboard function keys f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 fn htop midnight commander",
+                title = "扩展按键行",
+                description = "Termux 风格的按键行（Esc、Tab、Ctrl、方向键等），显示在" +
+                    "终端或编辑器中输入时的键盘上方。选择它在 " +
+                    "横竖屏方向下的显示时机。",
+                keywords = "扩展按键 软键盘 功能键 方向键 横竖屏 extra keys row esc ctrl alt tab arrows home end pgup pgdn page terminal editor keyboard termux orientation portrait landscape hidden always with soft keyboard function keys f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 fn htop midnight commander",
             ) {
                 SettingsDropdownRow(
-                    label = "Portrait",
+                    label = "竖屏",
                     options = ExtraKeysVisibility.entries.map { it.name },
                     selected = extraKeysSetting.portrait.name,
                     onSelect = { extraKeysSetting.onChangePortrait(ExtraKeysVisibility.valueOf(it)) },
@@ -571,7 +571,7 @@ object SettingsFeature {
                     onReset = { extraKeysSetting.onChangePortrait(SettingsDefaults.EXTRA_KEYS_PORTRAIT) },
                 )
                 SettingsDropdownRow(
-                    label = "Landscape",
+                    label = "横屏",
                     options = ExtraKeysVisibility.entries.map { it.name },
                     selected = extraKeysSetting.landscape.name,
                     onSelect = { extraKeysSetting.onChangeLandscape(ExtraKeysVisibility.valueOf(it)) },
@@ -580,9 +580,9 @@ object SettingsFeature {
                     onReset = { extraKeysSetting.onChangeLandscape(SettingsDefaults.EXTRA_KEYS_LANDSCAPE) },
                 )
                 ToggleRow(
-                    label = "Function keys",
-                    supporting = "Append F1–F12 chips to the row while a terminal is focused (htop, " +
-                        "midnight commander, and other TUIs use them).",
+                    label = "功能键",
+                    supporting = "在终端获得焦点时，向该行追加 F1–F12 快捷键（htop、" +
+                        "midnight commander 及其他 TUI 程序会使用它们）。",
                     checked = extraKeysSetting.functionKeys,
                     onCheckedChange = { extraKeysSetting.onChangeFunctionKeys(it) },
                     modified = extraKeysSetting.functionKeys != SettingsDefaults.EXTRA_KEYS_FUNCTION_KEYS,
@@ -594,39 +594,39 @@ object SettingsFeature {
 
             SettingsGroup("Input") {
             SettingsCard(
-                title = "Volume keys",
-                description = "Remap the hardware volume buttons to editor/terminal actions. " +
-                    "\"System Default\" keeps normal volume control. Pane actions (arrows, scroll) act on " +
-                    "whichever editor or terminal is focused; hold to repeat arrows and scrolling.",
-                keywords = "volume keys button hardware remap bind binding shortcut undo redo arrow scroll " +
-                    "command palette input up down page rocker media",
+                title = "音量键",
+                description = "将硬件音量键重映射为编辑器/终端操作。" +
+                    "“系统默认”保持常规音量控制。窗格操作（方向键、滚动）作用于" +
+                    "当前聚焦的编辑器或终端；按住可重复方向键和滚动操作。",
+                keywords = "音量键 硬件 重映射 绑定 快捷键 撤销 重做 滚动 volume keys button hardware remap bind binding shortcut undo redo arrow scroll " +
+                    "命令面板 输入 上 下 翻页 音量键 媒体",
             ) {
                 SettingsDropdownRow(
-                    label = "Volume up",
+                    label = "音量加",
                     options = VolumeKeyAction.entries.map { it.name },
                     selected = volumeKeysSetting.up.name,
                     onSelect = { volumeKeysSetting.onChangeUp(VolumeKeyAction.valueOf(it)) },
-                    optionLabel = { volumeKeyActionLabel(VolumeKeyAction.valueOf(it), "Vol Up") },
+                    optionLabel = { volumeKeyActionLabel(VolumeKeyAction.valueOf(it), "音量加") },
                     modified = volumeKeysSetting.up != SettingsDefaults.VOLUME_UP_ACTION,
                     onReset = { volumeKeysSetting.onChangeUp(SettingsDefaults.VOLUME_UP_ACTION) },
                 )
                 SettingsDropdownRow(
-                    label = "Volume down",
+                    label = "音量减",
                     options = VolumeKeyAction.entries.map { it.name },
                     selected = volumeKeysSetting.down.name,
                     onSelect = { volumeKeysSetting.onChangeDown(VolumeKeyAction.valueOf(it)) },
-                    optionLabel = { volumeKeyActionLabel(VolumeKeyAction.valueOf(it), "Vol Down") },
+                    optionLabel = { volumeKeyActionLabel(VolumeKeyAction.valueOf(it), "音量减") },
                     modified = volumeKeysSetting.down != SettingsDefaults.VOLUME_DOWN_ACTION,
                     onReset = { volumeKeysSetting.onChangeDown(SettingsDefaults.VOLUME_DOWN_ACTION) },
                 )
             }
 
             SettingsCard(
-                title = "Command Palette",
-                description = "Choose which built-in commands the palette offers. Context-dependent " +
-                    "commands only appear when their view is focused (e.g. Go to Line needs an open editor).",
-                keywords = "command palette commands orientation lock fullscreen keep awake screen on " +
-                    "hide header tabs zen go to line color search picker eyedropper format document",
+                title = "命令面板",
+                description = "选择命令面板要提供的内置命令。与上下文相关的 " +
+                    "命令仅在其视图聚焦时显示（例如「转到行」需要打开编辑器）。",
+                keywords = "命令面板 命令 方向锁定 全屏 保持唤醒 屏幕常亮 " +
+                    "隐藏 顶栏 选项卡 禅定模式 转到行 颜色 搜索 选择器 取色器 格式化文档",
             ) {
                 val paletteSetting = LocalCommandPaletteSetting.current
                 PaletteCommandCatalog.forEach { command ->
@@ -646,13 +646,13 @@ object SettingsFeature {
 
             SettingsGroup("Startup") {
             SettingsCard(
-                title = "Restore last session",
-                description = "Pick up where you left off after closing the app.",
-                keywords = "restore session reopen tabs workspace project unsaved recover startup launch",
+                title = "恢复上次会话",
+                description = "关闭应用后，从上次离开的位置继续。",
+                keywords = "恢复 会话 重新打开 选项卡 工作区 项目 未保存 找回 启动",
             ) {
                 ToggleRow(
-                    label = "Restore last session on launch",
-                    supporting = "Reopen the last workspace, project, and editor tabs — including unsaved changes — when JCode starts. Missing files are skipped.",
+                    label = "启动时恢复上次会话",
+                    supporting = "JCode 启动时重新打开上次的工作区、项目和编辑器选项卡（包括未保存的更改）。缺失的文件将被跳过。",
                     checked = restoreSessionSetting.enabled,
                     onCheckedChange = restoreSessionSetting.onChange,
                     modified = restoreSessionSetting.enabled != SettingsDefaults.RESTORE_LAST_SESSION,
@@ -667,15 +667,15 @@ object SettingsFeature {
 
             SettingsGroup("Performance") {
             SettingsCard(
-                title = "Rendering",
-                description = "How JCode draws the UI, editor, and terminal.",
-                keywords = "performance rendering hardware acceleration gpu software draw graphics lag smooth",
+                title = "渲染",
+                description = "JCode 绘制界面、编辑器和终端的方式。",
+                keywords = "性能 渲染 硬件加速 gpu 软件 绘制 图形 卡顿 流畅",
             ) {
                 ToggleRow(
-                    label = "Hardware acceleration",
-                    supporting = "Render the UI, editor, and terminal on the GPU. Turn off only to " +
-                        "troubleshoot rendering glitches on this device — software rendering is much " +
-                        "slower. Takes effect the next time the app starts.",
+                    label = "硬件加速",
+                    supporting = "在 GPU 上渲染界面、编辑器和终端。仅在" +
+                        "排查此设备上的渲染故障时才将其关闭——软件渲染" +
+                        "更慢，重启应用后生效。",
                     checked = perf.hardwareAcceleration,
                     onCheckedChange = perf.onSetHardwareAcceleration,
                     modified = perf.hardwareAcceleration != SettingsDefaults.HARDWARE_ACCELERATION,
@@ -683,23 +683,23 @@ object SettingsFeature {
                 )
             }
             SettingsCard(
-                title = "Resource management",
-                description = "Keep the Linux runtime lean by stopping work you're done with. Each terminal, " +
-                    "run, and debug session holds a proot process tree in memory.",
-                keywords = "performance memory cpu battery proot process terminal kill close idle background resource optimize swipe away warn running max instances timeout auto-close nested sub-shell subshell relocate tab bash zsh install toolchain sdk download timeout minutes android",
+                title = "资源管理",
+                description = "通过停止已完成的工作，让 Linux 运行时保持轻量。每个终端、 " +
+                    "运行和调试会话都会在内存中持有一棵 proot 进程树。",
+                keywords = "性能 内存 电池 进程 后台 资源 优化 超时 自动关闭 performance memory cpu battery proot process terminal kill close idle background resource optimize swipe away warn running max instances timeout auto-close nested sub-shell subshell relocate tab bash zsh install toolchain sdk download timeout minutes android",
             ) {
                 ToggleRow(
-                    label = "Warn before closing running processes",
-                    supporting = "When closing a project or workspace with a running terminal command, an active " +
-                        "Build & Run, or a live debug session, ask first before stopping them.",
+                    label = "关闭运行中的进程前发出警告",
+                    supporting = "关闭包含正在运行的终端命令的项目或工作区时，若存在处于活动状态的" +
+                        "构建与运行，或实时调试会话，请在停止前先询问。",
                     checked = perf.confirmCloseRunning,
                     onCheckedChange = perf.onSetConfirmCloseRunning,
                     modified = perf.confirmCloseRunning != SettingsDefaults.CONFIRM_CLOSE_RUNNING,
                     onReset = { perf.onSetConfirmCloseRunning(SettingsDefaults.CONFIRM_CLOSE_RUNNING) },
                 )
                 ToggleRow(
-                    label = "Close app fully on swipe-away",
-                    supporting = "When you swipe JCode off the Android recents screen, stop the Linux runtime " +
+                    label = "划掉后完全关闭应用",
+                    supporting = "当你将 JCode 从 Android 最近任务屏幕划掉时，停止 Linux 运行时" +
                         "(terminals, runs, VMs) and exit completely instead of leaving it running in the background.",
                     checked = perf.exitOnSwipeAway,
                     onCheckedChange = perf.onSetExitOnSwipeAway,
@@ -707,9 +707,9 @@ object SettingsFeature {
                     onReset = { perf.onSetExitOnSwipeAway(SettingsDefaults.EXIT_ON_SWIPE_AWAY) },
                 )
                 ToggleRow(
-                    label = "Auto-close idle terminals",
-                    supporting = "Automatically close terminals left idle at the prompt (no running program) to " +
-                        "free their process tree and memory. Terminals running a command are never auto-closed.",
+                    label = "自动关闭空闲终端",
+                    supporting = "自动关闭在提示符处空闲（无正在运行的程序）的终端，以" +
+                        "释放它们的进程树和内存。正在运行命令的终端永远不会被自动关闭。",
                     checked = perf.autoCloseIdleTerminals,
                     onCheckedChange = perf.onSetAutoCloseIdleTerminals,
                     modified = perf.autoCloseIdleTerminals != SettingsDefaults.AUTO_CLOSE_IDLE_TERMINALS,
@@ -717,7 +717,7 @@ object SettingsFeature {
                 )
                 if (perf.autoCloseIdleTerminals) {
                     StepperRow(
-                        label = "Idle timeout",
+                        label = "空闲超时",
                         value = "${perf.idleTimeoutMinutes} min",
                         onDecrease = { perf.onSetIdleTimeoutMinutes(perf.idleTimeoutMinutes - 5) },
                         onIncrease = { perf.onSetIdleTimeoutMinutes(perf.idleTimeoutMinutes + 5) },
@@ -726,7 +726,7 @@ object SettingsFeature {
                     )
                 }
                 StepperRow(
-                    label = "Max terminal instances",
+                    label = "终端实例数上限",
                     value = "${perf.maxTerminalSessions}",
                     onDecrease = { perf.onSetMaxTerminalSessions((perf.maxTerminalSessions - 1).coerceAtLeast(1)) },
                     onIncrease = { perf.onSetMaxTerminalSessions((perf.maxTerminalSessions + 1).coerceAtMost(24)) },
@@ -734,9 +734,9 @@ object SettingsFeature {
                     onReset = { perf.onSetMaxTerminalSessions(SettingsDefaults.MAX_TERMINAL_SESSIONS) },
                 )
                 StepperRow(
-                    label = "Toolchain install timeout",
-                    supporting = "How long a toolchain install (SDK, language server, debugger) may run before " +
-                        "it's cancelled. Increase it for large SDKs like the Android SDK on a slow connection.",
+                    label = "工具链安装超时",
+                    supporting = "工具链安装（SDK、语言服务器、调试器）可运行的最长" +
+                        "时长，超时后将被取消。在连接速度较慢时安装 Android SDK 等大型 SDK，可调大此值。",
                     value = "${perf.installTimeoutMinutes} min",
                     onDecrease = { perf.onSetInstallTimeoutMinutes((perf.installTimeoutMinutes - 5).coerceAtLeast(5)) },
                     onIncrease = { perf.onSetInstallTimeoutMinutes((perf.installTimeoutMinutes + 5).coerceAtMost(180)) },
@@ -744,10 +744,10 @@ object SettingsFeature {
                     onReset = { perf.onSetInstallTimeoutMinutes(SettingsDefaults.INSTALL_TIMEOUT_MINUTES) },
                 )
                 ToggleRow(
-                    label = "Sub-shells open in their own tab",
-                    supporting = "When you start an interactive shell (bash, zsh, …) inside a terminal, open it in a " +
-                        "temporary tab that closes when the sub-shell exits, returning to the parent — like a new " +
-                        "console window. Scripts and piped shells stay in the current tab.",
+                    label = "子 shell 在独立选项卡中打开",
+                    supporting = "在终端内启动交互式 shell（bash、zsh 等）时，在" +
+                        "临时选项卡中打开，子 shell 退出时该选项卡关闭并返回父级——就像新的" +
+                        "控制台窗口一样。脚本和管道 shell 保留在当前选项卡中。",
                     checked = perf.nestedShellTabs,
                     onCheckedChange = perf.onSetNestedShellTabs,
                     modified = perf.nestedShellTabs != SettingsDefaults.NESTED_SHELL_TABS,
@@ -758,7 +758,7 @@ object SettingsFeature {
 
             } // end Global-only cards; the Web preview card below renders on every scope tab.
 
-            // "Open web previews in" edits the app-wide default on the GLOBAL tab and a per-project
+            // "Web 预览打开位置" edits the app-wide default on the GLOBAL tab and a per-project
             // override on the PROJECT tab (INHERIT = fall back to that default). It renders on every
             // tab; the raw selected tab (not [selectedScope], which coalesces GLOBAL into Project when
             // a project is open) decides which it edits, so the GLOBAL tab always edits the default.
@@ -766,18 +766,18 @@ object SettingsFeature {
             if (!isEnvVarTab) {
             val projectBrowserScope =
                 tabScopes.getOrNull(safeTab) == ConfigScope.Project && webPreview.currentProjectKey.isNotBlank()
-            SettingsGroup("Web preview") {
+            SettingsGroup("网页预览") {
             SettingsCard(
-                title = "Open web previews in",
+                title = "Web 预览打开位置",
                 description = if (projectBrowserScope) {
-                    "The browser this project uses when you open a running dev server (Build & Run) or " +
-                        "tap a URL in the terminal. \"Use global default\" defers to the app-wide setting."
+                    "打开运行中的开发服务器（构建并运行）或 " +
+                        "点按终端中的网址时此项目使用的浏览器。「使用全局默认」将沿用应用级设置。"
                 } else {
-                    "The browser used when you open a running dev server (Build & Run) or tap a URL in " +
-                        "the terminal. A local project can override this on its Project settings tab."
+                    "打开运行中的开发服务器（构建与运行）或点按终端中的网址时使用的浏览器" +
+                        "。本地项目可在其「项目」设置选项卡中覆盖此设置。"
                 },
-                keywords = "browser web preview open url chrome firefox default run dev server " +
-                    "system always ask chooser built-in builtin inherit global project override " +
+                keywords = "浏览器 网页预览 默认 内置 browser web preview open url chrome firefox default run dev server " +
+                    "系统 始终 询问 选择器 内置 内置 继承 全局 项目 覆盖 " +
                     webPreview.available.joinToString(" ") { it.label },
             ) {
                 val options = buildList {
@@ -796,10 +796,10 @@ object SettingsFeature {
                     BundleRow(
                         name = webPreview.label(choice),
                         description = when (choice) {
-                            WebPreviewBrowsers.INHERIT -> "Fall back to the app-wide default"
-                            WebPreviewBrowsers.SYSTEM -> "The device's default browser app"
-                            WebPreviewBrowsers.ASK -> "Show the Android app chooser each time"
-                            WebPreviewBrowsers.BUILTIN -> "JCode's own in-editor browser, with DevTools"
+                            WebPreviewBrowsers.INHERIT -> "回退到应用级默认设置"
+                            WebPreviewBrowsers.SYSTEM -> "设备的默认浏览器应用"
+                            WebPreviewBrowsers.ASK -> "每次显示 Android 应用选择器"
+                            WebPreviewBrowsers.BUILTIN -> "JCode 内置的编辑器内浏览器，带开发者工具"
                             else -> choice
                         },
                         selected = selectedChoice == choice,
@@ -816,12 +816,12 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Web engine",
-                description = "The Chromium engine behind JCode's built-in browser and web previews. " +
-                    "It is the device's WebView provider — a system component JCode can read but not " +
-                    "choose; when it can't be updated, JCode falls back to the ROM's engine.",
-                keywords = "web engine webview chromium version provider outdated update play store " +
-                    "browser render blank dvh modern developer options implementation",
+                title = "网页引擎",
+                description = "JCode 内置浏览器和网页预览背后的 Chromium 引擎。 " +
+                    "它是设备的 WebView 提供方——一个 JCode 可读取但无法选择 " +
+                    "的系统组件；当它无法更新时，JCode 会回退到 ROM 自带的引擎。",
+                keywords = "网页引擎 webview chromium 版本 提供方 更新 渲染 开发者选项 web engine webview chromium version provider outdated update play store " +
+                    "浏览器 渲染 空白 dvh 现代 开发者选项 实现",
             ) {
                 val ctx = LocalContext.current
                 // Re-read on each composition of the card: the user may return from Play or the
@@ -848,7 +848,7 @@ object SettingsFeature {
                             shape = RoundedCornerShape(50),
                         ) {
                             Text(
-                                text = "Outdated",
+                                text = "已过期",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onErrorContainer,
                                 modifier = Modifier.padding(horizontal = Space.ms, vertical = Space.xs),
@@ -856,26 +856,26 @@ object SettingsFeature {
                         }
                     } else if (engineMajor > 0) {
                         Text(
-                            text = "Current",
+                            text = "当前",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
-                enginePackage?.packageName?.let { SummaryRow(label = "Provider", value = it) }
+                enginePackage?.packageName?.let { SummaryRow(label = "提供方", value = it) }
                 if (outdated) {
                     Text(
-                        text = "Modern sites can render blank or broken on this engine. Install the " +
-                            "latest Android System WebView, then select it under Developer options → " +
-                            "WebView implementation. Some devices lock the provider; JCode then keeps " +
-                            "using the ROM's engine.",
+                        text = "现代网站在此引擎上可能渲染为空白或错乱。请安装 " +
+                            "最新版 Android System WebView，然后在「开发者选项」→ 下选择它。 " +
+                            "WebView 实现。某些设备会锁定提供方；此时 JCode 将继续" +
+                            "使用 ROM 自带的引擎。",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
                 CompactFilledButton(
-                    text = "Get latest WebView",
+                    text = "获取最新 WebView",
                     onClick = {
                         val play = Intent(
                             Intent.ACTION_VIEW,
@@ -894,7 +894,7 @@ object SettingsFeature {
                     },
                 )
                 CompactOutlinedButton(
-                    text = "Choose provider…",
+                    text = "选择提供方…",
                     onClick = {
                         runCatching {
                             ctx.startActivity(
@@ -911,50 +911,50 @@ object SettingsFeature {
             } // end web-preview (hidden on the ENV VAR tab)
 
             if (showGlobalTab) {
-            SettingsGroup("Environment") {
+            SettingsGroup("环境") {
             SettingsCard(
-                title = "Environment",
-                description = "Environment setup: proot, distro bootstrap, and the final smoke test. " +
-                    "Install, switch between, or remove environments from the setup page.",
-                keywords = "environment proot distro toolchain smoke test bind runtime setup manage refresh install " +
-                    "ready passed failed not installed not run unknown update upgrade packages apt system " +
+                title = "环境",
+                description = "环境设置：proot、发行版引导，以及最后的冒烟测试。 " +
+                    "从设置页面安装、切换或移除环境。",
+                keywords = "环境 proot 发行版 工具链 冒烟测试 绑定 运行时 设置 管理 刷新 安装 " +
+                    "就绪 通过 失败 未安装 未运行 未知 更新 升级 软件包 apt 系统 " +
                     environmentState.runtime.selectedDistro.label,
             ) {
                 SummaryRow(
                     label = "proot",
-                    value = if (environmentState.prootInstalled) "Ready" else "Not installed",
+                    value = if (environmentState.prootInstalled) "Ready" else "未安装",
                 )
                 SummaryRow(
-                    label = "Distro",
+                    label = "发行版",
                     value = when (environmentState.distroInstalled) {
                         true -> environmentState.runtime.selectedDistro.label
-                        false -> "Not installed"
+                        false -> "未安装"
                         null -> "Unknown"
                     },
                 )
                 SummaryRow(
-                    label = "Toolchain",
+                    label = "工具链",
                     value = when (environmentState.toolchainReady) {
                         true -> "Ready"
-                        false -> "Not ready"
+                        false -> "未就绪"
                         null -> "Unknown"
                     },
                 )
                 SummaryRow(
-                    label = "Smoke test",
+                    label = "冒烟测试",
                     value = when (environmentState.smokeTestPassed) {
                         true -> "Passed"
                         false -> "Failed"
-                        null -> "Not run"
+                        null -> "未运行"
                     },
                 )
                 SummaryRow(
-                    "Primary bind",
+                    "主绑定",
                     environmentState.runtime.binds.firstOrNull()?.target ?: "/workspace",
                 )
                 environmentState.runningStep?.let { runningStep ->
                     Text(
-                        text = "Running: ${runningStep.key}",
+                        text = "正在运行：${runningStep.key}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -967,8 +967,8 @@ object SettingsFeature {
                     )
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
-                    CompactFilledButton(text = "Manage environments", onClick = onOpenEnvironmentWizard)
-                    CompactOutlinedButton(text = "Refresh checks", onClick = onRefreshEnvironment)
+                    CompactFilledButton(text = "管理环境", onClick = onOpenEnvironmentWizard)
+                    CompactOutlinedButton(text = "刷新检查", onClick = onRefreshEnvironment)
                 }
                 LocalEnvironmentBackup.current.migrationSummary?.let { summary ->
                     Text(
@@ -977,44 +977,44 @@ object SettingsFeature {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     CompactFilledButton(
-                        text = "Import from previous install",
+                        text = "从旧版本安装导入",
                         onClick = LocalEnvironmentBackup.current.onImportMigration,
                     )
                 }
                 if (environmentState.distroInstalled == true) {
                     val envBackup = LocalEnvironmentBackup.current
                     Text(
-                        text = "Back up the whole Linux environment (~2.5 GB) to a .tar.gz you can " +
-                            "restore here or on another device.",
+                        text = "将整个 Linux 环境（约 2.5 GB）备份为 .tar.gz 文件，以便 " +
+                            "在此处或其他设备上恢复。",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
-                        CompactFilledButton(text = "Back up (.tar.gz)", onClick = envBackup.onBackup)
-                        CompactOutlinedButton(text = "Restore…", onClick = envBackup.onRestore)
+                        CompactFilledButton(text = "备份（.tar.gz）", onClick = envBackup.onBackup)
+                        CompactOutlinedButton(text = "恢复…", onClick = envBackup.onRestore)
                     }
                     // Moving to an install with a different package name. Android gives that install
                     // its own data directory and no way to read this one's, so everything has to go
                     // out through shared storage first — see MigrationBundle.
                     Text(
-                        text = "Moving to a differently-named build? Write the environment, projects, " +
-                            "extensions and settings to the shared JCode folder, then import them " +
-                            "from the new install.",
+                        text = "要迁移到名称不同的构建版本？先将环境、项目、 " +
+                            "扩展和设置写入共享的 JCode 文件夹，然后" +
+                            "从新安装的版本中将其导入。",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     CompactOutlinedButton(
-                        text = "Export for migration",
+                        text = "导出以供迁移",
                         onClick = envBackup.onExportMigration,
                     )
                     Text(
-                        text = "Refresh package lists and upgrade installed packages " +
-                            "(apt-get update && upgrade). Runs in the Setup terminal — can be slow and use data.",
+                        text = "刷新软件包列表并升级已安装的软件包 " +
+                            "（apt-get update && upgrade）。在「设置」终端中运行——可能较慢且会消耗流量。",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     CompactOutlinedButton(
-                        text = if (envBackup.updatingPackages) "Updating packages…" else "Update system packages",
+                        text = if (envBackup.updatingPackages) "正在更新软件包…" else "更新系统软件包",
                         onClick = envBackup.onUpdatePackages,
                         enabled = !envBackup.updatingPackages,
                     )
@@ -1022,11 +1022,11 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Background process limit",
-                description = "Android caps how many processes an app may fork and kills the rest — " +
-                    "which takes the whole Linux environment down mid-command. Raising the cap needs " +
-                    "one adb command; JCode cannot set it itself.",
-                keywords = "phantom process limit killed died crashed dies terminal closes distro proot stopped " +
+                title = "后台进程数上限",
+                description = "Android 会限制应用可 fork 的进程数量，并终止其余进程—— " +
+                    "这会导致整个 Linux 环境在命令执行中途崩溃。提高上限需要 " +
+                    "一条 adb 命令；JCode 无法自行设置。",
+                keywords = "幽灵进程 崩溃 终端关闭 后台 phantom process limit killed died crashed dies terminal closes distro proot stopped " +
                     "background max_phantom_processes device_config adb activity manager trimming long session " +
                     "claude agent build gradle npm disappears exits by itself",
             ) {
@@ -1040,17 +1040,17 @@ object SettingsFeature {
                     }
                 }
                 SummaryRow(
-                    label = "Linux processes",
+                    label = "Linux 进程",
                     value = processCount?.let { "$it of ${AppProcesses.DEFAULT_PHANTOM_LIMIT} (default cap)" }
                         ?: "Unknown",
                 )
                 Text(
-                    text = "Android 12+ kills an app's forked processes once they pass the cap — 32 by " +
-                        "default. proot, the shell and everything under it count, so a long build or " +
-                        "coding-agent session goes over it and the terminal dies while JCode keeps " +
-                        "running. Run these from a computer with the device connected (or from this " +
-                        "device's own adb) to lift it; it survives reboots but has to be redone after a " +
-                        "factory reset.",
+                    text = "Android 12+ 会在应用 fork 的进程超过上限（默认为 32 个）时终止它们—— " +
+                        "proot、shell 及其下所有进程都计入，因此长时间的构建或 " +
+                        "coding-agent 会话超出上限后，终端会终止而 JCode 继续" +
+                        "运行。请通过已连接此设备的电脑运行以下命令（或通过本 " +
+                        "设备自带的 adb）来提高上限；该设置在重启后保留，但" +
+                        "恢复出厂设置后需要重新执行。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -1061,22 +1061,22 @@ object SettingsFeature {
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 CompactOutlinedButton(
-                    text = "Copy commands",
+                    text = "复制命令",
                     onClick = { clipboard.setText(AnnotatedString(AppProcesses.RAISE_LIMIT_COMMANDS)) },
                 )
             }
 
             SettingsCard(
-                title = "Android device",
-                description = "Pair JCode with this phone's own adb so builds install and launch on it.",
-                keywords = "android device adb bridge wireless debugging pair pairing code relay serial apk " +
-                    "install launch logcat gradle installdebug flutter run",
+                title = "Android 设备",
+                description = "将 JCode 与本机的 adb 配对，以便构建产物能安装并启动到本机。",
+                keywords = "android 设备 adb 桥接 无线调试 配对 配对码 中继 序列号 apk " +
+                    "安装 启动 logcat gradle installdebug flutter 运行",
             ) {
                 val androidDevice = LocalAndroidDevice.current
-                SummaryRow(label = "ADB bridge", value = androidDevice.status)
-                androidDevice.serial?.let { SummaryRow(label = "Serial", value = it) }
+                SummaryRow(label = "ADB 桥接", value = androidDevice.status)
+                androidDevice.serial?.let { SummaryRow(label = "序列号", value = it) }
                 CompactFilledButton(
-                    text = if (androidDevice.ready) "Manage device" else "Set up ADB",
+                    text = if (androidDevice.ready) "管理设备" else "设置 ADB",
                     onClick = androidDevice.onOpenPage,
                 )
             }
@@ -1087,8 +1087,8 @@ object SettingsFeature {
             SettingsGroup("About") {
             SettingsCard(
                 title = "JCode",
-                description = "App version and updates from GitHub releases.",
-                keywords = "about version update check release github changelog build app",
+                description = "应用版本，以及来自 GitHub releases 的更新。",
+                keywords = "关于 版本 更新 检查 发布 github 更新日志 构建 应用",
             ) {
                 val appUpdate = LocalAppUpdate.current
                 Row(
@@ -1097,7 +1097,7 @@ object SettingsFeature {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Version ${appUpdate.currentVersion}",
+                        text = "版本 ${appUpdate.currentVersion}",
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     if (appUpdate.updateAvailable) {
@@ -1106,7 +1106,7 @@ object SettingsFeature {
                             shape = RoundedCornerShape(50),
                         ) {
                             Text(
-                                text = "Update: v${appUpdate.latestVersion}",
+                                text = "更新：v${appUpdate.latestVersion}",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.padding(horizontal = Space.ms, vertical = Space.xs),
@@ -1114,19 +1114,19 @@ object SettingsFeature {
                         }
                     } else if (appUpdate.latestVersion != null) {
                         Text(
-                            text = "Up to date",
+                            text = "已是最新版本",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
-                // A single button: "Install Update" when a newer release is available (its label shows
-                // download/install progress while running), otherwise "Check for updates".
+                // A single button: "安装更新" when a newer release is available (its label shows
+                // download/install progress while running), otherwise "检查更新".
                 if (appUpdate.updateAvailable) {
                     CompactFilledButton(
                         text = when {
-                            !appUpdate.installing -> "Install Update"
-                            appUpdate.installProgress in 1..99 -> "Downloading… ${appUpdate.installProgress}%"
+                            !appUpdate.installing -> "安装更新"
+                            appUpdate.installProgress in 1..99 -> "下载中…${appUpdate.installProgress}%"
                             else -> "Installing…"
                         },
                         onClick = appUpdate.onInstallUpdate,
@@ -1134,7 +1134,7 @@ object SettingsFeature {
                     )
                 } else {
                     CompactOutlinedButton(
-                        text = if (appUpdate.checking) "Checking…" else "Check for updates",
+                        text = if (appUpdate.checking) "正在检查…" else "检查更新",
                         onClick = appUpdate.onCheck,
                         enabled = !appUpdate.checking,
                     )
@@ -1142,15 +1142,15 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Backup & restore",
-                description = "Save your app preferences to a file, then restore them here or on " +
-                    "another device. (Theme and editor settings live in the workspace config.)",
-                keywords = "backup restore export import settings preferences file save load transfer migrate json device",
+                title = "备份与恢复",
+                description = "将应用偏好设置保存到文件，然后在此处或 " +
+                    "其他设备上恢复。（主题和编辑器设置保存在工作区配置中。）",
+                keywords = "备份 恢复 导出 导入 设置 偏好设置 文件 保存 加载 传输 迁移 json 设备",
             ) {
                 val backup = LocalSettingsBackup.current
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
-                    CompactFilledButton(text = "Export settings…", onClick = backup.onExport)
-                    CompactOutlinedButton(text = "Import settings…", onClick = backup.onImport)
+                    CompactFilledButton(text = "导出设置…", onClick = backup.onExport)
+                    CompactOutlinedButton(text = "导入设置…", onClick = backup.onImport)
                 }
             }
 
@@ -1158,11 +1158,11 @@ object SettingsFeature {
 
             SettingsGroup("Diagnostics") {
             SettingsCard(
-                title = "Diagnostic logging",
-                description = "Off unless you turn it on. When something misbehaves, record what the " +
-                    "app is doing to a file you can attach to a bug report, then switch it back off.",
-                keywords = "diagnostic diagnostics log logging logcat debug trace record capture crash report " +
-                    "bug issue troubleshoot export share verbose file",
+                title = "诊断日志记录",
+                description = "默认关闭，需手动开启。当应用行为异常时，将其 " +
+                    "操作记录到文件，可附在问题报告中，然后再将其关闭。",
+                keywords = "诊断 诊断信息 日志 日志记录 logcat 调试 跟踪 记录 捕获 崩溃 报告 " +
+                    "错误 问题 排查 导出 分享 详细 文件",
             ) {
                 val diagnostics = LocalDiagnosticsSetting.current
                 var showLog by remember { mutableStateOf(false) }
@@ -1174,8 +1174,8 @@ object SettingsFeature {
                     }
                 }
                 ToggleRow(
-                    label = "Record diagnostics",
-                    supporting = "Writes app events to a log file on this device. Nothing is sent anywhere " +
+                    label = "记录诊断信息",
+                    supporting = "将应用事件写入本设备上的日志文件。不会向任何地方发送" +
                         "— you choose when to export it. File paths are replaced with placeholders so the " +
                         "log is safe to share.",
                     checked = diagnostics.enabled,
@@ -1185,7 +1185,7 @@ object SettingsFeature {
                 )
                 if (diagnostics.enabled) {
                     SettingsDropdownRow(
-                        label = "Detail",
+                        label = "详情",
                         options = DiagLevel.entries.map { it.name },
                         selected = diagnostics.level.name,
                         onSelect = { diagnostics.onSetLevel(DiagLevel.valueOf(it)) },
@@ -1194,41 +1194,41 @@ object SettingsFeature {
                         onReset = { diagnostics.onSetLevel(SettingsDefaults.DIAGNOSTIC_LEVEL) },
                     )
                     ToggleRow(
-                        label = "Include the system log",
-                        supporting = "Adds JCode's logcat output — including proot and the Linux " +
-                            "environment running under it, which is where most of the detail about " +
-                            "toolchains, extensions and language servers ends up. Only JCode's own " +
-                            "entries are readable; another app's never are.",
+                        label = "包含系统日志",
+                        supporting = "附加 JCode 的 logcat 输出 —— 包括 proot 和 Linux" +
+                            "环境，工具链、扩展和语言服务器的大部分详细信息都记录在其中；" +
+                            "只有 JCode 自身" +
+                            "的条目可读；其他应用的条目一律不可读。",
                         checked = diagnostics.captureSystemLog,
                         onCheckedChange = diagnostics.onSetCaptureSystemLog,
                         modified = diagnostics.captureSystemLog != SettingsDefaults.DIAGNOSTIC_SYSTEM_LOG,
                         onReset = { diagnostics.onSetCaptureSystemLog(SettingsDefaults.DIAGNOSTIC_SYSTEM_LOG) },
                     )
                     ToggleRow(
-                        label = "Record crashes",
-                        supporting = "Append the stack trace when the app crashes, so the log covers the " +
-                            "failure itself and not just what led up to it.",
+                        label = "记录崩溃",
+                        supporting = "在应用崩溃时附加堆栈跟踪，以便日志覆盖" +
+                            "故障本身，而不仅仅是导致故障的过程。",
                         checked = diagnostics.captureCrashes,
                         onCheckedChange = diagnostics.onSetCaptureCrashes,
                         modified = diagnostics.captureCrashes != SettingsDefaults.DIAGNOSTIC_CRASHES,
                         onReset = { diagnostics.onSetCaptureCrashes(SettingsDefaults.DIAGNOSTIC_CRASHES) },
                     )
-                    SummaryRow(label = "Recorded", value = formatLogSize(diagnostics.sizeBytes))
-                    SummaryRow(label = "Location", value = diagnostics.location.ifBlank { "Starting…" })
+                    SummaryRow(label = "已记录", value = formatLogSize(diagnostics.sizeBytes))
+                    SummaryRow(label = "位置", value = diagnostics.location.ifBlank { "Starting…" })
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
                     CompactFilledButton(
-                        text = "View",
+                        text = "查看",
                         onClick = { showLog = true },
                         enabled = diagnostics.sizeBytes > 0L,
                     )
                     CompactOutlinedButton(
-                        text = "Export…",
+                        text = "导出…",
                         onClick = diagnostics.onExport,
                         enabled = diagnostics.sizeBytes > 0L,
                     )
                     CompactOutlinedButton(
-                        text = "Clear",
+                        text = "清除",
                         onClick = diagnostics.onClear,
                         enabled = diagnostics.sizeBytes > 0L,
                     )
@@ -1240,17 +1240,17 @@ object SettingsFeature {
 
             } // end Diagnostics
 
-            SettingsGroup("Editor") {
+            SettingsGroup("编辑器") {
             SettingsCard(
-                title = "Editor defaults",
-                description = "Default font size and word wrap for the code editor. A workspace or " +
-                    "project can override the font size on its own settings tab.",
-                keywords = "editor font size text scale sp word wrap soft wrap line long lines default global",
+                title = "编辑器默认值",
+                description = "代码编辑器的默认字号和自动换行。工作区或 " +
+                    "项目可在其自身的设置选项卡中覆盖字号。",
+                keywords = "编辑器 字号 文本 缩放 sp 自动换行 软换行 行 长行 默认 全局",
             ) {
                 val editorFontSizeSetting = LocalEditorFontSizeSetting.current
                 val editorWordWrapSetting = LocalEditorWordWrapSetting.current
                 StepperRow(
-                    label = "Font size",
+                    label = "字号",
                     value = "${editorFontSizeSetting.value.toInt()} sp",
                     onDecrease = { editorFontSizeSetting.onChange((editorFontSizeSetting.value - 1f).coerceAtLeast(8f)) },
                     onIncrease = { editorFontSizeSetting.onChange((editorFontSizeSetting.value + 1f).coerceAtMost(72f)) },
@@ -1258,8 +1258,8 @@ object SettingsFeature {
                     onReset = { editorFontSizeSetting.onChange(SettingsDefaults.EDITOR_FONT_SIZE) },
                 )
                 ToggleRow(
-                    label = "Word wrap",
-                    supporting = "Wrap long lines to the editor width instead of scrolling horizontally.",
+                    label = "自动换行",
+                    supporting = "将长行按编辑器宽度换行，而不是水平滚动。",
                     checked = editorWordWrapSetting.enabled,
                     onCheckedChange = { editorWordWrapSetting.onChange(it) },
                     modified = editorWordWrapSetting.enabled != SettingsDefaults.EDITOR_WORD_WRAP,
@@ -1267,13 +1267,13 @@ object SettingsFeature {
                 )
             }
             SettingsCard(
-                title = "Editor gestures",
-                description = "How touch input behaves in the editor. Applies app-wide.",
-                keywords = "editor gestures drag move cursor speed vertical horizontal touch scroll",
+                title = "编辑器手势",
+                description = "触摸输入在编辑器中的行为方式。适用于整个应用。",
+                keywords = "编辑器 手势 拖动 移动光标 速度 垂直 水平 触摸 滚动",
             ) {
                 ToggleRow(
-                    label = "Drag to move cursor",
-                    supporting = "Drag a finger on the editor to move the text cursor (the view scrolls to follow) instead of scrolling. Long-press still selects text. Applies app-wide.",
+                    label = "拖动以移动光标",
+                    supporting = "在编辑器上拖动手指以移动文本光标（视图随之滚动）而不是滚动。长按仍可选择文本。全局生效。",
                     checked = editorDragSetting.enabled,
                     onCheckedChange = editorDragSetting.onChange,
                     modified = editorDragSetting.enabled != SettingsDefaults.EDITOR_DRAG_MOVES_CURSOR,
@@ -1281,7 +1281,7 @@ object SettingsFeature {
                 )
                 if (editorDragSetting.enabled) {
                     StepperRow(
-                        label = "Cursor drag speed — vertical",
+                        label = "光标拖动速度 —— 垂直",
                         value = "${editorDragSetting.verticalLevel} / 5",
                         onDecrease = { editorDragSetting.onVerticalLevelChange((editorDragSetting.verticalLevel - 1).coerceAtLeast(1)) },
                         onIncrease = { editorDragSetting.onVerticalLevelChange((editorDragSetting.verticalLevel + 1).coerceAtMost(5)) },
@@ -1289,7 +1289,7 @@ object SettingsFeature {
                         onReset = { editorDragSetting.onVerticalLevelChange(SettingsDefaults.CURSOR_DRAG_LEVEL) },
                     )
                     StepperRow(
-                        label = "Cursor drag speed — horizontal",
+                        label = "光标拖动速度 —— 水平",
                         value = "${editorDragSetting.horizontalLevel} / 5",
                         onDecrease = { editorDragSetting.onHorizontalLevelChange((editorDragSetting.horizontalLevel - 1).coerceAtLeast(1)) },
                         onIncrease = { editorDragSetting.onHorizontalLevelChange((editorDragSetting.horizontalLevel + 1).coerceAtMost(5)) },
@@ -1300,22 +1300,22 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Tabs",
-                description = "How editor and terminal tabs behave. Applies app-wide.",
-                keywords = "tabs tab close button hide editor terminal accidental coloring color accent random directory width size small medium large shorten ellipsis truncate",
+                title = "选项卡",
+                description = "编辑器和终端选项卡的行为方式。适用于整个应用。",
+                keywords = "选项卡 关闭按钮 隐藏 编辑器 终端 误触 着色 颜色 强调色 随机 目录 宽度 尺寸 小 中 大 缩短 省略号 截断",
             ) {
                 ToggleRow(
-                    label = "Hide tab close button",
-                    supporting = "Removes the × on editor and terminal tabs to avoid accidental closes. Close a tab from its long-press menu instead.",
+                    label = "隐藏选项卡关闭按钮",
+                    supporting = "移除编辑器和终端选项卡上的 ×，以免误关。请从选项卡的长按菜单关闭选项卡。",
                     checked = tabCloseSetting.hidden,
                     onCheckedChange = tabCloseSetting.onChange,
                     modified = tabCloseSetting.hidden != SettingsDefaults.HIDE_TAB_CLOSE_BUTTON,
                     onReset = { tabCloseSetting.onChange(SettingsDefaults.HIDE_TAB_CLOSE_BUTTON) },
                 )
                 SettingsDropdownRow(
-                    label = "Tab width",
-                    supporting = "The most an editor or terminal tab widens before its name is shortened " +
-                        "in the middle (e.g. \"build.gradle.kts\" → \"build.g…kts\").",
+                    label = "选项卡宽度",
+                    supporting = "编辑器或终端选项卡在名称被截断前能达到的最大" +
+                        "宽度，名称过长时从中间截断（例如“build.gradle.kts”→“build.g…kts”）。",
                     options = TabMaxSize.entries.map { it.name },
                     selected = tabMaxSizeSetting.size.name,
                     onSelect = { tabMaxSizeSetting.onChange(TabMaxSize.valueOf(it)) },
@@ -1323,9 +1323,9 @@ object SettingsFeature {
                     onReset = { tabMaxSizeSetting.onChange(SettingsDefaults.TAB_MAX_SIZE) },
                 )
                 SettingsDropdownRow(
-                    label = "Tab coloring",
-                    supporting = "Color-code editor file tabs. Long-press a file tab to set its color by hand; " +
-                        "colors are remembered in the project's .jcode. A project can override this default.",
+                    label = "选项卡着色",
+                    supporting = "为编辑器文件选项卡按颜色编码。长按文件选项卡可手动设置颜色；" +
+                        "颜色会记录在项目的 .jcode 中。项目可覆盖此默认值。",
                     options = TabColoring.entries.map { it.name },
                     selected = tabColoringSetting.mode.name,
                     onSelect = { tabColoringSetting.onChange(TabColoring.valueOf(it)) },
@@ -1336,15 +1336,15 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Formatter",
-                description = "Which formatter the editor uses. Built-in is rule-based; formatter extensions appear here once installed.",
-                keywords = "formatter format prettier indent on-save whitespace built-in " +
+                title = "格式化工具",
+                description = "编辑器使用的格式化工具。内置格式化工具基于规则；安装格式化扩展后会显示在这里。",
+                keywords = "格式化工具 格式化 prettier 缩进 保存时格式化 空白 内置 " +
                     formatterOptions.joinToString(" ") { it.second },
             ) {
                 formatterOptions.forEach { (id, label) ->
                     BundleRow(
                         name = label,
-                        description = if (id == "builtin") "Built-in rule-based formatter" else "Formatter extension",
+                        description = if (id == "builtin") "内置的基于规则的格式化工具" else "格式化扩展",
                         selected = formatterId == id,
                         swatch = emptyList(),
                         onClick = { onSelectFormatter(id) },
@@ -1353,15 +1353,15 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Markdown preview",
-                description = "How the rendered Markdown preview lays out.",
-                keywords = "markdown preview word wrap portrait landscape width horizontal scroll pan wide tables code",
+                title = "Markdown 预览",
+                description = "渲染后的 Markdown 预览的布局方式。",
+                keywords = "markdown 预览 自动换行 竖屏 横屏 宽度 水平滚动 平移 宽表格 代码",
             ) {
                 val markdownPreviewSetting = LocalMarkdownPreviewSetting.current
                 ToggleRow(
-                    label = "Word wrap in portrait",
-                    supporting = "Off: a portrait preview lays out at landscape width (the screen height, " +
-                        "honoring the device-cutout setting) and pans sideways — wide tables and code stay unbroken.",
+                    label = "竖屏时自动换行",
+                    supporting = "关闭：竖屏预览按横屏宽度（即屏幕高度，" +
+                        "遵循刘海屏设置）并可横向平移——宽表格和代码保持不换行。",
                     checked = markdownPreviewSetting.wrapInPortrait,
                     onCheckedChange = { markdownPreviewSetting.onSetWrapInPortrait(it) },
                     modified = markdownPreviewSetting.wrapInPortrait != SettingsDefaults.MARKDOWN_WRAP_PORTRAIT,
@@ -1371,16 +1371,16 @@ object SettingsFeature {
 
             } // end Editor
 
-            SettingsGroup("Explorer") {
+            SettingsGroup("资源管理器") {
             SettingsCard(
-                title = "Exclude Files/Folders",
-                description = "Exclude files and folders at the project root in the Explorer. \"By-injected\" " +
-                    "comes from each project's .gitignore, kept in sync by the Source Control extension. " +
-                    "Excluded entries are greyed out by default, or hidden from the tree entirely.",
-                keywords = "explorer files folder exclude hide hidden grey greyed grey-out dim de-emphasize project root gitignore jcode ignore injected specified show reveal by-line effect",
+                title = "排除文件/文件夹",
+                description = "在资源管理器中排除项目根目录下的文件和文件夹。“注入模式” " +
+                    "来自各项目的 .gitignore，由「源代码管理」扩展保持同步。 " +
+                    "被排除的条目默认显示为灰色，或从树中完全隐藏。",
+                keywords = "资源管理器 文件 文件夹 排除 隐藏 变灰 gitignore explorer files folder exclude hide hidden grey greyed grey-out dim de-emphasize project root gitignore jcode ignore injected specified show reveal by-line effect",
             ) {
                 SettingsDropdownRow(
-                    label = "Mode",
+                    label = "模式",
                     options = ExplorerHiddenMode.entries.map { it.name },
                     selected = explorerHiddenSetting.mode.name,
                     onSelect = { explorerHiddenSetting.onSetMode(ExplorerHiddenMode.valueOf(it)) },
@@ -1389,7 +1389,7 @@ object SettingsFeature {
                     onReset = { explorerHiddenSetting.onSetMode(SettingsDefaults.HIDDEN_ROOT_MODE) },
                 )
                 SettingsDropdownRow(
-                    label = "When excluded",
+                    label = "排除时",
                     options = ExplorerExcludeEffect.entries.map { it.name },
                     selected = explorerHiddenSetting.effect.name,
                     onSelect = { explorerHiddenSetting.onSetEffect(ExplorerExcludeEffect.valueOf(it)) },
@@ -1401,7 +1401,7 @@ object SettingsFeature {
                     mutableStateOf(explorerHiddenSetting.specifiedRaw)
                 }
                 SettingsTextFieldRow(
-                    label = "Specified — one pattern per line",
+                    label = "指定 —— 每行一个模式",
                     value = hidePatterns,
                     onValueChange = { hidePatterns = it },
                     onCommit = { explorerHiddenSetting.onSetSpecifiedRaw(hidePatterns) },
@@ -1411,15 +1411,15 @@ object SettingsFeature {
                 )
             }
             SettingsCard(
-                title = "Trash",
-                description = "Where deleted files go before they are gone. Covers Delete in the Explorer " +
-                    "and Discard in Source Control; the Trash itself opens from the Explorer toolbar.",
-                keywords = "trash bin recycle delete deleted remove restore recover undelete discard scm source control retention keep days empty permanently",
+                title = "回收站",
+                description = "文件在彻底删除前存放的位置。涵盖资源管理器中的「删除」 " +
+                    "和「源代码管理」中的「放弃更改」；回收站本身可从资源管理器工具栏打开。",
+                keywords = "回收站 回收站 循环 删除 已删除 移除 恢复 恢复 取消删除 放弃更改 scm 源代码管理 保留 保留 天数 清空 永久",
             ) {
                 ToggleRow(
-                    label = "Move deleted files to Trash",
-                    supporting = "Deleting a file or folder, or discarding a change in Source Control, keeps a " +
-                        "copy that can be restored. Turn this off to delete immediately and permanently.",
+                    label = "将删除的文件移至回收站",
+                    supporting = "删除文件或文件夹，或在源代码管理中放弃更改时，会保留" +
+                        "可恢复的副本。关闭此选项可立即永久删除。",
                     checked = trashSettings.enabled,
                     onCheckedChange = trashSettings.onSetEnabled,
                     modified = trashSettings.enabled != SettingsDefaults.TRASH_ENABLED,
@@ -1427,9 +1427,9 @@ object SettingsFeature {
                 )
                 if (trashSettings.enabled) {
                     SettingsDropdownRow(
-                        label = "Keep deleted files for",
-                        supporting = "Older items are removed when JCode starts and when the Trash is opened. " +
-                            "The Trash is app-private storage, so what is in it counts against the app's size.",
+                        label = "保留已删除文件",
+                        supporting = "较早的项目会在 JCode 启动时和打开回收站时被移除。" +
+                            "回收站是应用私有存储空间，因此其中的内容会计入应用体积。",
                         options = TRASH_RETENTION_CHOICES.map { it.toString() },
                         selected = trashSettings.retentionDays.toString(),
                         onSelect = { trashSettings.onSetRetentionDays(it.toInt()) },
@@ -1444,16 +1444,16 @@ object SettingsFeature {
 
             SettingsGroup("Developer") {
             SettingsCard(
-                title = "Developer options",
-                description = "Tools for building and testing JCode extensions.",
-                keywords = "developer options extension sideload unsigned jext debug dev tools inspector validator log console reload make tool third party",
+                title = "开发者选项",
+                description = "用于构建和测试 JCode 扩展的工具。",
+                keywords = "开发者选项 扩展 侧载 未签名 jext 调试 dev 工具 检查器 验证器 日志 控制台 重新加载 make 工具 第三方",
             ) {
                 val developerSetting = LocalDeveloperSetting.current
                 ToggleRow(
-                    label = "Enable developer options",
-                    supporting = "Adds an \"Ext Dev\" tab to the right panel (inspector, manifest validator, " +
-                        "live log) for debugging an unsigned .jext or .vsix. Importing one does not need this; " +
-                        "signed marketplace extensions are unaffected.",
+                    label = "启用开发者选项",
+                    supporting = "在右侧面板添加“扩展开发”选项卡（检查器、清单验证器、" +
+                        "实时日志），用于调试未签名的 .jext 或 .vsix。导入扩展不需要此选项； " +
+                        "已签名的扩展市场扩展不受影响。",
                     checked = developerSetting.enabled,
                     onCheckedChange = { developerSetting.onSetEnabled(it) },
                     modified = developerSetting.enabled != SettingsDefaults.DEVELOPER_OPTIONS,
@@ -1461,10 +1461,10 @@ object SettingsFeature {
                 )
                 if (developerSetting.enabled) {
                     Text(
-                        "Compile and pack your extension with the JCode extension make tool, then import the " +
-                            "unsigned .jext from the Extensions panel — the Ext Dev tab auto-reloads it on each " +
-                            "rebuild. Only signed packages (signed privately by the JCode maintainers) reach the " +
-                            "marketplace.",
+                        "使用 JCode 扩展制作工具编译并打包扩展，然后导入" +
+                            "未签名的 .jext（从「扩展」面板导入）——「扩展开发」选项卡会在每次 " +
+                            "重新构建。只有经过签名（由 JCode 维护者私下签名）的软件包才能进入" +
+                            "扩展市场。",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -1480,8 +1480,8 @@ object SettingsFeature {
             if (query.isBlank()) {
                 Text(
                     text = when (selectedScope) {
-                        ConfigScope.Workspace -> "These settings save to the workspace .jcode and apply across its projects unless a project override exists."
-                        ConfigScope.Project -> "These settings save to the project .jcode and only affect the selected local project."
+                        ConfigScope.Workspace -> "这些设置保存到工作区的 .jcode 目录，并应用于其下所有项目，除非项目存在覆盖设置。"
+                        ConfigScope.Project -> "这些设置保存到项目的 .jcode 中，仅影响所选的本地项目。"
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1490,27 +1490,27 @@ object SettingsFeature {
             }
 
             workspaceError?.let { message ->
-                WarningCard(title = "Workspace YAML warning", message = message)
+                WarningCard(title = "工作区 YAML 警告", message = message)
             }
 
             if (projectOverridesAvailable) {
                 projectError?.let { message ->
-                    WarningCard(title = "Project YAML warning", message = message)
+                    WarningCard(title = "项目 YAML 警告", message = message)
                 }
             }
 
             environmentState.errorMessage?.let { message ->
-                WarningCard(title = "Environment warning", message = message)
+                WarningCard(title = "环境警告", message = message)
             }
 
-            SettingsGroup("Editor", stateKey = "scoped.Editor") {
+            SettingsGroup("编辑器", stateKey = "scoped.Editor") {
             SettingsCard(
-                title = "Editor behavior",
-                description = "These controls write back to YAML and update the open editor immediately.",
-                keywords = "editor behavior font size tab size ligatures indent tab coloring color accent",
+                title = "编辑器行为",
+                description = "这些控件会回写到 YAML，并立即更新已打开的编辑器。",
+                keywords = "编辑器 行为 字号 制表符宽度 连字 缩进 选项卡 着色 颜色 强调色",
             ) {
                 StepperRow(
-                    label = "Font size",
+                    label = "字号",
                     value = "${fontSize.toInt()} sp",
                     onDecrease = { onUpdateFontSize(selectedScope, (fontSize - 1f).coerceAtLeast(8f)) },
                     onIncrease = { onUpdateFontSize(selectedScope, (fontSize + 1f).coerceAtMost(72f)) },
@@ -1518,8 +1518,8 @@ object SettingsFeature {
                     onReset = { onUpdateFontSize(selectedScope, null) },
                 )
                 SettingsDropdownRow(
-                    label = "Tab size",
-                    supporting = "Good defaults are 2, 4, or 8 spaces depending on the project.",
+                    label = "制表符宽度",
+                    supporting = "根据项目不同，2、4 或 8 个空格都是不错的默认值。",
                     options = listOf("2", "4", "8"),
                     selected = tabSize.toString(),
                     onSelect = { onUpdateTabSize(selectedScope, it.toInt()) },
@@ -1528,8 +1528,8 @@ object SettingsFeature {
                     onReset = { onUpdateTabSize(selectedScope, null) },
                 )
                 ToggleRow(
-                    label = "Ligatures",
-                    supporting = "Keep enabled for the editor surface, but let users disable it for long coding sessions.",
+                    label = "连字",
+                    supporting = "建议为编辑器界面保持启用，但允许用户在长时间编码时禁用。",
                     checked = ligatures,
                     onCheckedChange = { onUpdateLigatures(selectedScope, it) },
                     modified = scopedEditor?.ligatures != null,
@@ -1542,8 +1542,8 @@ object SettingsFeature {
                     ?.name
                     ?: tabColoringSetting.mode.name
                 SettingsDropdownRow(
-                    label = "Tab coloring",
-                    supporting = "Overrides the app-level default for this scope.",
+                    label = "选项卡着色",
+                    supporting = "覆盖此范围的应用级默认值。",
                     options = TabColoring.entries.map { it.name },
                     selected = tabColoring,
                     onSelect = { onUpdateTabColoring(selectedScope, it) },
@@ -1554,13 +1554,13 @@ object SettingsFeature {
             }
 
             SettingsCard(
-                title = "Explorer",
-                description = "Choose how the file explorer is laid out. Applies to the current edit scope.",
-                keywords = "explorer view mode tree list file manager layout breadcrumbs",
+                title = "资源管理器",
+                description = "选择文件资源管理器的布局方式。适用于当前编辑范围。",
+                keywords = "资源管理器 视图模式 树形 列表 文件管理器 布局 面包屑导航",
             ) {
                 OptionRow(
-                    label = "View mode",
-                    supporting = "Tree shows the whole project hierarchy; List is a one-folder file manager with breadcrumbs.",
+                    label = "视图模式",
+                    supporting = "树形显示整个项目层级；列表是带面包屑导航的单文件夹文件管理器。",
                     modified = scopedExplorer?.viewMode != null,
                     onReset = { onUpdateExplorerViewMode(selectedScope, null) },
                 ) {
@@ -1589,14 +1589,14 @@ object SettingsFeature {
 
             SettingsGroup("Files") {
             SettingsCard(
-                title = "YAML files",
-                description = "Open the backing config files directly when you want full control.",
-                keywords = "yaml files config workspace project open backing edit",
+                title = "YAML 文件",
+                description = "如需完全掌控，可直接打开底层的配置文件。",
+                keywords = "yaml 文件 配置 工作区 项目 打开 底层 编辑",
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
-                    CompactFilledButton(text = "Open workspace YAML", onClick = onOpenWorkspaceConfig)
+                    CompactFilledButton(text = "打开工作区 YAML", onClick = onOpenWorkspaceConfig)
                     CompactOutlinedButton(
-                        text = "Open project YAML",
+                        text = "打开项目 YAML",
                         onClick = onOpenProjectConfig,
                         enabled = projectOverridesAvailable,
                     )
@@ -1630,56 +1630,56 @@ private const val WEBVIEW_MODERN_MAJOR = 110
 private const val GOOGLE_WEBVIEW_PACKAGE = "com.google.android.webview"
 
 private fun explorerHiddenModeLabel(mode: ExplorerHiddenMode): String = when (mode) {
-    ExplorerHiddenMode.HideSpecifiedAndInjected -> "Specified + By-Injected"
-    ExplorerHiddenMode.HideInjected -> "By-Injected only"
+    ExplorerHiddenMode.HideSpecifiedAndInjected -> "指定项 + 注入项"
+    ExplorerHiddenMode.HideInjected -> "仅注入项"
     ExplorerHiddenMode.None -> "Off"
 }
 
-/** Human-readable labels for the "When excluded" dropdown — HOW excluded entries appear. */
+/** Human-readable labels for the "排除时" dropdown — HOW excluded entries appear. */
 private fun explorerExcludeEffectLabel(effect: ExplorerExcludeEffect): String = when (effect) {
-    ExplorerExcludeEffect.GreyOut -> "Grey out"
-    ExplorerExcludeEffect.Hide -> "Hide"
+    ExplorerExcludeEffect.GreyOut -> "置灰"
+    ExplorerExcludeEffect.Hide -> "隐藏"
 }
 
 /** Human-readable label for an [ExtraKeysVisibility] dropdown option. */
 private fun extraKeysVisibilityLabel(mode: ExtraKeysVisibility): String = when (mode) {
     ExtraKeysVisibility.Hidden -> "Hidden"
-    ExtraKeysVisibility.WithKeyboard -> "With keyboard"
+    ExtraKeysVisibility.WithKeyboard -> "随键盘显示"
     ExtraKeysVisibility.Always -> "Always"
 }
 
 /** Human-readable label for a [BottomBarVisibility] dropdown option. */
 private fun bottomBarVisibilityLabel(mode: BottomBarVisibility): String = when (mode) {
     BottomBarVisibility.Hidden -> "Hidden"
-    BottomBarVisibility.HideOnKeyboard -> "Hide on Soft Keyboard"
-    BottomBarVisibility.AlwaysShow -> "Always Show"
+    BottomBarVisibility.HideOnKeyboard -> "软键盘弹出时隐藏"
+    BottomBarVisibility.AlwaysShow -> "始终显示"
 }
 
 private fun headerActionButtonLabel(button: HeaderActionButton): String = when (button) {
-    HeaderActionButton.Terminal -> "Terminal"
-    HeaderActionButton.CommandPalette -> "Command Palette"
+    HeaderActionButton.Terminal -> "终端"
+    HeaderActionButton.CommandPalette -> "命令面板"
     HeaderActionButton.Hidden -> "Hidden"
 }
 
 private fun tabColoringLabel(mode: TabColoring): String = when (mode) {
-    TabColoring.RandomRemember -> "Random (if not exist then remember)"
-    TabColoring.Random -> "Random"
-    TabColoring.DirectoryBased -> "Directory based (then remember)"
+    TabColoring.RandomRemember -> "随机（不存在时则记住）"
+    TabColoring.Random -> "随机"
+    TabColoring.DirectoryBased -> "按目录（随后记住）"
     TabColoring.Disabled -> "Disabled"
 }
 
 /** [defaultSuffix] disambiguates the per-button System Default label, e.g. "System Default (Vol Up)". */
 private fun volumeKeyActionLabel(action: VolumeKeyAction, defaultSuffix: String): String = when (action) {
-    VolumeKeyAction.SystemDefault -> "System Default ($defaultSuffix)"
+    VolumeKeyAction.SystemDefault -> "系统默认（$defaultSuffix）"
     VolumeKeyAction.Undo -> "Undo"
     VolumeKeyAction.Redo -> "Redo"
-    VolumeKeyAction.KeyLeft -> "Key Left"
-    VolumeKeyAction.KeyRight -> "Key Right"
-    VolumeKeyAction.KeyUp -> "Key Up"
-    VolumeKeyAction.KeyDown -> "Key Down"
-    VolumeKeyAction.ScrollUp -> "Scroll Up"
-    VolumeKeyAction.ScrollDown -> "Scroll Down"
-    VolumeKeyAction.CommandPalette -> "Command Palette"
+    VolumeKeyAction.KeyLeft -> "左方向键"
+    VolumeKeyAction.KeyRight -> "右方向键"
+    VolumeKeyAction.KeyUp -> "上方向键"
+    VolumeKeyAction.KeyDown -> "下方向键"
+    VolumeKeyAction.ScrollUp -> "向上滚动"
+    VolumeKeyAction.ScrollDown -> "向下滚动"
+    VolumeKeyAction.CommandPalette -> "命令面板"
 }
 
 /** Current Settings search query; cards/headers self-filter on it. */
@@ -1726,7 +1726,7 @@ private fun SettingsSearchField(query: String, onQueryChange: (String) -> Unit) 
             Box(modifier = Modifier.weight(1f)) {
                 if (query.isEmpty()) {
                     Text(
-                        text = "Search settings",
+                        text = "搜索设置",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -1743,7 +1743,7 @@ private fun SettingsSearchField(query: String, onQueryChange: (String) -> Unit) 
             if (query.isNotEmpty()) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
-                    contentDescription = "Clear search",
+                    contentDescription = "清除搜索",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .size(16.dp)
@@ -1765,12 +1765,12 @@ private fun SettingsNoResults(query: String) {
         verticalArrangement = Arrangement.spacedBy(Space.xs),
     ) {
         Text(
-            text = "No settings match “$query”",
+            text = "没有与“$query”匹配的设置",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
         Text(
-            text = "Try a shorter or different term, like “font” or “theme”.",
+            text = "试试更短或不同的关键词，例如“font”或“theme”。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -1801,7 +1801,7 @@ private val settingsGroupOffsets = mutableMapOf<String, Float>()
  * inside collapsed groups and, for a group whose cards all filtered out, leave an empty child behind
  * that the parent's `spacedBy` would still pad around.
  *
- * [stateKey] separates groups that share a title — "Editor" is a heading on both the global and the
+ * [stateKey] separates groups that share a title — "编辑器" is a heading on both the global and the
  * scoped tab.
  */
 @Composable
@@ -1832,7 +1832,7 @@ private fun ColumnScope.SettingsGroup(
         )
         Icon(
             painter = jcIcon(if (expanded) JCodeIcon.ChevronUp else JCodeIcon.ChevronDown),
-            contentDescription = if (expanded) "Collapse $title" else "Expand $title",
+            contentDescription = if (expanded) "折叠 $title" else "展开 $title",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(IconSize.md),
         )
@@ -1887,7 +1887,7 @@ private fun WarningCard(
     message: String,
 ) {
     // Participate in the search filter/count like SettingsCard, so a warning neither leaks into
-    // unrelated results nor sits above a "No results" empty state.
+    // unrelated results nor sits above a "无结果" empty state.
     val query = LocalSettingsQuery.current.trim()
     if (query.isNotEmpty() && !matchesSettingsQuery(query, title, message, "warning error yaml")) return
     LocalSettingsMatchSink.current.count++
@@ -1957,7 +1957,7 @@ private fun BundleRow(
         if (selected) {
             Icon(
                 imageVector = Icons.Rounded.Check,
-                contentDescription = "Selected",
+                contentDescription = "已选中",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(IconSize.md),
             )
@@ -2060,7 +2060,7 @@ private fun IconSetRow(
         if (selected) {
             Icon(
                 imageVector = Icons.Rounded.Check,
-                contentDescription = "Selected",
+                contentDescription = "已选中",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(IconSize.md),
             )
@@ -2070,7 +2070,7 @@ private fun IconSetRow(
 
 /** Human-readable size for the Diagnostics card's "Recorded" row. */
 private fun formatLogSize(bytes: Long): String = when {
-    bytes <= 0L -> "Nothing yet"
+    bytes <= 0L -> "暂无"
     bytes < 1024L -> "$bytes B"
     bytes < 1024L * 1024L -> "${bytes / 1024L} KB"
     else -> String.format(Locale.US, "%.1f MB", bytes / (1024.0 * 1024.0))
@@ -2085,10 +2085,10 @@ private fun DiagnosticLogDialog(lines: List<String>, onDismiss: () -> Unit) {
     val clipboard = LocalClipboardManager.current
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Recent diagnostics") },
+        title = { Text("最近的诊断信息") },
         text = {
             if (lines.isEmpty()) {
-                Text("Nothing recorded yet.", style = MaterialTheme.typography.bodySmall)
+                Text("尚未记录任何内容。", style = MaterialTheme.typography.bodySmall)
             } else {
                 // Newest last, scrolled to the bottom: the end of the log is what a report is about.
                 val scroll = rememberScrollState()
@@ -2110,10 +2110,10 @@ private fun DiagnosticLogDialog(lines: List<String>, onDismiss: () -> Unit) {
                 }
             }
         },
-        confirmButton = { CompactFilledButton(text = "Close", onClick = onDismiss) },
+        confirmButton = { CompactFilledButton(text = "关闭", onClick = onDismiss) },
         dismissButton = {
             CompactOutlinedButton(
-                text = "Copy",
+                text = "复制",
                 onClick = {
                     clipboard.setText(AnnotatedString(buildString { lines.forEach { appendLine(it) } }))
                 },
@@ -2154,22 +2154,22 @@ private fun EnvVarEditor(settings: EnvVarSettings) {
     Column(verticalArrangement = Arrangement.spacedBy(Space.ms)) {
         // A plain heading, not a SettingsGroup: this tab is one section and has no search field.
         Text(
-            text = "Environment variables",
+            text = "环境变量",
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = Space.s, start = Space.xxs),
         )
         Text(
-            text = "Exported into every terminal and Build & Run session (e.g. API keys, GOPRIVATE, " +
-                "JAVA_OPTS). Applied to newly opened terminals.",
+            text = "导出到每个终端和「构建并运行」会话中（例如 API 密钥、GOPRIVATE、 " +
+                "JAVA_OPTS）。应用于新打开的终端。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         val entries = settings.vars.entries.sortedBy { it.key.lowercase() }
         if (entries.isEmpty()) {
             Text(
-                text = "No variables yet. Tap “Add variable” to create one.",
+                text = "还没有变量。点按“添加变量”创建一个。",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = Space.sm),
@@ -2185,20 +2185,20 @@ private fun EnvVarEditor(settings: EnvVarSettings) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
                             Text(
-                                text = value.ifEmpty { "(empty)" },
+                                text = value.ifEmpty { "（空）" },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
-                        CompactOutlinedButton(text = "Edit", onClick = { editTarget = name; adding = false })
-                        CompactOutlinedButton(text = "Delete", onClick = { settings.onRemove(name) })
+                        CompactOutlinedButton(text = "编辑", onClick = { editTarget = name; adding = false })
+                        CompactOutlinedButton(text = "删除", onClick = { settings.onRemove(name) })
                     }
                 }
             }
         }
-        CompactFilledButton(text = "Add variable", onClick = { editTarget = ""; adding = true })
+        CompactFilledButton(text = "添加变量", onClick = { editTarget = ""; adding = true })
     }
 
     val target = editTarget
@@ -2232,20 +2232,20 @@ private fun EnvVarDialog(
     val duplicate = name != editingName && name in existingNames
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (editingName == null) "Add variable" else "Edit variable") },
+        title = { Text(if (editingName == null) "添加变量" else "编辑变量") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Space.sm)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it.trim() },
-                    label = { Text("Name") },
+                    label = { Text("名称") },
                     singleLine = true,
                     isError = name.isNotEmpty() && (!nameValid || duplicate),
                     supportingText = {
                         if (duplicate) {
-                            Text("A variable named \"$name\" already exists")
+                            Text("已存在名为“$name”的变量")
                         } else if (name.isNotEmpty() && !nameValid) {
-                            Text("Letters, digits and underscore only; can't start with a digit")
+                            Text("仅允许字母、数字和下划线；不能以数字开头")
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -2253,19 +2253,19 @@ private fun EnvVarDialog(
                 OutlinedTextField(
                     value = value,
                     onValueChange = { value = it },
-                    label = { Text("Value") },
+                    label = { Text("值") },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
         },
         confirmButton = {
             CompactFilledButton(
-                text = "Save",
+                text = "保存",
                 onClick = { onSave(name, value) },
                 enabled = nameValid && !duplicate,
             )
         },
-        dismissButton = { CompactOutlinedButton(text = "Cancel", onClick = onDismiss) },
+        dismissButton = { CompactOutlinedButton(text = "取消", onClick = onDismiss) },
     )
 }
 
@@ -2304,8 +2304,8 @@ private fun StepperRow(
                 horizontalArrangement = Arrangement.spacedBy(Space.xs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                StepperButton(JCodeIcon.Minus, "Decrease $label", filled = false, onClick = onDecrease)
-                StepperButton(JCodeIcon.Add, "Increase $label", filled = true, onClick = onIncrease)
+                StepperButton(JCodeIcon.Minus, "减小 $label", filled = false, onClick = onDecrease)
+                StepperButton(JCodeIcon.Add, "增大 $label", filled = true, onClick = onIncrease)
             }
         }
     }

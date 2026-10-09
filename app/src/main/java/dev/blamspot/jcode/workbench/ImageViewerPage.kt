@@ -53,7 +53,7 @@ fun ImageViewerPage(source: String, name: String, modifier: Modifier = Modifier)
                     File(source).readBytes()
                 }
                 if (bytes.size > MAX_BYTES) {
-                    return@runCatching ImageLoad(null, "", "Image is too large to preview (${humanSize(bytes.size.toLong())}).")
+                    return@runCatching ImageLoad(null, "", "图片过大，无法预览（${humanSize(bytes.size.toLong())}）。")
                 }
                 val ext = name.substringAfterLast('.', "").lowercase()
                 val mime = mimeFor(ext)
@@ -66,7 +66,7 @@ fun ImageViewerPage(source: String, name: String, modifier: Modifier = Modifier)
                 }
                 // A data: URI loaded directly as the document (see the WebView factory below).
                 ImageLoad("data:$mime;base64,$b64", info)
-            }.getOrElse { e -> ImageLoad(null, "", e.message ?: "Failed to load image") }
+            }.getOrElse { e -> ImageLoad(null, "", e.message ?: "图片加载失败") }
         }
     }
 

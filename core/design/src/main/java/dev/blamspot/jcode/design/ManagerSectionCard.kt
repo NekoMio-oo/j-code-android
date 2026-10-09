@@ -63,7 +63,7 @@ fun ManagerSectionCard(
                 if (collapsible) {
                     Icon(
                         painter = jcIcon(if (expanded) JCodeIcon.ChevronUp else JCodeIcon.ChevronDown),
-                        contentDescription = if (expanded) "Collapse" else "Expand",
+                        contentDescription = if (expanded) "折叠" else "展开",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }

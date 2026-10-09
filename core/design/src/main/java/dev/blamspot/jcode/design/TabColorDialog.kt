@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 
 /**
- * The "Change Tab Color" picker: a 5x5 grid of [TabColorPalette] swatches, a "Random" button, and
- * (when a color is already set) a "Clear" button. Picking a swatch or Random calls [onPick] and
+ * The "更改选项卡颜色" picker: a 5x5 grid of [TabColorPalette] swatches, a "随机" button, and
+ * (when a color is already set) a "清除" button. Picking a swatch or Random calls [onPick] and
  * dismisses; Clear calls [onClear].
  */
 @Composable
@@ -38,7 +38,7 @@ fun TabColorDialog(
     val current = currentHex?.let { tabColorFromHex(it) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Tab color") },
+        title = { Text("选项卡颜色") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Space.sm)) {
                 TabColorPalette.chunked(5).forEach { row ->
@@ -73,14 +73,14 @@ fun TabColorDialog(
             }
         },
         confirmButton = {
-            CompactFilledButton(text = "Random", onClick = { onPick(randomTabColor()) })
+            CompactFilledButton(text = "随机", onClick = { onPick(randomTabColor()) })
         },
         dismissButton = {
             Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
                 if (current != null) {
-                    CompactDestructiveButton(text = "Clear", onClick = onClear)
+                    CompactDestructiveButton(text = "清除", onClick = onClear)
                 }
-                CompactOutlinedButton(text = "Cancel", onClick = onDismiss)
+                CompactOutlinedButton(text = "取消", onClick = onDismiss)
             }
         },
     )

@@ -18,7 +18,7 @@ enum class CompletionItemKind(val displayName: String) {
     EVENT("Event"),
     OPERATOR("Operator"),
     UNIT("Unit"),
-    VALUE("Value"),
+    VALUE("值"),
     CONSTANT("Constant"),
     ENUM("Enum"),
     ENUM_MEMBER("EnumMember"),

@@ -237,7 +237,7 @@ class DistroService(
         rootfsManager.isDistroInstalled(_environmentState.value.runtime.selectedDistro.id)
 
     /**
-     * Stream the active environment's rootfs to [out] as tar.gz (the "Back up environment" action).
+     * Stream the active environment's rootfs to [out] as tar.gz (the "备份环境" action).
      * [onProgress] reports (files, uncompressed bytes) periodically. Runs on the IO dispatcher.
      */
     suspend fun packSelectedEnvironment(
@@ -331,7 +331,7 @@ class DistroService(
                         runningAction = null,
                         executionLabel = null,
                         selectedDistroId = _environmentState.value.runtime.selectedDistro.id,
-                        errorMessage = "Failed to load SDK catalog: ${error.message ?: "Unknown error"}",
+                        errorMessage = "SDK 目录加载失败：${error.message ?: "未知错误"}",
                     )
                     return
                 }
@@ -357,14 +357,14 @@ class DistroService(
             val entry = _sdkCatalogState.value.entries.firstOrNull { it.id == entryId }
             if (entry == null) {
                 _sdkCatalogState.value = _sdkCatalogState.value.copy(
-                    errorMessage = "Unknown SDK catalog entry '$entryId'.",
+                    errorMessage = "未知的 SDK 目录条目 '$entryId'。",
                 )
                 return
             }
 
             if (_environmentState.value.distroInstalled != true || _environmentState.value.jcodeUserReady != true) {
                 _sdkCatalogState.value = _sdkCatalogState.value.copy(
-                    errorMessage = "Complete the environment setup before running SDK catalog actions.",
+                    errorMessage = "请先完成环境设置，再执行 SDK 目录操作。",
                 )
                 return
             }
@@ -440,10 +440,10 @@ class DistroService(
                     ?: "${action.label} failed."
 
                 action == SdkCatalogAction.Install && !installedNow ->
-                    "Install finished, but verification did not detect ${entry.name}."
+                    "安装已完成，但验证未检测到 ${entry.name}。"
 
                 action == SdkCatalogAction.Uninstall && installedNow ->
-                    "Removal finished, but verification still detects ${entry.name}."
+                    "卸载已完成，但验证仍检测到 ${entry.name}。"
 
                 else -> null
             }
@@ -500,7 +500,7 @@ class DistroService(
                 // slower concurrent fetch for another entry must keep its own spinner.
                 versionsLoadingEntryId = _sdkCatalogState.value.versionsLoadingEntryId.takeIf { it != entryId },
                 errorMessage = if (available.isEmpty()) {
-                    "Couldn't list installable versions for ${entry.name}."
+                    "无法列出 ${entry.name} 的可安装版本。"
                 } else {
                     _sdkCatalogState.value.errorMessage
                 },
@@ -531,14 +531,14 @@ class DistroService(
             val entry = LspServerCatalog.findById(entryId)
             if (entry == null) {
                 _lspCatalogState.value = _lspCatalogState.value.copy(
-                    errorMessage = "Unknown language server '$entryId'.",
+                    errorMessage = "未知的语言服务器 '$entryId'。",
                 )
                 return
             }
 
             if (_environmentState.value.distroInstalled != true || _environmentState.value.jcodeUserReady != true) {
                 _lspCatalogState.value = _lspCatalogState.value.copy(
-                    errorMessage = "Complete the environment setup before installing language servers.",
+                    errorMessage = "请先完成环境设置，再安装语言服务器。",
                 )
                 return
             }
@@ -585,10 +585,10 @@ class DistroService(
                     ?: "${action.label} failed."
 
                 action == LspCatalogAction.Install && !installedNow ->
-                    "Install finished, but verification did not detect $name."
+                    "安装已完成，但验证未检测到 $name。"
 
                 action == LspCatalogAction.Uninstall && installedNow ->
-                    "Removal finished, but verification still detects $name."
+                    "卸载已完成，但验证仍检测到 $name。"
 
                 else -> null
             }
@@ -763,14 +763,14 @@ class DistroService(
             val entry = DebugEngineCatalog.findById(entryId)
             if (entry == null) {
                 _debugCatalogState.value = _debugCatalogState.value.copy(
-                    errorMessage = "Unknown debug engine '$entryId'.",
+                    errorMessage = "未知的调试引擎 '$entryId'。",
                 )
                 return
             }
 
             if (_environmentState.value.distroInstalled != true || _environmentState.value.jcodeUserReady != true) {
                 _debugCatalogState.value = _debugCatalogState.value.copy(
-                    errorMessage = "Complete the environment setup before installing debug engines.",
+                    errorMessage = "请先完成环境设置，再安装调试引擎。",
                 )
                 return
             }
@@ -813,10 +813,10 @@ class DistroService(
                     ?: "${action.label} failed."
 
                 action == DebugEngineAction.Install && !installedNow ->
-                    "Install finished, but verification did not detect $name."
+                    "安装已完成，但验证未检测到 $name。"
 
                 action == DebugEngineAction.Uninstall && installedNow ->
-                    "Removal finished, but verification still detects $name."
+                    "卸载已完成，但验证仍检测到 $name。"
 
                 else -> null
             }
@@ -943,7 +943,7 @@ class DistroService(
                 // Refreshing package lists and installing Node are best-effort and idempotent; treat
                 // them as done once the user is ready so they run only during the fresh first-run pass
                 // (when the distro isn't installed at derive time) and never re-run on later
-                // "Use"/refresh triggers — an environment set up before Node was part of setup should
+                // "使用"/refresh triggers — an environment set up before Node was part of setup should
                 // not start a multi-minute install the next time it is selected.
                 completedSteps += WizardStepId.AptUpdated
                 completedSteps += WizardStepId.NodeInstalled
@@ -1023,11 +1023,11 @@ class DistroService(
         callerContext: Context = appContext,
     ) {
         lock.withLock {
-            updateRunningStep(stepId, "Running ${stepId.key}.")
+            updateRunningStep(stepId, "正在运行 ${stepId.key}。")
             val result = when (stepId) {
                 WizardStepId.CheckStorage -> checkStorageStep()
                 WizardStepId.ProotReady -> ensureProotStep()
-                WizardStepId.DistroSelected -> ExecResult(stdout = "Distro selected.", exitCode = 0)
+                WizardStepId.DistroSelected -> ExecResult(stdout = "已选择发行版。", exitCode = 0)
                 WizardStepId.DistroInstalled -> installSelectedDistro(onLine = ::appendActivityLogLine)
                 WizardStepId.WorkspaceReady -> ensureWorkspaceDirectory()
                 WizardStepId.ToolchainBootstrapped -> bootstrapToolchain(onLine = ::appendActivityLogLine)
@@ -1042,7 +1042,7 @@ class DistroService(
                 append(": ")
                 append(
                     result.internalError
-                        ?: result.stdout.ifBlank { result.stderr.ifBlank { "Completed with exit ${result.exitCode ?: "?"}." } }
+                        ?: result.stdout.ifBlank { result.stderr.ifBlank { "已完成，退出码为 ${result.exitCode ?: "?"}." } }
                             .lineSequence()
                             .firstOrNull()
                             .orEmpty(),
@@ -1077,7 +1077,7 @@ class DistroService(
         lock.withLock {
             // Re-derive completion for the currently selected distro first, so a freshly selected (and
             // possibly not-yet-installed) distro is not treated as "already set up" from another distro's
-            // state. Without this, selecting a second distro and tapping "Use" would no-op.
+            // state. Without this, selecting a second distro and tapping "使用" would no-op.
             deriveSelectedDistroState()
             val state = _environmentState.value
 
@@ -1089,7 +1089,7 @@ class DistroService(
                 _autoSetupProgress.tryEmit(DistroWizardProgress.AllDone(
                     totalSteps = WizardStepId.entries.size,
                     completedSteps = state.completedSteps.size,
-                    summary = "All environment steps are already complete.",
+                    summary = "所有环境步骤均已完成。",
                 ))
                 return
             }
@@ -1104,7 +1104,7 @@ class DistroService(
                 val result = when (step) {
                     WizardStepId.CheckStorage -> checkStorageStep()
                     WizardStepId.ProotReady -> ensureProotStep()
-                    WizardStepId.DistroSelected -> ExecResult(stdout = "Distro selected.", exitCode = 0)
+                    WizardStepId.DistroSelected -> ExecResult(stdout = "已选择发行版。", exitCode = 0)
                     WizardStepId.DistroInstalled -> installSelectedDistro(
                         onLine = ::appendActivityLogLine,
                         onDownloadProgress = { percent, detail ->
@@ -1133,7 +1133,7 @@ class DistroService(
                     append(": ")
                     append(
                         result.internalError
-                            ?: result.stdout.ifBlank { result.stderr.ifBlank { "Completed with exit ${result.exitCode ?: "?"}." } }
+                            ?: result.stdout.ifBlank { result.stderr.ifBlank { "已完成，退出码为 ${result.exitCode ?: "?"}." } }
                                 .lineSequence()
                                 .firstOrNull()
                                 .orEmpty(),
@@ -1158,12 +1158,12 @@ class DistroService(
                 } else {
                     val error = result.internalError
                         ?: result.stderr.ifBlank { result.stdout }.lineSequence().firstOrNull { it.isNotBlank() }
-                        ?: "Step failed with exit ${result.exitCode ?: "?"}."
+                        ?: "步骤失败，退出码为 ${result.exitCode ?: "?"}."
                     if (step in BEST_EFFORT_STEPS) {
                         // Best-effort steps (refreshing package lists) must never block setup: log it,
                         // mark it done so we don't loop on it, and carry on. A stale package list just
                         // means the first `apt-get install` will refresh itself.
-                        _autoSetupProgress.tryEmit(DistroWizardProgress.Completed(step, "Skipped: $error"))
+                        _autoSetupProgress.tryEmit(DistroWizardProgress.Completed(step, "已跳过：$error"))
                         val updatedCompletedSteps = _environmentState.value.completedSteps + step
                         val nextLog = (_environmentState.value.activityLog + logLine).takeLast(SETUP_ACTIVITY_LOG_LIMIT)
                         _environmentState.value = _environmentState.value.copy(
@@ -1197,26 +1197,26 @@ class DistroService(
             _autoSetupProgress.tryEmit(DistroWizardProgress.AllDone(
                 totalSteps = totalSteps,
                 completedSteps = completedCount,
-                summary = "Setup complete: $completedCount/$totalSteps steps succeeded.",
+                summary = "设置完成：$completedCount/$totalSteps 个步骤成功。",
             ))
         }
     }
 
     private fun stepLabel(step: WizardStepId): String = when (step) {
-        WizardStepId.CheckStorage -> "Check storage space"
-        WizardStepId.ProotReady -> "Extract proot binary"
-        WizardStepId.DistroSelected -> "Select distro"
-        WizardStepId.DistroInstalled -> "Install ${_environmentState.value.runtime.selectedDistro.label}"
-        WizardStepId.WorkspaceReady -> "Create workspace directory"
-        WizardStepId.ToolchainBootstrapped -> "Skip bootstrap (use SDK Manager for tools)"
-        WizardStepId.JcodeUserCreated -> "Create jcode user"
-        WizardStepId.AptUpdated -> "Refresh package lists"
-        WizardStepId.NodeInstalled -> "Install Node.js (LTS)"
-        WizardStepId.SmokeTest -> "Run smoke test"
+        WizardStepId.CheckStorage -> "检查存储空间"
+        WizardStepId.ProotReady -> "解压 proot 二进制文件"
+        WizardStepId.DistroSelected -> "选择发行版"
+        WizardStepId.DistroInstalled -> "安装 ${_environmentState.value.runtime.selectedDistro.label}"
+        WizardStepId.WorkspaceReady -> "创建工作区目录"
+        WizardStepId.ToolchainBootstrapped -> "跳过引导（使用 SDK 管理器安装工具）"
+        WizardStepId.JcodeUserCreated -> "创建 jcode 用户"
+        WizardStepId.AptUpdated -> "刷新软件包列表"
+        WizardStepId.NodeInstalled -> "安装 Node.js (LTS)"
+        WizardStepId.SmokeTest -> "运行冒烟测试"
     }
 
     fun install(profile: DistroProfile = _environmentState.value.runtime.selectedDistro): Flow<DistroEvent> = flow {
-        emit(DistroEvent(stage = "install", message = "Installing ${profile.label}."))
+        emit(DistroEvent(stage = "install", message = "正在安装 ${profile.label}。"))
         val result = installSelectedDistro(profile)
         emit(DistroEvent(stage = "install", message = summarizeResult(result), result = result))
     }
@@ -1226,7 +1226,7 @@ class DistroService(
         packages: List<String> = DEFAULT_BOOTSTRAP_PACKAGES,
         user: String = _environmentState.value.runtime.user,
     ): Flow<DistroEvent> = flow {
-        emit(DistroEvent(stage = "bootstrap", message = "Bootstrapping ${profile.label} as $user."))
+        emit(DistroEvent(stage = "bootstrap", message = "正在以 $user 身份引导 ${profile.label}。"))
         val result = bootstrapToolchain(packages = packages)
         emit(DistroEvent(stage = "bootstrap", message = summarizeResult(result), result = result))
     }
@@ -1268,9 +1268,9 @@ class DistroService(
 
     private fun checkStorageStep(): ExecResult {
         return if (checkStorageSpace()) {
-            ExecResult(stdout = "Sufficient storage available.", exitCode = 0)
+            ExecResult(stdout = "存储空间充足。", exitCode = 0)
         } else {
-            ExecResult(internalError = "Insufficient storage. Need at least 2GB free.", exitCode = 1)
+            ExecResult(internalError = "存储空间不足。至少需要 2GB 可用空间。", exitCode = 1)
         }
     }
 
@@ -1317,14 +1317,14 @@ class DistroService(
             val restore = pendingRestoreTarball
             if (restore != null) {
                 pendingRestoreTarball = null
-                onLine?.invoke("Restoring ${profile.label} from backup (${"%.1f".format(restore.length() / (1024f * 1024f))} MiB)…")
-                onDownloadProgress?.invoke(null, "Restoring from backup…")
+                onLine?.invoke("正在从备份还原 ${profile.label}（${"%.1f".format(restore.length() / (1024f * 1024f))} MiB)…")
+                onDownloadProgress?.invoke(null, "正在从备份还原…")
                 val rootfsDir = rootfsManager.getRootfsPath(profile.id)
                 val ok = rootfsManager.extractRootfs(restore, rootfsDir)
                 restore.delete()
-                if (!ok) return ExecResult(internalError = "Failed to restore rootfs for ${profile.label}", exitCode = 1)
+                if (!ok) return ExecResult(internalError = "未能还原 ${profile.label} 的 rootfs", exitCode = 1)
                 rootfsManager.writeMetadata(profile)
-                onLine?.invoke("Restored rootfs at ${rootfsDir.absolutePath}.")
+                onLine?.invoke("已在 ${rootfsDir.absolutePath} 还原 rootfs。")
                 return ExecResult(stdout = "${profile.label} restored from backup", exitCode = 0)
             }
             android.util.Log.d("DistroService", "installSelectedDistro: checking for ${profile.id}")
@@ -1336,11 +1336,11 @@ class DistroService(
 
             // Download rootfs synchronously for auto-setup
             android.util.Log.d("DistroService", "installSelectedDistro: downloading rootfs for ${profile.label}...")
-            onLine?.invoke("Downloading ${profile.label} rootfs...")
+            onLine?.invoke("正在下载 ${profile.label} rootfs…")
             val manifest = kotlinx.coroutines.runBlocking { rootfsManager.downloader.fetchManifest() }
             val entry = manifest.findByDistroId(profile.id)
             if (entry == null) {
-                return ExecResult(internalError = "No rootfs image found for ${profile.label}", exitCode = 1)
+                return ExecResult(internalError = "未找到 ${profile.label} 的 rootfs 镜像", exitCode = 1)
             }
             // Use the file extension from the URL to preserve compression format
             val urlExt = entry.url.substringAfterLast('.').let { ext ->
@@ -1354,30 +1354,30 @@ class DistroService(
                 val quarter = (percent ?: 0) / 25
                 if (percent != null && quarter != lastLoggedQuarter) {
                     lastLoggedQuarter = quarter
-                    onLine?.invoke("Downloading ${profile.label} rootfs: $percent% ($detail)")
+                    onLine?.invoke("正在下载 ${profile.label} rootfs：$percent%（$detail）")
                 }
             }
             android.util.Log.d("DistroService", "installSelectedDistro: download result=$downloadOk, fileSize=${tarball.length()}")
             if (!downloadOk) {
-                return ExecResult(internalError = "Failed to download rootfs for ${profile.label}", exitCode = 1)
+                return ExecResult(internalError = "下载 ${profile.label} 的 rootfs 失败", exitCode = 1)
             }
-            onLine?.invoke("Downloaded ${"%.1f".format(tarball.length() / (1024f * 1024f))} MiB rootfs archive.")
+            onLine?.invoke("已下载 ${"%.1f".format(tarball.length() / (1024f * 1024f))} MiB rootfs archive.")
 
             android.util.Log.d("DistroService", "installSelectedDistro: extracting rootfs...")
-            onLine?.invoke("Extracting rootfs...")
+            onLine?.invoke("正在解压 rootfs…")
             val rootfsDir = rootfsManager.getRootfsPath(profile.id)
             val extractOk = rootfsManager.extractRootfs(tarball, rootfsDir)
             android.util.Log.d("DistroService", "installSelectedDistro: extract result=$extractOk")
             tarball.delete()
             if (!extractOk) {
-                return ExecResult(internalError = "Failed to extract rootfs for ${profile.label}", exitCode = 1)
+                return ExecResult(internalError = "解压 ${profile.label} 的 rootfs 失败", exitCode = 1)
             }
             rootfsManager.writeMetadata(profile)
-            onLine?.invoke("Rootfs ready at ${rootfsDir.absolutePath}.")
+            onLine?.invoke("rootfs 已就绪：${rootfsDir.absolutePath}。")
             ExecResult(stdout = "${profile.label} installed at ${rootfsDir.absolutePath}", exitCode = 0)
         } catch (e: Exception) {
             android.util.Log.e("DistroService", "installSelectedDistro: exception", e)
-            ExecResult(internalError = e.message ?: "Installation failed.", exitCode = 1)
+            ExecResult(internalError = e.message ?: "安装失败。", exitCode = 1)
         }
     }
 
@@ -1385,9 +1385,9 @@ class DistroService(
         val bind = primaryBind()
         val created = bind.hostFile.mkdirs() || bind.hostFile.exists()
         return if (created) {
-            ExecResult(stdout = "Workspace ready at ${bind.host}.", exitCode = 0)
+            ExecResult(stdout = "工作区已就绪：${bind.host}。", exitCode = 0)
         } else {
-            ExecResult(internalError = "Failed to create ${bind.host}.", exitCode = 1)
+            ExecResult(internalError = "创建 ${bind.host} 失败。", exitCode = 1)
         }
     }
 
@@ -1397,8 +1397,8 @@ class DistroService(
     ): ExecResult {
         // Skip on-device bootstrap: proot apt-get is too slow (10+ min for 3 packages).
         // Users install toolchains via SDK Manager or terminal as needed.
-        onLine?.invoke("Bootstrap skipped. Install toolchains via SDK Manager or terminal.")
-        return ExecResult(stdout = "Bootstrap skipped (use SDK Manager for toolchains).", exitCode = 0)
+        onLine?.invoke("已跳过引导。请通过 SDK 管理器或终端安装工具链。")
+        return ExecResult(stdout = "已跳过引导（请使用 SDK 管理器安装工具链）。", exitCode = 0)
     }
 
     private fun createDistroUser(onLine: ((String) -> Unit)? = null): ExecResult {
@@ -1522,8 +1522,8 @@ class DistroService(
 
     private fun smokeTest(onLine: ((String) -> Unit)? = null): ExecResult {
         // Skip smoke test: minimal rootfs has limited tools, and proot execution is verified by other steps.
-        onLine?.invoke("Smoke test skipped (rootfs verified by other steps).")
-        return ExecResult(stdout = "Smoke test skipped.", exitCode = 0)
+        onLine?.invoke("已跳过冒烟测试（rootfs 已由其他步骤验证）。")
+        return ExecResult(stdout = "已跳过冒烟测试。", exitCode = 0)
     }
 
     private fun checkToolchainReady(): Boolean? {
@@ -1713,8 +1713,8 @@ class DistroService(
      */
     private suspend fun aptUpdateStep(onLine: ((String) -> Unit)? = null): ExecResult {
         ensureSelectedDistroNetworking()
-        onLine?.invoke("Refreshing package lists (apt-get update)…")
-        return execCatalogAction("Refresh package lists", "sudo apt-get -y update", timeoutMs = 300_000L)
+        onLine?.invoke("正在刷新软件包列表（apt-get update）…")
+        return execCatalogAction("刷新软件包列表", "sudo apt-get -y update", timeoutMs = 300_000L)
     }
 
     /**
@@ -1725,7 +1725,7 @@ class DistroService(
      * everyone's first task.
      *
      * Runs the `nodejs` catalog entry's own script (nvm, newest LTS) and records the outcome in the
-     * same persisted installed-set the Toolchains panel reads, so the row already reads "Installed"
+     * same persisted installed-set the Toolchains panel reads, so the row already reads "已安装"
      * and the version picker can add or remove versions alongside it. Best-effort
      * ([BEST_EFFORT_STEPS]): a failure still leaves a usable environment. Called from inside the
      * wizard lock, so it must NOT take [lock] again.
@@ -1737,18 +1737,18 @@ class DistroService(
         val entry = _sdkCatalogState.value.entries
             .ifEmpty { runCatching { sdkCatalogLoader.load() }.getOrElse { emptyList() } }
             .firstOrNull { it.id == NODE_CATALOG_ENTRY_ID }
-            ?: return ExecResult(internalError = "Node.js is missing from the toolchain catalog.")
+            ?: return ExecResult(internalError = "工具链目录中缺少 Node.js。")
 
         if (execCatalogScript(entry.verifyScript, timeoutMs = 120_000L).succeeded) {
-            return ExecResult(stdout = "Node.js is already installed.", exitCode = 0)
+            return ExecResult(stdout = "Node.js 已安装。", exitCode = 0)
         }
 
         ensureSelectedDistroNetworking()
-        onLine?.invoke("Installing Node.js (LTS)…")
+        onLine?.invoke("正在安装 Node.js (LTS)…")
         // Without a Setup terminal there is no PTY for the OSC progress marker, so the script's plain
         // "[ 42%] label" line is what drives the wizard's bar on that path.
         val result = execCatalogAction(
-            label = "Install ${entry.name} (LTS)",
+            label = "安装 ${entry.name} (LTS)",
             script = entry.installScript,
             timeoutMs = entry.installTimeoutMs(catalogInstallTimeoutMs),
             onProgress = onProgress,
@@ -1774,11 +1774,11 @@ class DistroService(
         if (!installed) {
             return ExecResult(
                 internalError = result.internalError
-                    ?: "Node.js install finished, but verification did not detect it.",
+                    ?: "Node.js 安装已完成，但验证未检测到它。",
                 exitCode = result.exitCode ?: 1,
             )
         }
-        return ExecResult(stdout = "Node.js (LTS) installed.", exitCode = 0)
+        return ExecResult(stdout = "Node.js (LTS) 已安装。", exitCode = 0)
     }
 
     /**
@@ -1790,11 +1790,11 @@ class DistroService(
      */
     suspend fun updateSystemPackages(): ExecResult = lock.withLock {
         if (_environmentState.value.distroInstalled != true || _environmentState.value.jcodeUserReady != true) {
-            return@withLock ExecResult(internalError = "Finish environment setup before updating packages.")
+            return@withLock ExecResult(internalError = "请先完成环境设置，再更新软件包。")
         }
         ensureSelectedDistroNetworking()
         execCatalogAction(
-            "Update system packages",
+            "更新系统软件包",
             "sudo apt-get -y update && sudo apt-get -y upgrade",
             timeoutMs = 1_800_000L,
         )
@@ -1847,7 +1847,7 @@ class DistroService(
         val rootfsPath = rootfsManager.getRootfsPath(distroId)
 
         if (!rootfsManager.isDistroInstalled(distroId)) {
-            return ExecResult(internalError = "Distro '$distroId' is not installed.", exitCode = 1)
+            return ExecResult(internalError = "发行版 '$distroId' 未安装。", exitCode = 1)
         }
 
         if (!prootManager.isProotInstalled) {
@@ -1867,7 +1867,7 @@ class DistroService(
             if (!qemuOk) {
                 return ExecResult(
                     internalError = "${arch.qemuUserBinary} is required to run ${runtime.selectedDistro.label} " +
-                        "but is not available. The QEMU emulator binary has not been bundled yet.",
+                        "但该二进制文件不可用。QEMU 模拟器二进制文件尚未打包。",
                     exitCode = 1,
                 )
             }
@@ -2024,7 +2024,7 @@ class DistroService(
                 return ExecResult(
                     stdout = stdout.toString(),
                     stderr = stderr.toString(),
-                    internalError = "Command timed out after ${timeoutMs}ms.",
+                    internalError = "命令在 ${timeoutMs}ms 后超时。",
                     exitCode = -1,
                 )
             }
@@ -2040,7 +2040,7 @@ class DistroService(
                 exitCode = process.exitValue(),
             )
         } catch (e: Exception) {
-            ExecResult(internalError = e.message ?: "Process execution failed.", exitCode = -1)
+            ExecResult(internalError = e.message ?: "进程执行失败。", exitCode = -1)
         }
     }
 
@@ -2122,7 +2122,7 @@ class DistroService(
             runCatching { sdkCatalogLoader.load() }.getOrElse { error ->
                 _sdkCatalogState.value = _sdkCatalogState.value.copy(
                     selectedDistroId = distroId,
-                    errorMessage = "Failed to load SDK catalog: ${error.message ?: "Unknown error"}",
+                    errorMessage = "SDK 目录加载失败：${error.message ?: "未知错误"}",
                 )
                 return
             }
@@ -2189,7 +2189,7 @@ class DistroService(
         return result.internalError
             ?: result.stdout.lineSequence().firstOrNull()?.takeIf(String::isNotBlank)
             ?: result.stderr.lineSequence().firstOrNull()?.takeIf(String::isNotBlank)
-            ?: "Command exited with ${result.exitCode ?: "unknown"}."
+            ?: "命令已退出，退出码为 ${result.exitCode ?: "unknown"}."
     }
 
     private fun appendCatalogLogLines(

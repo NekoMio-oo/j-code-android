@@ -134,7 +134,7 @@ internal fun TaskManagerSidebarContent(
         TaskSectionLabel("Sessions")
         if (!hasSessions) {
             Text(
-                "Nothing running — terminals, Build & Run, and debug sessions appear here.",
+                "没有正在运行的内容——终端、“构建和运行”以及调试会话将显示在这里。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = Space.xs),
@@ -145,39 +145,39 @@ internal fun TaskManagerSidebarContent(
             val foreground = session.foreground
             val idleMin = ((now - session.lastActivityAt) / 60_000L).coerceAtLeast(0)
             TaskRow(
-                title = "Terminal · ${terminalTitleFor(id) ?: session.label}",
-                subtitle = foreground?.let { "running $it" }
-                    ?: if (idleMin < 1) "idle at prompt" else "idle at prompt · $idleMin min",
+                title = "终端 · ${terminalTitleFor(id) ?: session.label}",
+                subtitle = foreground?.let { "正在运行 $it" }
+                    ?: if (idleMin < 1) "空闲等待输入" else "空闲等待输入 · $idleMin 分钟",
                 emphasized = foreground != null,
-                actionDescription = "Close terminal",
+                actionDescription = "关闭终端",
                 onStop = { onCloseTerminal(id) },
             )
         }
         if (runningProjectName != null) {
             TaskRow(
-                title = "Build & Run · $runningProjectName",
+                title = "构建与运行 · $runningProjectName",
                 subtitle = if (runInProgress) "building/starting" else "running",
                 emphasized = true,
-                actionDescription = "Stop run",
+                actionDescription = "停止运行",
                 onStop = onStopRun,
             )
         }
         if (debugActive) {
             TaskRow(
-                title = "Debug · ${debug.debugTargetName ?: "session"}",
+                title = "调试 · ${debug.debugTargetName ?: "会话"}",
                 subtitle = when (debug.state) {
-                    DebugState.STOPPED -> "paused at breakpoint"
+                    DebugState.STOPPED -> "已在断点处暂停"
                     DebugState.RUNNING -> "running"
                     else -> debug.state.name.lowercase()
                 },
                 emphasized = true,
-                actionDescription = "Stop debugging",
+                actionDescription = "停止调试",
                 onStop = debug.onStop,
             )
         }
 
         if (backgroundExtensions.isNotEmpty()) {
-            TaskSectionLabel("Background extensions")
+            TaskSectionLabel("后台扩展")
             backgroundExtensions.forEach { info ->
                 BackgroundExtensionRow(
                     info = info,
@@ -188,7 +188,7 @@ internal fun TaskManagerSidebarContent(
         }
 
         val totalMb = processes.sumOf { it.rssKb } / 1024
-        TaskSectionLabel("Processes · ${processes.size} · $totalMb MB")
+        TaskSectionLabel("进程 · ${processes.size} · $totalMb MB")
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.26f),
@@ -314,7 +314,7 @@ private fun BackgroundExtensionRow(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Extension · ${info.name}",
+                    text = "扩展 · ${info.name}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -329,22 +329,22 @@ private fun BackgroundExtensionRow(
                 )
             }
             if (info.suspended) {
-                JcTooltip("Start extension") {
+                JcTooltip("启动扩展") {
                     IconButton(onClick = onStart) {
                         Icon(
                             painter = jcIcon(JCodeIcon.Run),
-                            contentDescription = "Start extension",
+                            contentDescription = "启动扩展",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(IconSize.lg),
                         )
                     }
                 }
             } else {
-                JcTooltip("Stop extension") {
+                JcTooltip("停止扩展") {
                     IconButton(onClick = onStop) {
                         Icon(
                             painter = jcIcon(JCodeIcon.Stop),
-                            contentDescription = "Stop extension",
+                            contentDescription = "停止扩展",
                             tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(IconSize.lg),
                         )
@@ -378,12 +378,12 @@ private fun HostMemoryRow(mem: HostMemory) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Device memory",
+                    text = "设备内存",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                 )
                 Text(
-                    text = "%.1f GB free · %.1f GB".format(availGb, totalGb),
+                    text = "%.1f GB 可用 · 共 %.1f GB".format(availGb, totalGb),
                     style = MaterialTheme.typography.bodySmall,
                     fontFamily = FontFamily.Monospace,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -408,7 +408,7 @@ private fun ProcessRow(proc: AppProcesses.Process, isSelf: Boolean, onKill: () -
         horizontalArrangement = Arrangement.spacedBy(Space.sm),
     ) {
         Text(
-            text = if (isSelf) "${proc.name} (app)" else proc.name,
+            text = if (isSelf) "${proc.name}（应用）" else proc.name,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
@@ -438,11 +438,11 @@ private fun ProcessRow(proc: AppProcesses.Process, isSelf: Boolean, onKill: () -
                 )
             }
         } else {
-            JcTooltip("Kill process") {
+            JcTooltip("终止进程") {
                 IconButton(onClick = onKill) {
                     Icon(
                         painter = jcIcon(JCodeIcon.Stop),
-                        contentDescription = "Kill process",
+                        contentDescription = "终止进程",
                         tint = MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(IconSize.md),
                     )

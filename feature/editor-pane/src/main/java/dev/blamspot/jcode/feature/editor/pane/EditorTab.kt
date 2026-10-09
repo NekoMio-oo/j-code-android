@@ -26,7 +26,7 @@ data class EditorTab(
     /** File tab showing its rendered preview (e.g. Markdown) instead of the source editor. */
     val previewMode: Boolean = false,
     /** Pinned tabs sort to the front, hide their close "×" (close via the long-press menu), and are
-     *  skipped by "Close others" / "Close to the right". */
+     *  skipped by "关闭其他" / "关闭右侧选项卡". */
     val pinned: Boolean = false,
 ) {
     val isPage: Boolean get() = pageKind != EditorPageKind.None
@@ -86,7 +86,7 @@ data class EditorTab(
                 "rs" -> LanguageDescriptor("rust", "Rust", listOf("rs"))
                 "c", "h" -> LanguageDescriptor("c", "C", listOf("c", "h"))
                 "cpp", "cc", "cxx", "hpp", "hxx" -> LanguageDescriptor("cpp", "C++", listOf("cpp", "cc", "cxx", "hpp", "hxx"))
-                else -> LanguageDescriptor("text", "Plain Text")
+                else -> LanguageDescriptor("text", "纯文本")
             }
             return descriptor
         }

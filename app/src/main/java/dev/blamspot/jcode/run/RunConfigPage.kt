@@ -29,7 +29,7 @@ import dev.blamspot.jcode.design.Space
  * Structured editor for a project's run configuration (`.jcode/run.yaml`), opened as an in-editor
  * page. Edits a [RunConfig]: a display name, the port to open in the browser, and a list of
  * terminals (label + bash command). [onSave] persists the form to `run.yaml`. Preset/trigger
- * selection happens up front via the "Add run config" dialog, not here. Fields use the app's compact
+ * selection happens up front via the "添加运行配置" dialog, not here. Fields use the app's compact
  * [SettingsTextFieldRow] so the page matches the rest of JCode.
  */
 @Composable
@@ -47,11 +47,11 @@ fun RunConfigPage(
     var savedOnce by remember { mutableStateOf(false) }
 
     fun buildConfig() = RunConfig(
-        name = name.ifBlank { "Run" },
+        name = name.ifBlank { "运行" },
         readyPort = port.trim().toIntOrNull() ?: 0,
         debugEntry = initial.debugEntry,
         // One command → one guest process whose PID the run binds to for running/done/killed status.
-        terminals = listOf(RunConfigTerminal(label = name.ifBlank { "Run" }, command = command.trim())),
+        terminals = listOf(RunConfigTerminal(label = name.ifBlank { "运行" }, command = command.trim())),
     )
 
     Column(
@@ -61,31 +61,31 @@ fun RunConfigPage(
             .padding(Space.lg),
         verticalArrangement = Arrangement.spacedBy(Space.lg),
     ) {
-        Text("Build & Run configuration", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
+        Text("构建与运行配置", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
         Text(
-            "Stored in this project's .jcode/run.yaml.",
+            "存储在此项目的 .jcode/run.yaml 中。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
 
         SettingsTextFieldRow(
-            label = "Name",
+            label = "名称",
             value = name,
             onValueChange = { name = it; dirty = true },
         )
         SettingsTextFieldRow(
-            label = "Ready port",
-            supporting = "Opened in the browser when the run is ready — blank for none.",
+            label = "就绪端口",
+            supporting = "运行就绪时在浏览器中打开——留空表示不打开。",
             value = port,
             onValueChange = { port = it.filter(Char::isDigit); dirty = true },
             placeholder = "e.g. 5173",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
         SettingsTextFieldRow(
-            label = "Command (bash)",
-            supporting = "The one command this config runs. It executes verbosely in a terminal; the run " +
-                "tracks its process — running until it exits (done) or you stop it (killed).",
+            label = "命令 (bash)",
+            supporting = "此配置运行的唯一命令。它在终端中详细执行；运行会" +
+                "跟踪其进程——运行直到其退出（完成）或被你停止（已终止）。",
             value = command,
             onValueChange = { command = it; dirty = true },
             placeholder = "e.g. dotnet run",
@@ -95,7 +95,7 @@ fun RunConfigPage(
         )
 
         CompactFilledButton(
-            text = if (savedOnce && !dirty) "Saved" else "Save",
+            text = if (savedOnce && !dirty) "已保存" else "保存",
             onClick = { onSave(buildConfig()); savedOnce = true; dirty = false },
             modifier = Modifier.fillMaxWidth(),
         )

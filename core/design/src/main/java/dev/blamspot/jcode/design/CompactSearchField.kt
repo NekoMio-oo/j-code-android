@@ -92,7 +92,7 @@ fun CompactSearchField(
             } else if (query.isNotEmpty()) {
                 Icon(
                     jcIcon(JCodeIcon.Close),
-                    contentDescription = "Clear search",
+                    contentDescription = "清除搜索",
                     modifier = Modifier
                         .size(18.dp)
                         .clickable { onQueryChange("") }

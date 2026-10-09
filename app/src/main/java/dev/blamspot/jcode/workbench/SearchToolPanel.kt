@@ -66,9 +66,9 @@ private const val MIN_QUERY_LENGTH = 2
 
 /** Where the Search tool looks for matches. */
 internal enum class SearchScope(val label: String, val placeholder: String) {
-    Content("Content", "Search in files"),
-    Names("Names", "Search file names"),
-    CurrentDoc("Current", "Search in current document"),
+    Content("Content", "在文件中搜索"),
+    Names("Names", "搜索文件名"),
+    CurrentDoc("当前", "在当前文档中搜索"),
 }
 
 /** Compact 3-way scope switch: a segmented control that fills its row so the labels always fit
@@ -129,12 +129,12 @@ internal fun SearchToolPanel(
     val rootFile = (project?.fsPath as? FsPath.Local)?.file
 
     if (rootFile == null) {
-        SearchHint("Open a local project to search its files.", modifier)
+        SearchHint("打开本地项目以搜索其文件。", modifier)
         return
     }
 
     var query by remember { mutableStateOf("") }
-    // Seed the query when "Find text" is invoked from the editor menu (keyed by the request nonce so
+    // Seed the query when "查找文本" is invoked from the editor menu (keyed by the request nonce so
     // repeating the same word re-seeds), then consume it one-shot so re-entering the panel (e.g.
     // switching sidebar tools and back) doesn't re-inject over a query the user cleared or edited.
     LaunchedEffect(seed?.first) {
@@ -251,10 +251,10 @@ internal fun SearchToolPanel(
             val plus = if (truncated) "+" else ""
             val summary = when {
                 scope == SearchScope.CurrentDoc && activeDocTab == null ->
-                    "Open a file to search the current document"
-                query.length < MIN_QUERY_LENGTH -> "Type at least $MIN_QUERY_LENGTH characters"
+                    "打开文件以在当前文档中搜索"
+                query.length < MIN_QUERY_LENGTH -> "请至少输入 $MIN_QUERY_LENGTH 个字符"
                 results.isEmpty() && searching -> "Searching…"
-                results.isEmpty() -> "No results"
+                results.isEmpty() -> "无结果"
                 scope == SearchScope.Names ->
                     "${results.size}$plus file${if (results.size == 1) "" else "s"}"
                 else -> "${results.size}$plus results in $fileCount file${if (fileCount == 1) "" else "s"}"

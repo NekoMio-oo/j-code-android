@@ -25,8 +25,8 @@ data class LspCatalogEntry(
 )
 
 enum class LspCatalogAction(val label: String) {
-    Install("Install"),
-    Uninstall("Remove"),
+    Install("安装"),
+    Uninstall("移除"),
 }
 
 data class LspCatalogState(
@@ -77,7 +77,7 @@ object LspServerCatalog {
             id = "clangd",
             category = "Systems",
             name = "clangd (C/C++)",
-            description = "Clang-based language server for C and C++.",
+            description = "基于 Clang 的 C/C++ 语言服务器。",
             installCommand = "jcode_apt 0 100 'Installing clangd' clangd",
             verifyCommand = "clangd --version",
             uninstallCommand = "sudo apt-get remove -y clangd",
@@ -91,7 +91,7 @@ object LspServerCatalog {
             id = "typescript-language-server",
             category = "Web",
             name = "TypeScript / JavaScript",
-            description = "Language server for TypeScript and JavaScript (needs Node.js).",
+            description = "TypeScript/JavaScript 语言服务器（需要 Node.js）。",
             // Pin typescript to the 5.x line: npm's `typescript` latest is now the 7.x Go rewrite,
             // which no longer ships lib/tsserver.js — typescript-language-server can't drive it and
             // fails to start for any project without a local typescript<=6. updateCheck below stays
@@ -114,7 +114,7 @@ object LspServerCatalog {
             id = "csharp-ls",
             category = ".NET",
             name = "C# (csharp-ls)",
-            description = "Roslyn-based C# language server, installed as a .NET global tool (needs the .NET SDK toolchain).",
+            description = "基于 Roslyn 的 C# 语言服务器，作为 .NET 全局工具安装（需要 .NET SDK 工具链）。",
             // dotnet lives behind the /usr/local/bin/dotnet shim (GC heap cap + DOTNET_ROOT — see the
             // dotnet catalog entry); global tools land in ~/.dotnet/tools, which non-login shells
             // don't have on PATH, and the tool's apphost needs the same env to find the runtime.
@@ -134,7 +134,7 @@ object LspServerCatalog {
             id = "pyright",
             category = "Scripting",
             name = "Pyright (Python)",
-            description = "Static type checker and language server for Python (needs Node.js).",
+            description = "Python 静态类型检查器与语言服务器（需要 Node.js）。",
             installCommand = "set -e; jcode_progress 10 'Installing Pyright'; " +
                 "sudo npm install -g pyright; " +
                 linkNpmBin("pyright", "pyright-langserver") + "; " +
@@ -154,7 +154,7 @@ object LspServerCatalog {
             id = "gopls",
             category = "Systems",
             name = "gopls (Go)",
-            description = "Official Go language server (needs the Go toolchain).",
+            description = "Go 官方语言服务器（需要 Go 工具链）。",
             // `go install` drops the binary into $GOPATH/bin, which is never on the fixed catalog
             // PATH — the /usr/local/bin symlink is what makes verify and the runtime launcher find it.
             installCommand = "set -e; jcode_progress 10 'Building gopls'; " +
@@ -174,7 +174,7 @@ object LspServerCatalog {
             id = "rust-analyzer",
             category = "Systems",
             name = "rust-analyzer (Rust)",
-            description = "Language server for Rust (needs rustup).",
+            description = "Rust 语言服务器（需要 rustup）。",
             // rustup lives in ~/.cargo/bin, which is never on the fixed catalog PATH; the component's
             // real binary gets symlinked into /usr/local/bin so verify and the runtime launcher work.
             installCommand = "set -e; jcode_progress 10 'Adding the rust-analyzer component'; " +
@@ -195,8 +195,8 @@ object LspServerCatalog {
             id = "dart-language-server",
             category = "Dart",
             name = "Dart Analysis Server",
-            description = "Analysis server for Dart and Flutter. Ships inside the Flutter SDK, so " +
-                "installing it is installing Flutter — there is nothing else to fetch.",
+            description = "Dart/Flutter 分析服务器。内置于 Flutter SDK 中，因此" +
+                "安装它即是安装 Flutter——无需再获取其他内容。",
             // Nothing to install: `dart` is part of the Flutter SDK, and requiredSdks below is what
             // actually brings it. Saying so out loud beats a no-op that reads as a broken script.
             installCommand = "command -v dart >/dev/null 2>&1 || " +
@@ -217,7 +217,7 @@ object LspServerCatalog {
             id = "kotlin-language-server",
             category = "JVM",
             name = "Kotlin Language Server",
-            description = "Language server for Kotlin (needs a JDK). Installed from the fwcd release archive.",
+            description = "Kotlin 语言服务器（需要 JDK）。从 fwcd 发布归档安装。",
             // fwcd/kotlin-language-server ships a `server.zip` on each release; /releases/latest/download
             // always resolves to the newest asset, so no version needs pinning. It's a JVM app, so `jdk`
             // (which provides `java`) is required first.
@@ -252,7 +252,7 @@ object LspServerCatalog {
             id = "jdtls",
             category = "JVM",
             name = "Java (Eclipse JDT LS)",
-            description = "Eclipse JDT language server for Java (needs a JDK). Installed from the latest Eclipse snapshot archive.",
+            description = "Eclipse JDT Java 语言服务器（需要 JDK）。从最新的 Eclipse 快照归档安装。",
             // The equinox launcher writes to its -configuration area, so the runtime uses a per-user
             // copy of config_linux instead of the root-owned /opt tree.
             installCommand = "set -e; jcode_apt 0 15 'Installing download prerequisites' curl; " +
@@ -282,7 +282,7 @@ object LspServerCatalog {
             id = "vscode-html-language-server",
             category = "Web",
             name = "HTML",
-            description = "HTML language server from vscode-langservers-extracted (needs Node.js).",
+            description = "来自 vscode-langservers-extracted 的 HTML 语言服务器（需要 Node.js）。",
             installCommand = "set -e; jcode_progress 10 'Installing the HTML/CSS/JSON servers'; " +
                 "sudo npm install -g vscode-langservers-extracted; " +
                 // One package ships all three binaries, so each entry links all three.
@@ -310,7 +310,7 @@ object LspServerCatalog {
             id = "vscode-css-language-server",
             category = "Web",
             name = "CSS / SCSS / LESS",
-            description = "CSS language server from vscode-langservers-extracted (needs Node.js).",
+            description = "来自 vscode-langservers-extracted 的 CSS 语言服务器（需要 Node.js）。",
             installCommand = "set -e; jcode_progress 10 'Installing the HTML/CSS/JSON servers'; " +
                 "sudo npm install -g vscode-langservers-extracted; " +
                 // One package ships all three binaries, so each entry links all three.
@@ -338,7 +338,7 @@ object LspServerCatalog {
             id = "vscode-json-language-server",
             category = "Web",
             name = "JSON",
-            description = "JSON language server from vscode-langservers-extracted (needs Node.js).",
+            description = "来自 vscode-langservers-extracted 的 JSON 语言服务器（需要 Node.js）。",
             installCommand = "set -e; jcode_progress 10 'Installing the HTML/CSS/JSON servers'; " +
                 "sudo npm install -g vscode-langservers-extracted; " +
                 // One package ships all three binaries, so each entry links all three.
@@ -366,7 +366,7 @@ object LspServerCatalog {
             id = "yaml-language-server",
             category = "Web",
             name = "YAML",
-            description = "YAML language server by Red Hat (needs Node.js).",
+            description = "Red Hat 出品的 YAML 语言服务器（需要 Node.js）。",
             installCommand = "set -e; jcode_progress 10 'Installing the YAML language server'; " +
                 "sudo npm install -g yaml-language-server; " +
                 linkNpmBin("yaml-language-server") + "; " +

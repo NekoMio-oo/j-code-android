@@ -88,7 +88,7 @@ internal fun WorkspaceHeader(
             onCollapseSidebar?.let { collapse ->
                 WorkbenchIconActionButton(
                     icon = jcIcon(JCodeIcon.MenuToggle),
-                    contentDescription = "Hide left sidebar",
+                    contentDescription = "隐藏左侧边栏",
                     onClick = collapse,
                     active = true,
                 )
@@ -115,7 +115,7 @@ internal fun WorkspaceHeader(
                         horizontalArrangement = Arrangement.spacedBy(Space.xxs),
                     ) {
                         Text(
-                            text = workspace?.name ?: "Default Workspace",
+                            text = workspace?.name ?: "默认工作区",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                             maxLines = 1,
@@ -131,7 +131,7 @@ internal fun WorkspaceHeader(
                         }
                     }
                     Text(
-                        text = selectedProject?.distroBindTarget ?: "No bind target yet",
+                        text = selectedProject?.distroBindTarget ?: "尚未设置绑定目标",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -144,7 +144,7 @@ internal fun WorkspaceHeader(
                     listActions = listOf(
                         ContextAction(
                             JCodeIcon.Close,
-                            if (inUserWorkspace) "Close workspace" else "Close project",
+                            if (inUserWorkspace) "关闭工作区" else "关闭项目",
                         ) { if (inUserWorkspace) onCloseWorkspace() else onCloseProject() },
                     ),
                 )
@@ -152,14 +152,14 @@ internal fun WorkspaceHeader(
 
             WorkbenchIconActionButton(
                 icon = jcIcon(JCodeIcon.Add),
-                contentDescription = "Add project",
+                contentDescription = "添加项目",
                 onClick = onCreateProject,
             )
             Box {
                 var openFolderMenu by remember { mutableStateOf(false) }
                 WorkbenchIconActionButton(
                     icon = jcIcon(JCodeIcon.OpenFolder),
-                    contentDescription = "Open folder",
+                    contentDescription = "打开文件夹",
                     onClick = { if (contributedDrawerActions.isEmpty()) onOpenExternalFolder() else openFolderMenu = true },
                 )
                 if (contributedDrawerActions.isNotEmpty()) {
@@ -167,7 +167,7 @@ internal fun WorkspaceHeader(
                         expanded = openFolderMenu,
                         onDismissRequest = { openFolderMenu = false },
                         listActions = buildList {
-                            add(ContextAction(JCodeIcon.OpenFolder, "Open Folder") { onOpenExternalFolder() })
+                            add(ContextAction(JCodeIcon.OpenFolder, "打开文件夹") { onOpenExternalFolder() })
                             contributedDrawerActions.forEach { a ->
                                 add(ContextAction(contributedActionIcon(a.id), a.label) { onDrawerAction(a) })
                             }
@@ -183,7 +183,7 @@ internal fun WorkspaceHeader(
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(Space.s),
         ) {
-            // "DB Managers", "SCM" and "VM" only show once a matching client extension is installed.
+            // "数据库管理器", "SCM" and "VM" only show once a matching client extension is installed.
             WorkbenchTool.entries
                 .filter {
                     it.available &&
@@ -241,7 +241,7 @@ internal fun WorkbenchTopBar(
         ) {
             WorkbenchIconActionButton(
                 icon = jcIcon(JCodeIcon.MenuToggle),
-                contentDescription = if (leftSidebarExpanded) "Hide left sidebar" else "Show left sidebar",
+                contentDescription = if (leftSidebarExpanded) "隐藏左侧边栏" else "显示左侧边栏",
                 onClick = onToggleLeftSidebar,
                 active = leftSidebarExpanded,
             )
@@ -272,7 +272,7 @@ internal fun WorkbenchTopBar(
                         activeTab?.title,
                     ).let { if (it.lastOrNull() == heading) it.dropLast(1) else it }
                         .joinToString(" / ")
-                        .ifBlank { "Editor workspace" },
+                        .ifBlank { "编辑器工作区" },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
@@ -286,7 +286,7 @@ internal fun WorkbenchTopBar(
                 Box {
                     WorkbenchIconActionButton(
                         icon = jcIcon(JCodeIcon.Save),
-                        contentDescription = if (activeTab.isDirty) "Save (unsaved changes)" else "Save",
+                        contentDescription = if (activeTab.isDirty) "保存（有未保存的更改）" else "保存",
                         onClick = onSave,
                         active = activeTab.isDirty,
                         onLongClick = { saveMenuOpen = true },
@@ -297,8 +297,8 @@ internal fun WorkbenchTopBar(
                         quickActions = listOf(
                             ContextAction(JCodeIcon.Undo, "Undo") { saveActions.onUndo() },
                             ContextAction(JCodeIcon.Redo, "Redo") { saveActions.onRedo() },
-                            ContextAction(JCodeIcon.Discard, "Discard", destructive = true) { saveActions.onDiscard() },
-                            ContextAction(JCodeIcon.Save, "Save all") { saveActions.onSaveAll() },
+                            ContextAction(JCodeIcon.Discard, "放弃", destructive = true) { saveActions.onDiscard() },
+                            ContextAction(JCodeIcon.Save, "全部保存") { saveActions.onSaveAll() },
                         ),
                     )
                 }
@@ -315,7 +315,7 @@ internal fun WorkbenchTopBar(
                 // deliberately not here — it belongs with the stepping controls in this button's
                 // long-press menu and the Run panel, and putting it in the header meant the one
                 // obvious control could not end a session. Without the Continue state the header kept
-                // offering "Run" at a breakpoint, the one thing you cannot do from there.
+                // offering "运行" at a breakpoint, the one thing you cannot do from there.
                 val debug = LocalDebugSession.current
                 val paused = debug.state == DebugState.STOPPED
                 val debugging = paused || debug.state == DebugState.RUNNING
@@ -327,10 +327,10 @@ internal fun WorkbenchTopBar(
                             else -> jcIcon(JCodeIcon.Run)
                         },
                         contentDescription = when {
-                            paused -> "Continue"
-                            debugging -> "Stop debugging"
-                            isRunning -> "Stop"
-                            else -> "Run"
+                            paused -> "继续"
+                            debugging -> "停止调试"
+                            isRunning -> "停止"
+                            else -> "运行"
                         },
                         onClick = {
                             when {
@@ -351,15 +351,15 @@ internal fun WorkbenchTopBar(
                             // The session controls, live only while it is paused — stepping a running
                             // debuggee is not a thing, and these were dead placeholders before the
                             // debugger existed.
-                            ContextAction(JCodeIcon.Continue, "Continue", enabled = paused) { debug.onContinue() },
+                            ContextAction(JCodeIcon.Continue, "继续", enabled = paused) { debug.onContinue() },
                             ContextAction(JCodeIcon.Pause, "Pause", enabled = debug.state == DebugState.RUNNING) {
                                 debug.onPause()
                             },
-                            ContextAction(JCodeIcon.StepOver, "Step Over", enabled = paused) { debug.onStepOver() },
-                            ContextAction(JCodeIcon.StepInto, "Step Into", enabled = paused) { debug.onStepInto() },
-                            ContextAction(JCodeIcon.StepOut, "Step Out", enabled = paused) { debug.onStepOut() },
+                            ContextAction(JCodeIcon.StepOver, "单步跳过", enabled = paused) { debug.onStepOver() },
+                            ContextAction(JCodeIcon.StepInto, "单步进入", enabled = paused) { debug.onStepInto() },
+                            ContextAction(JCodeIcon.StepOut, "单步跳出", enabled = paused) { debug.onStepOut() },
                             if (debugging) {
-                                ContextAction(JCodeIcon.Stop, "Stop debugging") { debug.onStop() }
+                                ContextAction(JCodeIcon.Stop, "停止调试") { debug.onStop() }
                             } else {
                                 ContextAction(JCodeIcon.Rerun, "Rerun") { onRerun() }
                             },
@@ -382,7 +382,7 @@ internal fun WorkbenchTopBar(
                     Box {
                         WorkbenchIconActionButton(
                             icon = jcIcon(JCodeIcon.Terminal),
-                            contentDescription = "Terminal",
+                            contentDescription = "终端",
                             onClick = onShowTerminal,
                             shimmer = terminalBusy,
                             badge = terminalHasUnseen,
@@ -402,7 +402,7 @@ internal fun WorkbenchTopBar(
                     val launcher = LocalCommandPaletteLauncher.current
                     WorkbenchIconActionButton(
                         icon = jcIcon(JCodeIcon.CommandPalette),
-                        contentDescription = "Command Palette",
+                        contentDescription = "命令面板",
                         onClick = launcher.onOpen,
                     )
                 }
@@ -415,7 +415,7 @@ internal fun WorkbenchTopBar(
             if (!(rightSidebarDocked && canShowRightSidebar && rightSidebarVisible)) {
                 WorkbenchIconActionButton(
                     icon = jcIcon(JCodeIcon.Logs),
-                    contentDescription = "Toggle right sidebar",
+                    contentDescription = "切换右侧边栏",
                     onClick = onToggleRightSidebar,
                     active = canShowRightSidebar && rightSidebarVisible,
                 )

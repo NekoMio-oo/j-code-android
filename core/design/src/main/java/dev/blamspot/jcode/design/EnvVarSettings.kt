@@ -3,7 +3,7 @@ package dev.blamspot.jcode.design
 import androidx.compose.runtime.compositionLocalOf
 
 /**
- * User-defined environment variables surfaced on the Settings "Env Var" tab, applied to every
+ * User-defined environment variables surfaced on the Settings "环境变量" tab, applied to every
  * terminal / Build & Run session. [vars] is name→value; the callbacks persist edits. Shared via
  * [LocalEnvVarSettings] like [PerformanceSettings] so the settings screen needs no threaded params.
  */

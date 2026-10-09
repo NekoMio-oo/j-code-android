@@ -2,7 +2,7 @@ package dev.blamspot.jcode.design
 
 import androidx.compose.runtime.compositionLocalOf
 
-/** Which files/folders the Explorer excludes at the PROJECT ROOT. (Enum names keep the legacy "Hide"
+/** Which files/folders the Explorer excludes at the PROJECT ROOT. (Enum names keep the legacy "隐藏"
  *  prefix so persisted preferences still parse; the [ExplorerExcludeEffect] decides grey-out vs hide.) */
 enum class ExplorerHiddenMode { HideSpecifiedAndInjected, HideInjected, None }
 

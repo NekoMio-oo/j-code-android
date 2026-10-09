@@ -79,7 +79,7 @@ import org.json.JSONObject
 
 private enum class DevToolsPane(val label: String) {
     Console("Console"),
-    Sources("Sources"),
+    Sources("源代码"),
     Network("Network"),
     Application("Application"),
     Elements("Elements"),
@@ -196,10 +196,10 @@ fun DevtoolsSidebarContent(modifier: Modifier = Modifier) {
 /**
  * A pane's overflow menu.
  *
- * Console and Network had a bare "Clear" link. Clearing is the one thing there you cannot undo, and
+ * Console and Network had a bare "清除" link. Clearing is the one thing there you cannot undo, and
  * it was the only thing in reach — while the setting that decides whether the log survives the next
  * page load, which is what you want set *before* the interesting request happens, had nowhere to
- * live at all. Application had the same shape of problem from the other side: its "Refresh" sat at
+ * live at all. Application had the same shape of problem from the other side: its "刷新" sat at
  * the bottom of a long scroll, past everything it refreshes.
  */
 @Composable
@@ -209,7 +209,7 @@ private fun PaneMenuButton(pane: DevToolsPane) {
     Box {
         Icon(
             painter = jcIcon(JCodeIcon.MoreVert),
-            contentDescription = "${pane.label} options",
+            contentDescription = "${pane.label}选项",
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .clickable { open = true }
@@ -218,12 +218,12 @@ private fun PaneMenuButton(pane: DevToolsPane) {
         )
         val actions = when (pane) {
             DevToolsPane.Application -> listOf(
-                ContextAction(icon = JCodeIcon.Refresh, label = "Refresh") {
+                ContextAction(icon = JCodeIcon.Refresh, label = "刷新") {
                     BuiltinBrowser.requestAppRefresh()
                 },
                 ContextAction(
                     icon = JCodeIcon.Delete,
-                    label = "Clear site data",
+                    label = "清除网站数据",
                     destructive = true,
                 ) { clearSiteData() },
             )
@@ -232,12 +232,12 @@ private fun PaneMenuButton(pane: DevToolsPane) {
                 listOf(
                     ContextAction(
                         icon = JCodeIcon.Pin,
-                        label = "Preserve log",
+                        label = "保留日志",
                         checked = BuiltinBrowser.preserveLog.value,
                     ) { BuiltinBrowser.preserveLog.value = !BuiltinBrowser.preserveLog.value },
                     ContextAction(
                         icon = JCodeIcon.Copy,
-                        label = if (network) "Copy all requests" else "Copy all messages",
+                        label = if (network) "复制所有请求" else "复制所有消息",
                         enabled = if (network) {
                             BuiltinBrowser.network.isNotEmpty()
                         } else {
@@ -255,7 +255,7 @@ private fun PaneMenuButton(pane: DevToolsPane) {
                     },
                     ContextAction(
                         icon = JCodeIcon.Clear,
-                        label = if (network) "Clear network" else "Clear console",
+                        label = if (network) "清除网络" else "清除控制台",
                         destructive = true,
                     ) { if (network) BuiltinBrowser.clearNetwork() else BuiltinBrowser.clearConsole() },
                 )
@@ -310,7 +310,7 @@ private fun ConsolePane(onOpenSource: (String, Int) -> Unit, modifier: Modifier 
         BuiltinBrowser.addConsole(BrowserConsoleEntry("input", script))
         val ctl = BuiltinBrowser.controller
         if (ctl == null) {
-            BuiltinBrowser.addConsole(BrowserConsoleEntry("error", "No page — open the built-in browser first."))
+            BuiltinBrowser.addConsole(BrowserConsoleEntry("error", "没有页面——请先打开内置浏览器。"))
         } else {
             ctl.eval(script) { raw ->
                 BuiltinBrowser.addConsole(BrowserConsoleEntry("eval", decodeJsResult(raw)))
@@ -327,8 +327,8 @@ private fun ConsolePane(onOpenSource: (String, Int) -> Unit, modifier: Modifier 
         if (rows.isEmpty()) {
             item {
                 Text(
-                    text = "Console messages from the page appear here. Type JavaScript below to " +
-                        "run it in the page.",
+                    text = "页面中的控制台消息将显示在这里。在下方输入 JavaScript " +
+                        "即可在页面中运行。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth().padding(horizontal = Space.md, vertical = Space.ms),
@@ -635,7 +635,7 @@ private fun SourcesPane(
         if (chosen == null) {
             if (sources.isEmpty()) {
                 Box(Modifier.weight(1f).fillMaxWidth()) {
-                    EmptyHint("Nothing loaded yet. Open a page in the built-in browser, then come back.")
+                    EmptyHint("尚未加载任何内容。请在内置浏览器中打开一个页面，然后返回。")
                 }
             } else {
                 LazyColumn(Modifier.weight(1f).fillMaxWidth()) {
@@ -682,7 +682,7 @@ private fun SourcesPane(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "‹ Back",
+                    text = "‹ 返回",
                     color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier
@@ -722,8 +722,8 @@ private fun SourcesPane(
 
                 body.startsWith(SOURCE_UNREADABLE) -> Box(Modifier.weight(1f).fillMaxWidth()) {
                     EmptyHint(
-                        "Served from another origin without CORS headers, so the page cannot read it " +
-                            "back. Its requests are still on the Network pane.",
+                        "由另一个源提供，且没有 CORS 标头，因此页面无法读取" +
+                            "回其内容。它的请求仍显示在「网络」面板上。",
                     )
                 }
 
@@ -800,12 +800,12 @@ private fun ApplicationPane(modifier: Modifier = Modifier) {
 
     if (BuiltinBrowser.controller == null) {
         Box(modifier.fillMaxSize()) {
-            EmptyHint("Open a page in the built-in browser to see what it has stored.")
+            EmptyHint("在内置浏览器中打开一个页面，以查看其存储的内容。")
         }
         return
     }
     if (survey == null) {
-        Box(modifier.fillMaxSize()) { EmptyHint("Reading what this page has stored…") }
+        Box(modifier.fillMaxSize()) { EmptyHint("正在读取此页面存储的内容…") }
         return
     }
     val entry = open
@@ -828,7 +828,7 @@ private fun ApplicationPane(modifier: Modifier = Modifier) {
             DetailPairs(
                 buildList {
                     add("Origin" to survey.origin.ifBlank { "—" })
-                    add("Secure context" to if (survey.secure) "yes" else "no")
+                    add("安全上下文" to if (survey.secure) "yes" else "no")
                     if (survey.persisted != null) {
                         add("Storage" to if (survey.persisted) "persistent" else "best-effort")
                     }
@@ -836,8 +836,8 @@ private fun ApplicationPane(modifier: Modifier = Modifier) {
                 LocalClipboardManager.current,
             )
         }
-        StoredSection("Local storage", survey.local, ::refresh, pageUrl) { open = it }
-        StoredSection("Session storage", survey.session, ::refresh, pageUrl) { open = it }
+        StoredSection("本地存储", survey.local, ::refresh, pageUrl) { open = it }
+        StoredSection("会话存储", survey.session, ::refresh, pageUrl) { open = it }
         StoredSection("Cookies", survey.cookies, ::refresh, pageUrl) { open = it }
         IndexedDbSection(survey.databases)
         CacheSection(survey.caches)
@@ -858,7 +858,7 @@ private fun QuotaBar(survey: AppSurvey) {
     val fraction = (survey.usage.toFloat() / survey.quota).coerceIn(0f, 1f)
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = Space.md, vertical = Space.sm)) {
         Text(
-            text = "${formatBytes(survey.usage)} used of ${formatBytes(survey.quota)}",
+            text = "已用 ${formatBytes(survey.usage)}，共 ${formatBytes(survey.quota)}",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurface,
         )
@@ -897,8 +897,8 @@ private fun StoredSection(
         trailing = if (rows.isEmpty()) "empty" else rows.size.toString(),
         // The two people actually open the pane for start open; the rest state their count in the
         // header, which is the whole map of what a site keeps in one screen.
-        initiallyExpanded = rows.isNotEmpty() && title != "Session storage",
-        actionLabel = if (clearable) "Clear" else null,
+        initiallyExpanded = rows.isNotEmpty() && title != "会话存储",
+        actionLabel = if (clearable) "清除" else null,
         onAction = if (clearable) {
             { BuiltinBrowser.controller?.eval(clearStoreJs(rows.first().store)) { onChanged() } }
         } else {
@@ -907,7 +907,7 @@ private fun StoredSection(
     ) {
         if (rows.isEmpty()) {
             Text(
-                text = "Nothing stored here.",
+                text = "此处未存储任何内容。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 30.dp, bottom = Space.sm),
@@ -994,7 +994,7 @@ private fun StoredValueDetail(
         ) {
             Icon(
                 painter = jcIcon(JCodeIcon.ArrowBack),
-                contentDescription = "Back to storage",
+                contentDescription = "返回存储",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(IconSize.sm),
             )
@@ -1007,7 +1007,7 @@ private fun StoredValueDetail(
                 modifier = Modifier.weight(1f),
             )
             Text(
-                text = "Delete",
+                text = "删除",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.clickable(onClick = onDelete).padding(horizontal = Space.s, vertical = Space.xxs),
@@ -1019,7 +1019,7 @@ private fun StoredValueDetail(
                 buildList {
                     add("Store" to storeLabel(entry.store))
                     add("Size" to formatBytes(entry.value.length.toLong()))
-                    if (entry.httpOnly) add("Flag" to "HttpOnly — not visible to page script")
+                    if (entry.httpOnly) add("Flag" to "HttpOnly——页面脚本不可见")
                 },
                 clipboard,
             )
@@ -1033,7 +1033,7 @@ private fun StoredValueDetail(
 private fun IndexedDbSection(databases: List<IdbDatabase>) {
     DetailSection("IndexedDB", if (databases.isEmpty()) "none" else databases.size.toString()) {
         if (databases.isEmpty()) {
-            SectionNote("No databases on this origin.")
+            SectionNote("此源上没有数据库。")
             return@DetailSection
         }
         databases.forEach { db ->
@@ -1046,7 +1046,7 @@ private fun IndexedDbSection(databases: List<IdbDatabase>) {
                 )
                 if (db.stores.isEmpty()) {
                     Text(
-                        text = "no object stores",
+                        text = "没有对象存储",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 10.sp,
                     )
@@ -1067,15 +1067,15 @@ private fun IndexedDbSection(databases: List<IdbDatabase>) {
 
 @Composable
 private fun CacheSection(caches: List<CacheBucket>) {
-    DetailSection("Cache storage", if (caches.isEmpty()) "none" else caches.size.toString()) {
+    DetailSection("缓存存储", if (caches.isEmpty()) "none" else caches.size.toString()) {
         if (caches.isEmpty()) {
-            SectionNote("No caches. A service worker is what usually puts them here.")
+            SectionNote("没有缓存。通常是 Service Worker 将它们放在这里。")
             return@DetailSection
         }
         caches.forEach { bucket ->
             Column(modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = Space.ms, bottom = Space.s)) {
                 Text(
-                    text = "${bucket.name} · ${bucket.count} entries",
+                    text = "${bucket.name} · ${bucket.count} 个条目",
                     color = MaterialTheme.colorScheme.onSurface,
                     fontFamily = FontFamily.Monospace,
                     fontSize = 11.sp,
@@ -1093,7 +1093,7 @@ private fun CacheSection(caches: List<CacheBucket>) {
                 }
                 if (bucket.count > bucket.urls.size) {
                     Text(
-                        text = "… and ${bucket.count - bucket.urls.size} more",
+                        text = "… 还有 ${bucket.count - bucket.urls.size} 个",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 10.sp,
                         modifier = Modifier.padding(start = Space.ms),
@@ -1106,9 +1106,9 @@ private fun CacheSection(caches: List<CacheBucket>) {
 
 @Composable
 private fun WorkerSection(workers: List<WorkerInfo>) {
-    DetailSection("Service workers", if (workers.isEmpty()) "none" else workers.size.toString()) {
+    DetailSection("Service Worker", if (workers.isEmpty()) "none" else workers.size.toString()) {
         if (workers.isEmpty()) {
-            SectionNote("No service worker registered for this origin.")
+            SectionNote("此源未注册 Service Worker。")
             return@DetailSection
         }
         workers.forEach { w ->
@@ -1125,7 +1125,7 @@ private fun WorkerSection(workers: List<WorkerInfo>) {
                         fontSize = 11.sp,
                     )
                     Text(
-                        text = "Unregister",
+                        text = "取消注册",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
@@ -1148,7 +1148,7 @@ private fun WorkerSection(workers: List<WorkerInfo>) {
 private fun ManifestSection(url: String, manifest: String) {
     DetailSection("Manifest", if (url.isBlank()) "none" else "") {
         if (url.isBlank()) {
-            SectionNote("This page declares no web app manifest.")
+            SectionNote("此页面未声明 Web 应用清单。")
             return@DetailSection
         }
         Text(
@@ -1159,7 +1159,7 @@ private fun ManifestSection(url: String, manifest: String) {
             modifier = Modifier.padding(start = 30.dp, end = Space.ms, bottom = Space.xs),
         )
         if (manifest.isBlank()) {
-            SectionNote("Declared, but could not be read — it may be cross-origin.")
+            SectionNote("已声明，但无法读取——可能是跨源的。")
         } else {
             DetailBody(manifest, truncated = false, clipboard = LocalClipboardManager.current)
         }
@@ -1177,8 +1177,8 @@ private fun SectionNote(text: String) {
 }
 
 private fun storeLabel(store: String): String = when (store) {
-    "localStorage" -> "Local storage"
-    "sessionStorage" -> "Session storage"
+    "localStorage" -> "本地存储"
+    "sessionStorage" -> "会话存储"
     else -> "Cookie"
 }
 
@@ -1432,10 +1432,10 @@ private fun NetworkPane(modifier: Modifier = Modifier) {
         if (shown.isEmpty()) {
             EmptyHint(
                 if (entries.isEmpty()) {
-                    "Requests the page makes appear here — documents, scripts, styles, images, " +
-                        "fetch and XHR. Tap one for its headers, payload and response."
+                    "页面发出的请求将显示在这里——文档、脚本、样式、图片、" +
+                        "fetch 和 XHR。点击某条请求可查看其标头、负载和响应。"
                 } else {
-                    "No ${NETWORK_FILTERS[filter].first} requests."
+                    "没有 ${NETWORK_FILTERS[filter].first} 请求。"
                 },
             )
             return
@@ -1515,7 +1515,7 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
         ) {
             Icon(
                 painter = jcIcon(JCodeIcon.ArrowBack),
-                contentDescription = "Back to requests",
+                contentDescription = "返回请求列表",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(IconSize.sm),
             )
@@ -1532,7 +1532,7 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
             DetailSection("General", initiallyExpanded = true) {
                 DetailPairs(
                     buildList {
-                        add("Request URL" to e.url)
+                        add("请求 URL" to e.url)
                         add("Method" to e.method)
                         add("Status" to if (e.status > 0) e.status.toString() else if (e.failed) "(failed)" else "—")
                         add("Type" to e.kind)
@@ -1554,10 +1554,10 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
             }
             if (e.timingOnly) {
                 Text(
-                    text = "Loaded by the browser, not by page script. Resource timing reports its " +
-                        "URL, size, duration, and — where the origin allows it — the status; the " +
+                    text = "由浏览器加载，而非页面脚本。资源计时会报告其" +
+                        "URL、大小、时长，以及（在来源允许的情况下）状态；" +
                         "response body and headers aren't exposed to the page, so there's nothing " +
-                        "more to show here.",
+                        "更多可显示的内容。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = Space.md, vertical = Space.sm),
@@ -1565,7 +1565,7 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
                 return@Column
             }
             if (e.requestHeaders.isNotEmpty()) {
-                DetailSection("Request headers", "${e.requestHeaders.size}") {
+                DetailSection("请求标头", "${e.requestHeaders.size}") {
                     DetailPairs(e.requestHeaders, clipboard)
                 }
             }
@@ -1575,7 +1575,7 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
                 }
             }
             if (e.responseHeaders.isNotEmpty()) {
-                DetailSection("Response headers", "${e.responseHeaders.size}") {
+                DetailSection("响应标头", "${e.responseHeaders.size}") {
                     DetailPairs(e.responseHeaders, clipboard)
                 }
             }
@@ -1585,8 +1585,8 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
                 }
             } else if (!e.failed) {
                 Text(
-                    text = "No response body was captured — it was empty, binary, or larger than the " +
-                        "capture limit.",
+                    text = "未捕获到响应正文——它为空、二进制，或超过" +
+                        "捕获上限。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = Space.md, vertical = Space.sm),
@@ -1690,7 +1690,7 @@ private fun DetailBody(
     val text = remember(raw) { prettyJson(raw) }
     Column(modifier = Modifier.fillMaxWidth().padding(start = 30.dp, end = Space.ms, bottom = Space.sm)) {
         Text(
-            text = "Copy",
+            text = "复制",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
@@ -1706,7 +1706,7 @@ private fun DetailBody(
         )
         if (truncated) {
             Text(
-                text = "… truncated at the 16 KB capture limit",
+                text = "… 已在 16 KB 捕获上限处截断",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -1805,7 +1805,7 @@ private fun ElementsPane(
             horizontalArrangement = Arrangement.spacedBy(Space.sm),
         ) {
             Text(
-                text = "Refresh snapshot",
+                text = "刷新快照",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { refresh() }.padding(horizontal = Space.sm, vertical = Space.xs),
@@ -1821,9 +1821,9 @@ private fun ElementsPane(
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 EmptyHint(
                     if (BuiltinBrowser.controller == null) {
-                        "Open a page in the built-in browser first."
+                        "请先在内置浏览器中打开一个页面。"
                     } else {
-                        "Tap “Refresh snapshot” to capture the current page's HTML."
+                        "点击“刷新快照”以捕获当前页面的 HTML。"
                     },
                 )
             }

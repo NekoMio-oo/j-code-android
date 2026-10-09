@@ -90,8 +90,8 @@ fun ExtensionDevSidebarContent(modifier: Modifier = Modifier) {
                         DevTab(label = p.label, selected = p == pane) { pane = p }
                     }
                 }
-                ActionText("Reload") { state.onReload() }
-                if (pane == DevPane.Log) ActionText("Clear") { ExtensionDevLog.clear() }
+                ActionText("重新加载") { state.onReload() }
+                if (pane == DevPane.Log) ActionText("清除") { ExtensionDevLog.clear() }
             }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.28f))
@@ -99,8 +99,8 @@ fun ExtensionDevSidebarContent(modifier: Modifier = Modifier) {
         if (exts.isEmpty()) {
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 EmptyDevHint(
-                    "No dev extensions loaded.\n\nTap “Load” to sideload an unsigned .jext — only unsigned " +
-                        "packages are debuggable. Signed packages install but can't be inspected here.",
+                    "未加载开发版扩展。\n\n点击“加载”可侧载未签名的 .jext——仅未签名的 " +
+                        "软件包可调试。带签名的软件包可安装，但无法在此处检查。",
                 )
             }
             return
@@ -121,7 +121,7 @@ fun ExtensionDevSidebarContent(modifier: Modifier = Modifier) {
 
         val target = selected
         if (target == null) {
-            Box(Modifier.weight(1f).fillMaxWidth()) { EmptyDevHint("Select an extension.") }
+            Box(Modifier.weight(1f).fillMaxWidth()) { EmptyDevHint("选择扩展。") }
             return
         }
         when (pane) {
@@ -180,7 +180,7 @@ private fun ValidatorPane(ext: InstalledExtension, hostApiVersion: Int, modifier
     if (issues.isEmpty()) {
         Box(modifier.fillMaxSize()) {
             Box(Modifier.fillMaxSize().padding(Space.xxl), contentAlignment = Alignment.Center) {
-                Text("No problems found ✓", style = MaterialTheme.typography.bodyMedium,
+                Text("未发现问题 ✓", style = MaterialTheme.typography.bodyMedium,
                     color = JCodeTheme.semanticColors.success)
             }
         }
@@ -221,7 +221,7 @@ private fun LogPane(extId: String, modifier: Modifier = Modifier) {
     val shown = all.filter { it.extId == extId || it.extId.isEmpty() }
     if (shown.isEmpty()) {
         Box(modifier.fillMaxSize()) {
-            EmptyDevHint("This extension's API/exec calls, host events, and console.log appear here as it runs.")
+            EmptyDevHint("此扩展的 API/exec 调用、主机事件和 console.log 将在运行时显示在此处。")
         }
         return
     }

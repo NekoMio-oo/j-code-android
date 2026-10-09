@@ -39,19 +39,19 @@ data class BackendSessionRecord(
         if (parts.size < 2) return if (raw.equals("terminal", ignoreCase = true)) kindLabel() else raw
         val subject = parts.drop(2).joinToString(":").ifBlank { parts.getOrNull(1).orEmpty() }
         return when {
-            parts[1] == "install" -> "Installing $subject"
-            parts[1] == "uninstall" || parts[1] == "remove" -> "Removing $subject"
-            parts[0] == "environment" && parts[1] == "create" -> "Creating $subject"
-            parts[0] == "environment" -> "Setting up the environment"
+            parts[1] == "install" -> "正在安装 $subject"
+            parts[1] == "uninstall" || parts[1] == "remove" -> "正在移除 $subject"
+            parts[0] == "environment" && parts[1] == "create" -> "正在创建 $subject"
+            parts[0] == "environment" -> "正在设置环境"
             else -> raw
         }
     }
 
     private fun kindLabel(): String = when (kind) {
-        BackendSessionKind.TERMINAL -> "Terminal"
-        BackendSessionKind.LANGUAGE_SERVER -> "Language server"
+        BackendSessionKind.TERMINAL -> "终端"
+        BackendSessionKind.LANGUAGE_SERVER -> "语言服务器"
         BackendSessionKind.DEBUG_ADAPTER -> "Debugger"
-        BackendSessionKind.JOB -> "Background job"
+        BackendSessionKind.JOB -> "后台作业"
     }
 }
 

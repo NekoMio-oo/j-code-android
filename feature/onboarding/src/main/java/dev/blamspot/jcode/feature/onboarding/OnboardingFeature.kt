@@ -155,7 +155,7 @@ object OnboardingFeature {
                 Text(
                     // A running setup step is the more specific thing to say; otherwise the wait is
                     // the environment being probed and started.
-                    text = running?.label ?: "Starting $distroLabel…",
+                    text = running?.label ?: "正在启动 $distroLabel…",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -278,9 +278,9 @@ private fun StepperScreen(
     var setUpFresh by remember { mutableStateOf(false) }
     val importing = onImportMigration != null && migrationSummary != null && !setUpFresh
     val idleLabel = if (importing) {
-        "Waiting for you to start the import."
+        "等待开始导入。"
     } else {
-        "Waiting for you to choose a distro."
+        "等待选择发行版。"
     }
     val selectionSteps: LazyListScope.() -> Unit = {
         if (installedEnvironments.isNotEmpty()) {
@@ -441,10 +441,10 @@ private fun MigrationImportCard(
     ) {
         Text(
             text = when {
-                completed -> "Your previous environment is set up."
-                enabled -> "Your previous install left its Linux environment, projects, extensions " +
-                    "and settings behind. Importing them puts JCode back where it was."
-                else -> "Allow storage access above to continue."
+                completed -> "您之前的环境已设置完毕。"
+                enabled -> "之前的安装保留了其 Linux 环境、项目、扩展" +
+                    "和设置。导入它们可让 JCode 恢复到之前的状态。"
+                else -> "请先在上方允许存储空间访问权限以继续。"
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -454,10 +454,10 @@ private fun MigrationImportCard(
             verticalArrangement = Arrangement.spacedBy(Space.sm),
         ) {
             FilledTonalButton(onClick = onImport, enabled = interactive) {
-                Text("Import")
+                Text("导入")
             }
             OutlinedButton(onClick = onSetUpFresh, enabled = interactive) {
-                Text("Set up fresh instead")
+                Text("改为全新设置")
             }
         }
         if (interactive) {
@@ -493,9 +493,9 @@ private fun DistroSelectionCard(
     ) {
         Text(
             text = when {
-                completed -> "Environment ready — ${environmentState.runtime.selectedDistro.label} is set up."
-                enabled -> "Choose the Linux distro JCode should prepare for your embedded environment."
-                else -> "Allow storage access above to continue."
+                completed -> "环境已就绪——${environmentState.runtime.selectedDistro.label} 已设置完毕。"
+                enabled -> "选择 JCode 应为嵌入式环境准备的 Linux 发行版。"
+                else -> "请先在上方允许存储空间访问权限以继续。"
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -527,20 +527,20 @@ private fun DistroSelectionCard(
             verticalArrangement = Arrangement.spacedBy(Space.sm),
         ) {
             FilledTonalButton(onClick = onAutoSetup, enabled = interactive) {
-                Text("Use ${environmentState.runtime.selectedDistro.label}")
+                Text("使用 ${environmentState.runtime.selectedDistro.label}")
             }
             if (onRestoreEnvironment != null) {
                 OutlinedButton(onClick = onRestoreEnvironment, enabled = interactive) {
-                    Text("Restore from backup…")
+                    Text("从备份恢复…")
                 }
             }
             OutlinedButton(onClick = onRefresh, enabled = interactive) {
-                Text("Refresh")
+                Text("刷新")
             }
         }
         if (onRestoreEnvironment != null && interactive) {
             Text(
-                text = "Or restore a .tar.gz backup into the selected distro — brings back its toolchains, VMs and files instead of a fresh download. Pick the distro that matches your backup first.",
+                text = "或将 .tar.gz 备份恢复到所选发行版中——可恢复其工具链、虚拟机和文件，无需重新下载。请先选择与备份匹配的发行版。",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -635,7 +635,7 @@ private fun ConfigureStepCard(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Done")
+                Text("完成")
             }
         }
     }
@@ -667,13 +667,13 @@ private fun WebEngineHintCard() {
                 .padding(Space.lg),
             verticalArrangement = Arrangement.spacedBy(Space.ms),
         ) {
-            Text("Browser engine is outdated", fontWeight = FontWeight.SemiBold)
+            Text("浏览器引擎已过时", fontWeight = FontWeight.SemiBold)
             Text(
-                text = "This device's WebView is Chromium $engineVersion, which modern sites can " +
-                    "render blank or broken. JCode's built-in browser and web previews use it. " +
-                    "Recommended: install the latest Android System WebView, then pick it under " +
-                    "Developer options → WebView implementation. If your device doesn't allow the " +
-                    "switch, JCode keeps working on the ROM's engine.",
+                text = "此设备的 WebView 是 Chromium $engineVersion，现代网站可能" +
+                    "渲染为空白或错乱。JCode 的内置浏览器和网页预览都使用它。" +
+                    "建议：安装最新版 Android System WebView，然后在" +
+                    "「开发者选项」→「WebView 实现」中选择它。如果你的设备不允许" +
+                    "切换，JCode 将继续使用系统自带的引擎。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -693,7 +693,7 @@ private fun WebEngineHintCard() {
                     }
                 },
             ) {
-                Text("Get latest WebView")
+                Text("获取最新 WebView")
             }
         }
     }
@@ -712,14 +712,14 @@ private fun AddEnvironmentCard(onAdd: () -> Unit) {
                 .padding(Space.lg),
             verticalArrangement = Arrangement.spacedBy(Space.ms),
         ) {
-            Text("Add an environment", fontWeight = FontWeight.SemiBold)
+            Text("添加环境", fontWeight = FontWeight.SemiBold)
             Text(
-                text = "Install another Linux distro alongside the ones above. Each keeps its own SDKs " +
-                    "and language servers.",
+                text = "在上面列出的发行版之外再安装另一个 Linux 发行版。每个发行版保留各自的 SDK" +
+                    "和语言服务器。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            FilledTonalButton(onClick = onAdd) { Text("Install another distro") }
+            FilledTonalButton(onClick = onAdd) { Text("安装另一个发行版") }
         }
     }
 }
@@ -744,10 +744,10 @@ private fun InstalledEnvironmentsCard(
                 .padding(Space.lg),
             verticalArrangement = Arrangement.spacedBy(Space.ms),
         ) {
-            Text("Installed environments", fontWeight = FontWeight.SemiBold)
+            Text("已安装的环境", fontWeight = FontWeight.SemiBold)
             Text(
-                text = "Switch which environment terminals and builds target. SDKs and language servers stay " +
-                    "installed per environment. Open terminals keep their original environment.",
+                text = "切换终端和构建所面向的环境。SDK 和语言服务器保留" +
+                    "在各自的环境中。已打开的终端保留其原有环境。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -771,23 +771,23 @@ private fun InstalledEnvironmentsCard(
         val target = environments.firstOrNull { it.id == deleteId }
         AlertDialog(
             onDismissRequest = { pendingDelete = null },
-            title = { Text("Remove environment") },
+            title = { Text("移除环境") },
             text = {
                 Text(
-                    "Remove ${target?.label ?: deleteId}? Its rootfs and everything installed inside it " +
+                    "要移除 ${target?.label ?: deleteId} 吗？其 rootfs 及其中安装的所有内容" +
                         "(SDKs, language servers, packages) will be deleted. This cannot be undone.",
                 )
             },
-            // Destructive "Remove" sits away from the rightmost (reflexive-tap) slot, which Material
+            // Destructive "移除" sits away from the rightmost (reflexive-tap) slot, which Material
             // gives to the dismiss button.
             confirmButton = {
-                CompactDestructiveButton(text = "Remove", onClick = {
+                CompactDestructiveButton(text = "移除", onClick = {
                     onDelete(deleteId)
                     pendingDelete = null
                 })
             },
             dismissButton = {
-                CompactFilledButton(text = "Cancel", onClick = { pendingDelete = null })
+                CompactFilledButton(text = "取消", onClick = { pendingDelete = null })
             },
         )
     }
@@ -836,7 +836,7 @@ private fun EnvironmentRow(
                 )
                 Text(
                     text = buildString {
-                        append(if (emulated) "Emulated (QEMU)" else "Native")
+                        append(if (emulated) "模拟（QEMU）" else "原生")
                         if (env.isActive) append(" · active")
                     },
                     style = MaterialTheme.typography.bodySmall,
@@ -848,7 +848,7 @@ private fun EnvironmentRow(
                 )
             }
             TextButton(onClick = onDelete, enabled = canDelete) {
-                Text("Remove", color = MaterialTheme.colorScheme.error)
+                Text("移除", color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -867,9 +867,9 @@ private fun Header() {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(Space.xs),
         ) {
-            Text("Environment setup", fontWeight = FontWeight.SemiBold)
+            Text("环境设置", fontWeight = FontWeight.SemiBold)
             Text(
-                text = "Pick a Linux distro and JCode configures the rest automatically.",
+                text = "选择一个 Linux 发行版，JCode 会自动完成其余配置。",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -904,9 +904,9 @@ private fun StorageAccessCard(
         active = !granted,
     ) {
         Text(
-            text = "Lets JCode migrate projects created by older versions from the shared /JCode " +
-                "folder. Projects now live in app storage — browse them via the \"JCode Projects\" " +
-                "entry in your Files app, or export them from the workspace menu.",
+            text = "允许 JCode 从共享的 /JCode 文件夹" +
+                "迁移旧版本创建的项目。项目现存放在应用存储中——可通过“文件”应用中的“JCode Projects”" +
+                "条目浏览，或从工作区菜单导出。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -916,7 +916,7 @@ private fun StorageAccessCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text("✓", color = JCodeTheme.semanticColors.success, fontWeight = FontWeight.Bold)
-                Text("Storage access granted", style = MaterialTheme.typography.bodyMedium)
+                Text("已授予存储空间访问权限", style = MaterialTheme.typography.bodyMedium)
             }
         } else {
             FilledTonalButton(
@@ -932,12 +932,12 @@ private fun StorageAccessCard(
                 },
                 enabled = enabled,
             ) {
-                Text("Allow \"All files access\"")
+                Text("允许“所有文件访问权限”")
             }
             if (deniedOnce) {
                 Text(
-                    text = "Without it, projects fall back to app-private storage and are removed " +
-                        "when the app is uninstalled. In the settings screen that opens, turn on " +
+                    text = "没有该权限，项目将回退到应用私有存储，并在卸载应用时被删除" +
+                        "。在打开的设置界面中，开启" +
                         "\"Allow access to manage all files\" for JCode, then return here.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1022,15 +1022,15 @@ private fun ActivityLogCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(Space.xxs)) {
-                    Text("Setup log", fontWeight = FontWeight.SemiBold)
+                    Text("设置日志", fontWeight = FontWeight.SemiBold)
                     Text(
-                        text = runningStep?.key ?: "Waiting for progress",
+                        text = runningStep?.key ?: "等待进度",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 TextButton(onClick = onToggle) {
-                    Text(if (expanded) "Hide" else "Show")
+                    Text(if (expanded) "隐藏" else "显示")
                 }
             }
             if (expanded) {

@@ -78,7 +78,7 @@ class TemplateScaffolder internal constructor(
                 projectName = request.projectName,
                 finished = true,
                 succeeded = false,
-                errorMessage = "The Linux runtime isn't ready yet. Finish environment setup first.",
+                errorMessage = "Linux 运行时尚未就绪。请先完成环境设置。",
             )
             return false
         }
@@ -101,7 +101,7 @@ class TemplateScaffolder internal constructor(
             running = true,
             totalSteps = steps.size,
             currentStep = 0,
-            currentLabel = if (steps.isEmpty()) "Creating folder" else null,
+            currentLabel = if (steps.isEmpty()) "正在创建文件夹" else null,
             logLines = listOf("== ${template.name} → ${request.projectDir} =="),
         )
 
@@ -111,9 +111,9 @@ class TemplateScaffolder internal constructor(
         }
 
         val prep = "rm -rf \"$staging\" && mkdir -p \"$staging\" && mkdir -p \"${request.projectDir}\""
-        val prepResult = execStep("Prepare ${request.projectName}", prep, request.projectDir)
+        val prepResult = execStep("准备 ${request.projectName}", prep, request.projectDir)
         if (!prepResult.succeeded) {
-            return fail(prepResult.internalError ?: "Failed to prepare staging directory.")
+            return fail(prepResult.internalError ?: "准备暂存目录失败。")
         }
 
         // A script step gets the same values the inline form gets as `{{tokens}}`, but as environment
@@ -151,13 +151,13 @@ class TemplateScaffolder internal constructor(
         }
 
         // Best-effort cleanup of the ext4 staging copy; failure here does not fail the scaffold.
-        execStep("Clean up", "rm -rf \"$staging\"", request.projectDir)
+        execStep("清理", "rm -rf \"$staging\"", request.projectDir)
 
         _state.value = _state.value.copy(
             running = false,
             finished = true,
             succeeded = true,
-            currentLabel = "Done",
+            currentLabel = "完成",
         )
         return true
     }

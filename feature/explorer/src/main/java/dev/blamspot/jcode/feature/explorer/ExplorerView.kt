@@ -262,8 +262,8 @@ fun ExplorerView(
             // Refresh either way: a partial failure may have landed some files already.
             viewModel.refresh()
             scmUi.onFsActivity?.invoke()
-            result.onSuccess { names -> onSnackbar?.invoke("Imported ${names.size} file(s)") }
-                .onFailure { onSnackbar?.invoke("Import failed: ${it.message}") }
+            result.onSuccess { names -> onSnackbar?.invoke("已导入 ${names.size} 个文件") }
+                .onFailure { onSnackbar?.invoke("导入失败：${it.message}") }
         }
     }
     var exportFileSource by rememberSaveable { mutableStateOf<String?>(null) }
@@ -274,8 +274,8 @@ fun ExplorerView(
         exportFileSource = null
         if (source != null && uri != null) fileOpScope.launch {
             runCatching { exportFileToUri(context, source, uri) }
-                .onSuccess { onSnackbar?.invoke("Exported file") }
-                .onFailure { onSnackbar?.invoke("Export failed: ${it.message}") }
+                .onSuccess { onSnackbar?.invoke("已导出文件") }
+                .onFailure { onSnackbar?.invoke("导出失败：${it.message}") }
         }
     }
     var exportDirSource by rememberSaveable { mutableStateOf<String?>(null) }
@@ -286,8 +286,8 @@ fun ExplorerView(
         exportDirSource = null
         if (source != null && uri != null) fileOpScope.launch {
             runCatching { copyLocalTreeToDocumentTree(context, source, uri, source.name) }
-                .onSuccess { n -> onSnackbar?.invoke("Exported $n file(s) from '${source.name}'") }
-                .onFailure { onSnackbar?.invoke("Export failed: ${it.message}") }
+                .onSuccess { n -> onSnackbar?.invoke("已从 '${source.name}' 导出 $n 个文件") }
+                .onFailure { onSnackbar?.invoke("导出失败：${it.message}") }
         }
     }
 
@@ -311,11 +311,11 @@ fun ExplorerView(
             RowAction.Rename -> showRenameDialog = RenameTarget(row.node.path, row.node.name)
             RowAction.Copy -> {
                 clipboard = ClipboardEntry(row.node.path, row.node.name, isCut = false)
-                onSnackbar?.invoke("Copied '${row.node.name}'")
+                onSnackbar?.invoke("已复制 '${row.node.name}'")
             }
             RowAction.Cut -> {
                 clipboard = ClipboardEntry(row.node.path, row.node.name, isCut = true)
-                onSnackbar?.invoke("Cut '${row.node.name}'")
+                onSnackbar?.invoke("已剪切 '${row.node.name}'")
             }
             RowAction.Delete -> showDeleteConfirm = row
             RowAction.ImportHere -> {
@@ -333,7 +333,7 @@ fun ExplorerView(
                         exportDirSource = path.file.absolutePath
                         exportDirLauncher.launch(null)
                     }
-                    else -> onSnackbar?.invoke("Folder export supports local folders only")
+                    else -> onSnackbar?.invoke("文件夹导出仅支持本地文件夹")
                 }
             }
         }
@@ -363,14 +363,14 @@ fun ExplorerView(
                             val targetParent = resolveCreateParent()
                             copyFileOrDir(fs, context, entry.sourcePath, targetParent)
                             viewModel.refresh()
-                            onSnackbar?.invoke("Pasted '${entry.name}'")
+                            onSnackbar?.invoke("已粘贴 '${entry.name}'")
                             if (entry.isCut) {
                                 deletePermanently(fs, context, entry.sourcePath)
                                 viewModel.refresh()
                             }
                             clipboard = null
                             scmUi.onFsActivity?.invoke()
-                        }.onFailure { onSnackbar?.invoke("Paste failed: ${it.message}") }
+                        }.onFailure { onSnackbar?.invoke("粘贴失败：${it.message}") }
                     }
                 }
             },
@@ -432,7 +432,7 @@ fun ExplorerView(
     // Create dialog
     showCreateDialog?.let { target ->
         CreateRenameDialog(
-            title = if (target.isDirectory) "New Folder" else "New File",
+            title = if (target.isDirectory) "新建文件夹" else "新建文件",
             initialName = if (target.isDirectory) "new-folder" else "new-file.txt",
             onDismiss = { showCreateDialog = null },
             onConfirm = { name ->
@@ -445,9 +445,9 @@ fun ExplorerView(
                         }
                         viewModel.refresh()
                         scmUi.onFsActivity?.invoke()
-                        onSnackbar?.invoke("Created '$name'")
+                        onSnackbar?.invoke("已创建 '$name'")
                     }.onFailure {
-                        onSnackbar?.invoke("Create failed: ${it.message}")
+                        onSnackbar?.invoke("创建失败：${it.message}")
                     }
                 }
                 showCreateDialog = null
@@ -458,7 +458,7 @@ fun ExplorerView(
     // Rename dialog
     showRenameDialog?.let { target ->
         CreateRenameDialog(
-            title = "Rename",
+            title = "重命名",
             initialName = target.currentName,
             onDismiss = { showRenameDialog = null },
             onConfirm = { newName ->
@@ -467,9 +467,9 @@ fun ExplorerView(
                         renameFile(fs, context, target.path, newName)
                         viewModel.refresh()
                         scmUi.onFsActivity?.invoke()
-                        onSnackbar?.invoke("Renamed to '$newName'")
+                        onSnackbar?.invoke("已重命名为 '$newName'")
                     }.onFailure {
-                        onSnackbar?.invoke("Rename failed: ${it.message}")
+                        onSnackbar?.invoke("重命名失败：${it.message}")
                     }
                 }
                 showRenameDialog = null
@@ -481,12 +481,12 @@ fun ExplorerView(
     // final, and the wording has to be the one the button will actually honour.
     showDeleteConfirm?.let { target ->
         val isDir = target.node.kind == FsKind.Directory
-        val subject = if (isDir) "The folder, with everything in it," else "The file"
+        val subject = if (isDir) "该文件夹及其中的全部内容，" else "该文件"
         val what = if (isDir) "folder and everything in it" else "file"
         val toTrash = trashSettings.enabled
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = null },
-            title = { Text("Delete '${target.node.name}'?") },
+            title = { Text("删除“${target.node.name}”？") },
             text = {
                 Text(
                     if (toTrash) {
@@ -494,8 +494,8 @@ fun ExplorerView(
                             trashRetentionLabel(trashSettings.retentionDays).lowercase() +
                             " and can be restored."
                     } else {
-                        "This permanently deletes the $what. " +
-                            "If the project is under git, you can restore it there."
+                        "这将永久删除$what。" +
+                            "如果该项目受 Git 管理，可在其中恢复。"
                     },
                 )
             },
@@ -522,19 +522,19 @@ fun ExplorerView(
                             viewModel.refresh()
                             scmUi.onFsActivity?.invoke()
                             onSnackbar?.invoke(
-                                if (toTrash) "Moved '${node.name}' to Trash" else "Deleted '${node.name}'",
+                                if (toTrash) "已将 '${node.name}' 移到回收站" else "已删除 '${node.name}'",
                             )
-                        }.onFailure { onSnackbar?.invoke("Delete failed: ${it.message}") }
+                        }.onFailure { onSnackbar?.invoke("删除失败：${it.message}") }
                     }
                 }
                 if (toTrash) {
-                    CompactFilledButton(text = "Move to Trash", onClick = confirmAction)
+                    CompactFilledButton(text = "移入回收站", onClick = confirmAction)
                 } else {
-                    CompactDestructiveButton(text = "Delete", onClick = confirmAction)
+                    CompactDestructiveButton(text = "删除", onClick = confirmAction)
                 }
             },
             dismissButton = {
-                CompactOutlinedButton(text = "Cancel", onClick = { showDeleteConfirm = null })
+                CompactOutlinedButton(text = "取消", onClick = { showDeleteConfirm = null })
             },
         )
     }
@@ -585,14 +585,14 @@ private fun RowOverflowMenu(
     // The project root must not be moved or deleted from the tree, so Cut/Delete are hidden on it.
     val isProjectRoot = LocalProjectRootId.current == row.node.path.stableId
     Box {
-        JcTooltip("More actions") {
+        JcTooltip("更多操作") {
             IconButton(
                 onClick = { onExpandedChange(true) },
                 modifier = Modifier.size(28.dp),
             ) {
                 Icon(
                     painter = jcIcon(JCodeIcon.MoreVert),
-                    contentDescription = "More actions",
+                    contentDescription = "更多操作",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(IconSize.md),
                 )
@@ -602,22 +602,22 @@ private fun RowOverflowMenu(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) },
             quickActions = buildList {
-                add(ContextAction(JCodeIcon.Copy, "Copy") { onAction(row, RowAction.Copy) })
+                add(ContextAction(JCodeIcon.Copy, "复制") { onAction(row, RowAction.Copy) })
                 if (!isProjectRoot) add(ContextAction(JCodeIcon.Cut, "Cut") { onAction(row, RowAction.Cut) })
-                add(ContextAction(JCodeIcon.Rename, "Rename") { onAction(row, RowAction.Rename) })
+                add(ContextAction(JCodeIcon.Rename, "重命名") { onAction(row, RowAction.Rename) })
                 if (!isProjectRoot) {
-                    add(ContextAction(JCodeIcon.Delete, "Delete", destructive = true) { onAction(row, RowAction.Delete) })
+                    add(ContextAction(JCodeIcon.Delete, "删除", destructive = true) { onAction(row, RowAction.Delete) })
                 }
             },
             listActions = buildList {
-                if (!isDir) add(ContextAction(JCodeIcon.Open, "Open") { onAction(row, RowAction.Open) })
+                if (!isDir) add(ContextAction(JCodeIcon.Open, "打开") { onAction(row, RowAction.Open) })
                 if (isDir) {
-                    add(ContextAction(JCodeIcon.NewFile, "New file") { onAction(row, RowAction.NewFile) })
-                    add(ContextAction(JCodeIcon.NewFolder, "New folder") { onAction(row, RowAction.NewFolder) })
-                    add(ContextAction(JCodeIcon.Add, "Import files…") { onAction(row, RowAction.ImportHere) })
+                    add(ContextAction(JCodeIcon.NewFile, "新建文件") { onAction(row, RowAction.NewFile) })
+                    add(ContextAction(JCodeIcon.NewFolder, "新建文件夹") { onAction(row, RowAction.NewFolder) })
+                    add(ContextAction(JCodeIcon.Add, "导入文件…") { onAction(row, RowAction.ImportHere) })
                 }
-                add(ContextAction(JCodeIcon.Save, "Export…") { onAction(row, RowAction.Export) })
-                // Extension-contributed actions (e.g. "Add to .gitignore") target a path inside the
+                add(ContextAction(JCodeIcon.Save, "导出…") { onAction(row, RowAction.Export) })
+                // Extension-contributed actions (e.g. "添加到 .gitignore") target a path inside the
                 // repo — the project root isn't a valid target, so omit them there.
                 if (!isProjectRoot) {
                     scmUi.onContextAction?.let { dispatch ->
@@ -648,11 +648,11 @@ private fun ExplorerBreadcrumb(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (entries.size > 1) {
-            JcTooltip("Up one level") {
+            JcTooltip("上一级") {
                 IconButton(onClick = onNavigateUp, modifier = Modifier.size(28.dp)) {
                     Icon(
                         painter = jcIcon(JCodeIcon.ArrowUp),
-                        contentDescription = "Up one level",
+                        contentDescription = "上一级",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(IconSize.md),
                     )
@@ -730,7 +730,7 @@ private fun TreeViewContent(
 private fun EmptyExplorerHint() {
     Box(modifier = Modifier.fillMaxSize().padding(Space.xxl), contentAlignment = Alignment.Center) {
         Text(
-            text = "No files yet.\nUse the New File / New Folder buttons above.",
+            text = "还没有文件。\n请使用上方的“新建文件/新建文件夹”按钮。",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -804,7 +804,7 @@ private fun TreeRowItem(
                     ) {
                         Icon(
                             painter = if (row.isExpanded) jcIcon(JCodeIcon.ChevronDown) else jcIcon(JCodeIcon.ChevronRight),
-                            contentDescription = if (row.isExpanded) "Collapse" else "Expand",
+                            contentDescription = if (row.isExpanded) "折叠" else "展开",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(iconSize),
                         )
@@ -978,19 +978,19 @@ private fun ExplorerToolbar(
             .padding(horizontal = Space.xs, vertical = Space.xxs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ToolbarIcon(jcIcon(JCodeIcon.NewFile), "New File", onCreateFile)
-        ToolbarIcon(jcIcon(JCodeIcon.NewFolder), "New Folder", onCreateFolder)
-        ToolbarIcon(jcIcon(JCodeIcon.Add), "Import files", onImport)
+        ToolbarIcon(jcIcon(JCodeIcon.NewFile), "新建文件", onCreateFile)
+        ToolbarIcon(jcIcon(JCodeIcon.NewFolder), "新建文件夹", onCreateFolder)
+        ToolbarIcon(jcIcon(JCodeIcon.Add), "导入文件", onImport)
         ToolbarIcon(jcIcon(JCodeIcon.Paste), "Paste", onPaste, enabled = canPaste)
-        ToolbarIcon(jcIcon(JCodeIcon.Refresh), "Refresh", onRefresh)
+        ToolbarIcon(jcIcon(JCodeIcon.Refresh), "刷新", onRefresh)
         if (viewMode == ExplorerViewMode.Tree) {
-            ToolbarIcon(jcIcon(JCodeIcon.Collapse), "Collapse all", onCollapseAll)
+            ToolbarIcon(jcIcon(JCodeIcon.Collapse), "全部折叠", onCollapseAll)
         }
         // Away from the make-and-refresh cluster, at the end of the row: the bin is where deletes
         // are undone, not another thing to do to the tree.
         if (showTrash) {
             Spacer(modifier = Modifier.weight(1f))
-            ToolbarIcon(jcIcon(JCodeIcon.Trash), "Trash", onOpenTrash)
+            ToolbarIcon(jcIcon(JCodeIcon.Trash), "回收站", onOpenTrash)
         }
     }
 }
@@ -1044,7 +1044,7 @@ private fun CreateRenameDialog(
         },
         confirmButton = {
             CompactFilledButton(
-                text = "OK",
+                text = "确定",
                 onClick = {
                     if (textState.text.isNotBlank()) {
                         onConfirm(textState.text)
@@ -1054,7 +1054,7 @@ private fun CreateRenameDialog(
             )
         },
         dismissButton = {
-            CompactOutlinedButton(text = "Cancel", onClick = onDismiss)
+            CompactOutlinedButton(text = "取消", onClick = onDismiss)
         },
     )
 }
@@ -1065,7 +1065,7 @@ private fun CreateRenameDialog(
 @Composable
 private fun RowVcsBadges(row: TreeRow) {
     if (row.isSubmodule) {
-        JcTooltip("Git submodule") {
+        JcTooltip("Git 子模块") {
             Text(
                 text = "S",
                 color = MaterialTheme.colorScheme.tertiary,

@@ -41,12 +41,12 @@ fun ManagerPanelHeader(
     onToggleSearch: () -> Unit = {},
     query: String = "",
     onQueryChange: (String) -> Unit = {},
-    searchPlaceholder: String = "Search",
+    searchPlaceholder: String = "搜索",
     onManage: (() -> Unit)? = null,
     manageContentDescription: String = "Manage",
     onImport: (() -> Unit)? = null,
     importIcon: JCodeIcon = JCodeIcon.Open,
-    importContentDescription: String = "Import",
+    importContentDescription: String = "导入",
     onExtras: (() -> Unit)? = null,
     extrasIcon: JCodeIcon = JCodeIcon.MoreVert,
     extrasContentDescription: String = "More",
@@ -105,7 +105,7 @@ fun ManagerPanelHeader(
             }
             HeaderIconButton(
                 icon = jcIcon(JCodeIcon.Search),
-                contentDescription = "Search",
+                contentDescription = "搜索",
                 onClick = onToggleSearch,
                 active = searchActive,
             )
@@ -122,13 +122,13 @@ fun ManagerPanelHeader(
             } else {
                 HeaderIconButton(
                     icon = jcIcon(JCodeIcon.Refresh),
-                    contentDescription = "Refresh",
+                    contentDescription = "刷新",
                     onClick = onRefresh,
                 )
             }
         }
         Text(
-            text = "$installedCount installed",
+            text = "$installedCount 个已安装",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -171,7 +171,7 @@ private fun ManagerSearchField(
  */
 @Composable
 private fun HeaderNoticeButton(count: Int, onClick: () -> Unit) {
-    val label = if (count == 1) "1 problem — show in Issues" else "$count problems — show in Issues"
+    val label = if (count == 1) "1 个问题——在“问题”中查看" else "$count 个问题——在“问题”中查看"
     JcTooltip(label) {
         IconButton(onClick = onClick, modifier = Modifier.size(36.dp)) {
             Box(

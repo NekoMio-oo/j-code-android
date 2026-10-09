@@ -140,7 +140,7 @@ fun SettingsAutocompleteRow(
                     )
                     suggestions.isNotEmpty() -> Icon(
                         painter = jcIcon(if (open) JCodeIcon.ChevronUp else JCodeIcon.ChevronDown),
-                        contentDescription = if (open) "Hide suggestions" else "Show suggestions",
+                        contentDescription = if (open) "隐藏建议" else "显示建议",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
                             .size(IconSize.sm)
