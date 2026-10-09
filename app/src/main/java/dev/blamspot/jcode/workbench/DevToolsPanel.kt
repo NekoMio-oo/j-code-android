@@ -824,13 +824,13 @@ private fun ApplicationPane(modifier: Modifier = Modifier) {
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
         QuotaBar(survey)
-        DetailSection("Page") {
+        DetailSection("页面") {
             DetailPairs(
                 buildList {
-                    add("Origin" to survey.origin.ifBlank { "—" })
-                    add("安全上下文" to if (survey.secure) "yes" else "no")
+                    add("来源" to survey.origin.ifBlank { "—" })
+                    add("安全上下文" to if (survey.secure) "是" else "否")
                     if (survey.persisted != null) {
-                        add("Storage" to if (survey.persisted) "persistent" else "best-effort")
+                        add("存储" to if (survey.persisted) "持久" else "尽力")
                     }
                 },
                 LocalClipboardManager.current,
@@ -838,7 +838,7 @@ private fun ApplicationPane(modifier: Modifier = Modifier) {
         }
         StoredSection("本地存储", survey.local, ::refresh, pageUrl) { open = it }
         StoredSection("会话存储", survey.session, ::refresh, pageUrl) { open = it }
-        StoredSection("Cookies", survey.cookies, ::refresh, pageUrl) { open = it }
+        StoredSection("Cookie", survey.cookies, ::refresh, pageUrl) { open = it }
         IndexedDbSection(survey.databases)
         CacheSection(survey.caches)
         WorkerSection(survey.workers)
@@ -891,10 +891,10 @@ private fun StoredSection(
     // Clearing a whole store stays reachable, but rows delete one at a time: the reason to look at
     // storage while debugging is usually to drop a single key and try again, not to wipe the site
     // and lose the session that took ten minutes to get into.
-    val clearable = rows.isNotEmpty() && title != "Cookies"
+    val clearable = rows.isNotEmpty() && title != "Cookie"
     DetailSection(
         title = title,
-        trailing = if (rows.isEmpty()) "empty" else rows.size.toString(),
+        trailing = if (rows.isEmpty()) "空" else rows.size.toString(),
         // The two people actually open the pane for start open; the rest state their count in the
         // header, which is the whole map of what a site keeps in one screen.
         initiallyExpanded = rows.isNotEmpty() && title != "会话存储",
@@ -1017,9 +1017,9 @@ private fun StoredValueDetail(
         Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             DetailPairs(
                 buildList {
-                    add("Store" to storeLabel(entry.store))
-                    add("Size" to formatBytes(entry.value.length.toLong()))
-                    if (entry.httpOnly) add("Flag" to "HttpOnly——页面脚本不可见")
+                    add("存储" to storeLabel(entry.store))
+                    add("大小" to formatBytes(entry.value.length.toLong()))
+                    if (entry.httpOnly) add("标记" to "HttpOnly——页面脚本不可见")
                 },
                 clipboard,
             )
@@ -1387,14 +1387,14 @@ private fun unregisterWorkerJs(scope: String): String =
 
 /** The Network pane's type filter. Null matches everything; the rest match [BrowserNetworkEntry.kind]. */
 private val NETWORK_FILTERS: List<Pair<String, Set<String>?>> = listOf(
-    "All" to null,
+    "全部" to null,
     "Fetch/XHR" to setOf("fetch", "xhr"),
-    "Doc" to setOf("document"),
+    "文档" to setOf("document"),
     "JS" to setOf("script"),
     "CSS" to setOf("css"),
-    "Img" to setOf("img"),
-    "Media" to setOf("media", "font"),
-    "Other" to setOf("other"),
+    "图片" to setOf("img"),
+    "媒体" to setOf("media", "font"),
+    "其他" to setOf("other"),
 )
 
 @Composable
@@ -1529,25 +1529,25 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.28f))
         Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-            DetailSection("General", initiallyExpanded = true) {
+            DetailSection("常规", initiallyExpanded = true) {
                 DetailPairs(
                     buildList {
                         add("请求 URL" to e.url)
-                        add("Method" to e.method)
-                        add("Status" to if (e.status > 0) e.status.toString() else if (e.failed) "(failed)" else "—")
-                        add("Type" to e.kind)
+                        add("方法" to e.method)
+                        add("状态" to if (e.status > 0) e.status.toString() else if (e.failed) "（失败）" else "—")
+                        add("类型" to e.kind)
                         if (e.mimeType.isNotBlank()) add("Content-Type" to e.mimeType)
                         add(
-                            "Transferred" to when {
+                            "已传输" to when {
                                 e.bytes > 0 -> formatBytes(e.bytes)
                                 e.bytes == 0L && e.encodedBytes > 0 ->
-                                    "0 B — served from cache (${formatBytes(e.encodedBytes)} decoded)"
+                                    "0 B — 来自缓存（解码 ${formatBytes(e.encodedBytes)}）"
                                 e.bytes == 0L ->
-                                    "not disclosed — cross-origin without Timing-Allow-Origin"
-                                else -> "unknown"
+                                    "未提供——跨来源请求且无 Timing-Allow-Origin"
+                                else -> "未知"
                             },
                         )
-                        add("Time" to "${e.durationMs} ms")
+                        add("时间" to "${e.durationMs} ms")
                     },
                     clipboard,
                 )
@@ -1556,7 +1556,7 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
                 Text(
                     text = "由浏览器加载，而非页面脚本。资源计时会报告其" +
                         "URL、大小、时长，以及（在来源允许的情况下）状态；" +
-                        "response body and headers aren't exposed to the page, so there's nothing " +
+                        "但响应体与响应头不会暴露给页面，因此没有" +
                         "更多可显示的内容。",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -1570,7 +1570,7 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
                 }
             }
             if (e.requestBody.isNotBlank()) {
-                DetailSection("Payload", initiallyExpanded = true) {
+                DetailSection("载荷", initiallyExpanded = true) {
                     DetailBody(e.requestBody, e.bodyTruncated, clipboard)
                 }
             }
@@ -1580,7 +1580,7 @@ private fun NetworkDetail(e: BrowserNetworkEntry, onBack: () -> Unit, modifier: 
                 }
             }
             if (e.responseBody.isNotBlank()) {
-                DetailSection("Response", initiallyExpanded = true) {
+                DetailSection("响应", initiallyExpanded = true) {
                     DetailBody(e.responseBody, e.bodyTruncated, clipboard)
                 }
             } else if (!e.failed) {

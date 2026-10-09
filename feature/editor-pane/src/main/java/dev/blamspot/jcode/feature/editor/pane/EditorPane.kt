@@ -597,8 +597,8 @@ fun EditorViewHost(
                 },
                 quickActions = listOf(
                     ContextAction(JCodeIcon.Copy, "复制") { view?.copySelection() },
-                    ContextAction(JCodeIcon.Cut, "Cut") { view?.cutSelection() },
-                    ContextAction(JCodeIcon.Paste, "Paste") { view?.pasteClipboard() },
+                    ContextAction(JCodeIcon.Cut, "剪切") { view?.cutSelection() },
+                    ContextAction(JCodeIcon.Paste, "粘贴") { view?.pasteClipboard() },
                 ),
                 listActions = buildList {
                     add(ContextAction(JCodeIcon.Cursor, "选择文本") { view?.beginTextSelection() })

@@ -1202,7 +1202,7 @@ fun JCodeApp(
                 // Settings > About button, so installing from the toast alone looked like nothing
                 // happened. Open Settings and reveal that group, then kick the install off.
                 viewModel.openSettingsPage()
-                SettingsFeature.revealGroup("About")
+                SettingsFeature.revealGroup("关于")
                 appUpdateSetting.onInstallUpdate()
             }
         }
@@ -4788,7 +4788,7 @@ private fun EditorRecents(actions: EditorEmptyActions, modifier: Modifier = Modi
         ) {
             EditorStartHeader()
             Column(verticalArrangement = Arrangement.spacedBy(Space.s)) {
-                StartSectionLabel("Start")
+                StartSectionLabel("开始")
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.sm), verticalArrangement = Arrangement.spacedBy(Space.sm)) {
                     WorkbenchActionButton(text = "新建文件夹", onClick = actions.onNewProject, active = true)
                     WorkbenchActionButton(text = "打开文件夹", onClick = actions.onOpenFolder)
@@ -4806,7 +4806,7 @@ private fun EditorRecents(actions: EditorEmptyActions, modifier: Modifier = Modi
                 )
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(Space.s)) {
-                    StartSectionLabel("Recent")
+                    StartSectionLabel("最近")
                     actions.recents.forEach { recent ->
                         RecentRow(
                             recent = recent,
@@ -4961,7 +4961,7 @@ private fun recentDisplayName(recent: RecentEntity): String = when (recent.kind)
     ProjectKind.Local -> File(recent.uri).name.ifBlank { recent.uri }
     ProjectKind.Saf -> Uri.parse(recent.uri).lastPathSegment
         ?.substringAfterLast('/')?.substringAfterLast(':')?.ifBlank { null }
-        ?: "Folder"
+        ?: "文件夹"
 }
 
 private fun recentSubtitle(recent: RecentEntity): String = when (recent.kind) {
@@ -5707,7 +5707,7 @@ private fun TerminalSidebarContent(
                             if (req.view.hasSelection()) {
                                 add(ContextAction(JCodeIcon.Copy, "复制") { req.view.contextCopy() })
                             }
-                            add(ContextAction(JCodeIcon.Paste, "Paste") { req.view.contextPaste() })
+                            add(ContextAction(JCodeIcon.Paste, "粘贴") { req.view.contextPaste() })
                         },
                         listActions = listOf(
                             ContextAction(JCodeIcon.Cursor, "选择文本") { req.view.beginTextSelection() },

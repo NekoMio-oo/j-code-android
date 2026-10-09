@@ -342,7 +342,7 @@ object ProjectRunner {
                         RunConfig(
                             name = "Android 应用$qualifier（虚拟设备）",
                             readyPort = 0,
-                            terminals = listOf(RunConfigTerminal("Build", androidVirtualDeviceCommand(guestDir, modulePath, gradle))),
+                            terminals = listOf(RunConfigTerminal("构建", androidVirtualDeviceCommand(guestDir, modulePath, gradle))),
                         ),
                     ),
                 )
@@ -480,7 +480,7 @@ object ProjectRunner {
     fun editableBuildConfig(project: Project, index: Int?): BuildConfig {
         val builds = effectiveBuilds(project)
         if (index != null && index in builds.indices) return builds[index]
-        return BuildConfig("Build", "")
+        return BuildConfig("构建", "")
     }
 
     /** Detected build presets: `dotnet publish`, `npm run build`, and a Gradle assemble — scoped to the

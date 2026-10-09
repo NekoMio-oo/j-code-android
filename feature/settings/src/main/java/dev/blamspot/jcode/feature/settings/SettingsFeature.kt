@@ -396,7 +396,7 @@ object SettingsFeature {
                 ) {
                     val activeFiles = iconSettings.activeFileSetId
                     FileIconSetRow(
-                        name = "None",
+                        name = "无",
                         description = "JCode 自带的文件夹与文件字形，取自界面图标集。",
                         detail = null,
                         selected = activeFiles == FileIconSetRegistry.NONE_ID,
@@ -922,29 +922,29 @@ object SettingsFeature {
             ) {
                 SummaryRow(
                     label = "proot",
-                    value = if (environmentState.prootInstalled) "Ready" else "未安装",
+                    value = if (environmentState.prootInstalled) "就绪" else "未安装",
                 )
                 SummaryRow(
                     label = "发行版",
                     value = when (environmentState.distroInstalled) {
                         true -> environmentState.runtime.selectedDistro.label
                         false -> "未安装"
-                        null -> "Unknown"
+                        null -> "未知"
                     },
                 )
                 SummaryRow(
                     label = "工具链",
                     value = when (environmentState.toolchainReady) {
-                        true -> "Ready"
+                        true -> "就绪"
                         false -> "未就绪"
-                        null -> "Unknown"
+                        null -> "未知"
                     },
                 )
                 SummaryRow(
                     label = "冒烟测试",
                     value = when (environmentState.smokeTestPassed) {
-                        true -> "Passed"
-                        false -> "Failed"
+                        true -> "通过"
+                        false -> "失败"
                         null -> "未运行"
                     },
                 )
@@ -1041,8 +1041,8 @@ object SettingsFeature {
                 }
                 SummaryRow(
                     label = "Linux 进程",
-                    value = processCount?.let { "$it of ${AppProcesses.DEFAULT_PHANTOM_LIMIT} (default cap)" }
-                        ?: "Unknown",
+                    value = processCount?.let { "$it / ${AppProcesses.DEFAULT_PHANTOM_LIMIT}（默认上限）" }
+                        ?: "未知",
                 )
                 Text(
                     text = "Android 12+ 会在应用 fork 的进程超过上限（默认为 32 个）时终止它们—— " +
@@ -1084,7 +1084,7 @@ object SettingsFeature {
 
             } // end Environment
 
-            SettingsGroup("About") {
+            SettingsGroup("关于") {
             SettingsCard(
                 title = "JCode",
                 description = "应用版本，以及来自 GitHub releases 的更新。",
@@ -1214,7 +1214,7 @@ object SettingsFeature {
                         onReset = { diagnostics.onSetCaptureCrashes(SettingsDefaults.DIAGNOSTIC_CRASHES) },
                     )
                     SummaryRow(label = "已记录", value = formatLogSize(diagnostics.sizeBytes))
-                    SummaryRow(label = "位置", value = diagnostics.location.ifBlank { "Starting…" })
+                    SummaryRow(label = "位置", value = diagnostics.location.ifBlank { "正在启动…" })
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
                     CompactFilledButton(
@@ -1632,7 +1632,7 @@ private const val GOOGLE_WEBVIEW_PACKAGE = "com.google.android.webview"
 private fun explorerHiddenModeLabel(mode: ExplorerHiddenMode): String = when (mode) {
     ExplorerHiddenMode.HideSpecifiedAndInjected -> "指定项 + 注入项"
     ExplorerHiddenMode.HideInjected -> "仅注入项"
-    ExplorerHiddenMode.None -> "Off"
+    ExplorerHiddenMode.None -> "关"
 }
 
 /** Human-readable labels for the "排除时" dropdown — HOW excluded entries appear. */

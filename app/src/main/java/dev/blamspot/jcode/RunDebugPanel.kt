@@ -464,7 +464,7 @@ private fun ChoiceRow(
 private fun SegmentedToggle(selected: Segment, onSelect: (Segment) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(Space.s)) {
         Segment.entries.forEach { seg ->
-            ManagerFilterChip(selected = seg == selected, label = seg.name) { onSelect(seg) }
+            ManagerFilterChip(selected = seg == selected, label = if (seg == Segment.Run) "运行" else "构建") { onSelect(seg) }
         }
     }
 }
@@ -480,7 +480,7 @@ private fun ProjectPickRow(project: Project, running: Boolean, onClick: () -> Un
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
-        if (running) RunStatusChip("Running", active = true)
+        if (running) RunStatusChip("运行中", active = true)
         Icon(Icons.AutoMirrored.Rounded.KeyboardArrowRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(IconSize.lg))
     }
 }
@@ -505,9 +505,9 @@ private fun RunConfigRow(
         config.terminals.firstOrNull()?.command?.let { ProjectRunner.commandPreview(it, max = 32) }.orEmpty()
     }
     val status = when {
-        running && runInProgress -> "Building…"
-        running -> "Running"
-        else -> "Idle"
+        running && runInProgress -> "构建中…"
+        running -> "运行中"
+        else -> "空闲"
     }
     Surface(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.12f), shape = RoundedCornerShape(Radius.lg)) {
         Column {
@@ -530,7 +530,7 @@ private fun RunConfigRow(
                     // The entry is auto-derived from the command / active file — no manual field to fill in.
                     IconAction(jcIcon(JCodeIcon.Debug), "调试", MaterialTheme.colorScheme.tertiary, onDebug)
                 }
-                IconAction(jcIcon(JCodeIcon.Settings), "Configure", MaterialTheme.colorScheme.onSurfaceVariant, onConfigure, size = 17)
+                IconAction(jcIcon(JCodeIcon.Settings), "配置", MaterialTheme.colorScheme.onSurfaceVariant, onConfigure, size = 17)
                 if (!running && deletable) IconAction(rememberVectorPainter(Icons.Rounded.DeleteOutline), "删除", MaterialTheme.colorScheme.onSurfaceVariant, onDelete, size = 17)
             }
             // Row 2: thin status + port line.
@@ -555,8 +555,8 @@ private fun BuildConfigRow(config: BuildConfig, deletable: Boolean, onBuild: () 
             horizontalArrangement = Arrangement.spacedBy(Space.hairline),
         ) {
             Text(config.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-            IconAction(jcIcon(JCodeIcon.Run), "Build", MaterialTheme.colorScheme.primary, onBuild, enabled = config.command.isNotBlank())
-            IconAction(jcIcon(JCodeIcon.Settings), "Configure", MaterialTheme.colorScheme.onSurfaceVariant, onConfigure, size = 17)
+            IconAction(jcIcon(JCodeIcon.Run), "构建", MaterialTheme.colorScheme.primary, onBuild, enabled = config.command.isNotBlank())
+            IconAction(jcIcon(JCodeIcon.Settings), "配置", MaterialTheme.colorScheme.onSurfaceVariant, onConfigure, size = 17)
             if (deletable) IconAction(rememberVectorPainter(Icons.Rounded.DeleteOutline), "删除", MaterialTheme.colorScheme.onSurfaceVariant, onDelete, size = 17)
         }
     }

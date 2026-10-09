@@ -49,7 +49,7 @@ fun ManagerPanelHeader(
     importContentDescription: String = "导入",
     onExtras: (() -> Unit)? = null,
     extrasIcon: JCodeIcon = JCodeIcon.MoreVert,
-    extrasContentDescription: String = "More",
+    extrasContentDescription: String = "更多",
     /**
      * Problems this panel wants to report. A count rather than the text: the messages themselves go
      * to the Issues pane, which is where the workbench already collects things that went wrong and

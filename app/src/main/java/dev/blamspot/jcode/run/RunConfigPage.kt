@@ -79,7 +79,7 @@ fun RunConfigPage(
             supporting = "运行就绪时在浏览器中打开——留空表示不打开。",
             value = port,
             onValueChange = { port = it.filter(Char::isDigit); dirty = true },
-            placeholder = "e.g. 5173",
+            placeholder = "例如 5173",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
         SettingsTextFieldRow(
@@ -88,7 +88,7 @@ fun RunConfigPage(
                 "跟踪其进程——运行直到其退出（完成）或被你停止（已终止）。",
             value = command,
             onValueChange = { command = it; dirty = true },
-            placeholder = "e.g. dotnet run",
+            placeholder = "例如 dotnet run",
             singleLine = false,
             minLines = 4,
             monospace = true,

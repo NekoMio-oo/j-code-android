@@ -481,8 +481,7 @@ fun ExplorerView(
     // final, and the wording has to be the one the button will actually honour.
     showDeleteConfirm?.let { target ->
         val isDir = target.node.kind == FsKind.Directory
-        val subject = if (isDir) "该文件夹及其中的全部内容，" else "该文件"
-        val what = if (isDir) "folder and everything in it" else "file"
+        val subject = if (isDir) "该文件夹及其全部内容" else "该文件"
         val toTrash = trashSettings.enabled
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = null },
@@ -490,11 +489,11 @@ fun ExplorerView(
             text = {
                 Text(
                     if (toTrash) {
-                        "$subject moves to the Trash, where it is kept for " +
-                            trashRetentionLabel(trashSettings.retentionDays).lowercase() +
-                            " and can be restored."
+                        "${subject}将移入回收站，保留" +
+                            trashRetentionLabel(trashSettings.retentionDays) +
+                            "，期间可随时恢复。"
                     } else {
-                        "这将永久删除$what。" +
+                        "这将永久删除$subject。" +
                             "如果该项目受 Git 管理，可在其中恢复。"
                     },
                 )
@@ -603,7 +602,7 @@ private fun RowOverflowMenu(
             onDismissRequest = { onExpandedChange(false) },
             quickActions = buildList {
                 add(ContextAction(JCodeIcon.Copy, "复制") { onAction(row, RowAction.Copy) })
-                if (!isProjectRoot) add(ContextAction(JCodeIcon.Cut, "Cut") { onAction(row, RowAction.Cut) })
+                if (!isProjectRoot) add(ContextAction(JCodeIcon.Cut, "剪切") { onAction(row, RowAction.Cut) })
                 add(ContextAction(JCodeIcon.Rename, "重命名") { onAction(row, RowAction.Rename) })
                 if (!isProjectRoot) {
                     add(ContextAction(JCodeIcon.Delete, "删除", destructive = true) { onAction(row, RowAction.Delete) })
@@ -981,7 +980,7 @@ private fun ExplorerToolbar(
         ToolbarIcon(jcIcon(JCodeIcon.NewFile), "新建文件", onCreateFile)
         ToolbarIcon(jcIcon(JCodeIcon.NewFolder), "新建文件夹", onCreateFolder)
         ToolbarIcon(jcIcon(JCodeIcon.Add), "导入文件", onImport)
-        ToolbarIcon(jcIcon(JCodeIcon.Paste), "Paste", onPaste, enabled = canPaste)
+        ToolbarIcon(jcIcon(JCodeIcon.Paste), "粘贴", onPaste, enabled = canPaste)
         ToolbarIcon(jcIcon(JCodeIcon.Refresh), "刷新", onRefresh)
         if (viewMode == ExplorerViewMode.Tree) {
             ToolbarIcon(jcIcon(JCodeIcon.Collapse), "全部折叠", onCollapseAll)

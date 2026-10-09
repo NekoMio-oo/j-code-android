@@ -71,7 +71,7 @@ fun BuildConfigPage(
         CompactFilledButton(
             text = if (savedOnce && !dirty) "已保存" else "保存",
             onClick = {
-                onSave(BuildConfig(name = name.ifBlank { "Build" }, command = command))
+                onSave(BuildConfig(name = name.ifBlank { "构建" }, command = command))
                 savedOnce = true
                 dirty = false
             },

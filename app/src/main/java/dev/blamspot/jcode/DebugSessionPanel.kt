@@ -309,11 +309,12 @@ internal fun DebugConsoleSidebarContent(modifier: Modifier = Modifier) {
 @Composable
 private fun DebugStateChip(state: DebugState) {
     val (label, active) = when (state) {
-        DebugState.STARTING, DebugState.INITIALIZING -> "Starting…" to false
-        DebugState.RUNNING -> "Running" to true
-        DebugState.STOPPED -> "Paused" to true
-        DebugState.ERROR -> "Error" to false
-        else -> state.name.lowercase() to false
+        DebugState.STARTING, DebugState.INITIALIZING -> "正在启动…" to false
+        DebugState.RUNNING -> "运行中" to true
+        DebugState.STOPPED -> "已暂停" to true
+        DebugState.ERROR -> "错误" to false
+        DebugState.DISCONNECTED -> "未连接" to false
+        DebugState.TERMINATED -> "已终止" to false
     }
     Surface(
         color = if (active) MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)

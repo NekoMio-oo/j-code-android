@@ -461,23 +461,23 @@ fun BrowserPage(modifier: Modifier = Modifier) {
 private enum class SiteTrust(val icon: JCodeIcon, val summary: String, val detail: String) {
     Secure(
         JCodeIcon.Lock,
-        "connection is secure",
+        "连接是安全的",
         "此设备与网站之间已加密。传输中的数据无法被读取或篡改。",
     ),
     Insecure(
         JCodeIcon.LockOpen,
-        "connection is not secure",
+        "连接不安全",
         "通过 HTTP 明文发送。此处与服务器之间的网络上的任何人都可以读取" +
             "并篡改它——对于本机上的开发服务器而言很平常，但在其他任何地方都值得留意。",
     ),
     Local(
         JCodeIcon.Files,
-        "local file",
+        "本地文件",
         "从此设备加载，而非通过网络获取。",
     ),
     Blank(
         JCodeIcon.Browser,
-        "no page loaded",
+        "未加载页面",
         "此选项卡尚未加载任何内容。",
     );
 
@@ -541,12 +541,12 @@ private fun SiteInfoPanel(
             val local = counts.getOrNull(0)?.toIntOrNull() ?: 0
             val session = counts.getOrNull(1)?.toIntOrNull() ?: 0
             storage = when {
-                local == 0 && session == 0 -> "None"
-                session == 0 -> "$local in localStorage"
-                local == 0 -> "$session in sessionStorage"
-                else -> "$local local, $session session"
+                local == 0 && session == 0 -> "无"
+                session == 0 -> "localStorage $local 条"
+                local == 0 -> "sessionStorage $session 条"
+                else -> "本地 $local 条，会话 $session 条"
             }
-        } ?: run { storage = "None" }
+        } ?: run { storage = "无" }
     }
 
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
@@ -588,11 +588,11 @@ private fun SiteInfoPanel(
             webView?.certificate?.let { cert ->
                 SiteInfoRow("颁发给", cert.issuedTo?.cName?.ifBlank { host } ?: host)
                 SiteInfoRow("颁发者", cert.issuedBy?.oName?.ifBlank { "—" } ?: "—")
-                SiteInfoRow("Expires", cert.validNotAfterDate?.let { DateFormat.getDateInstance().format(it) } ?: "—")
+                SiteInfoRow("有效期至", cert.validNotAfterDate?.let { DateFormat.getDateInstance().format(it) } ?: "—")
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = Space.sm))
-            SiteInfoRow("Cookies", if (cookies == 0) "None" else "$cookies for this site")
-            SiteInfoRow("网站数据", storage ?: "Reading…")
+            SiteInfoRow("Cookie", if (cookies == 0) "无" else "$cookies 个")
+            SiteInfoRow("网站数据", storage ?: "正在读取…")
             TextButton(
                 onClick = {
                     // This origin only. The overflow menu is where "清除全部数据" lives.
@@ -610,7 +610,7 @@ private fun SiteInfoPanel(
                     // The same two the row counts, or the button would clear something else.
                     BuiltinBrowser.controller?.eval(STORAGE_CLEAR_JS) {}
                     cookies = 0
-                    storage = "None"
+                    storage = "无"
                     webView?.reload()
                     onDismiss()
                 },

@@ -58,7 +58,7 @@ internal const val ADB_CATALOG_ID = "adb"
 internal fun adbStatusLabel(state: AdbBridgeState): String = when (state) {
     is AdbBridgeState.Stopped -> "未设置"
     is AdbBridgeState.Discovering -> "正在连接…"
-    is AdbBridgeState.Ready -> "Connected"
+    is AdbBridgeState.Ready -> "已连接"
     is AdbBridgeState.Degraded -> state.reason
     is AdbBridgeState.Failed -> state.message
 }
@@ -172,8 +172,8 @@ internal fun AndroidDevicePage(
             description = "开发者选项 → 无线调试。通常需要 Wi-Fi，且 Android " +
                 "会在每次重启后将其关闭。",
         ) {
-            ManagerSummaryRow("开发者选项", if (developerOptionsOn) "On" else "Off")
-            ManagerSummaryRow("无线调试", if (wirelessDebuggingOn) "On" else "Off")
+            ManagerSummaryRow("开发者选项", if (developerOptionsOn) "开" else "关")
+            ManagerSummaryRow("无线调试", if (wirelessDebuggingOn) "开" else "关")
             if (!developerOptionsOn) {
                 Text(
                     text = "开发者选项处于隐藏状态。请打开设备信息，连续点击版本号七" +
@@ -215,7 +215,7 @@ internal fun AndroidDevicePage(
                 value = pairingPort,
                 onValueChange = { pairingPortEdited = true; pairingPort = it.filter(Char::isDigit).take(5) },
                 supporting = "显示在配对码下方，冒号之后。",
-                placeholder = "e.g. 41337",
+                placeholder = "例如 41337",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 monospace = true,
             )
@@ -255,7 +255,7 @@ internal fun AndroidDevicePage(
             description = "启动中继服务，通过 mDNS 发现本机的 adbd，并将客户机的 " +
                 "adb 连接到它。",
         ) {
-            ManagerSummaryRow("Status", adbStatusLabel(state))
+            ManagerSummaryRow("状态", adbStatusLabel(state))
             (state as? AdbBridgeState.Ready)?.let { ready ->
                 ManagerSummaryRow("中继端口", ready.relayPort.toString())
                 ManagerSummaryRow("设备端口", ready.backendPort.toString())
@@ -308,7 +308,7 @@ internal fun AndroidDevicePage(
             defaultExpanded = false,
         ) {
             SettingsTextFieldRow(
-                label = "adbd endpoint",
+                label = "adbd 地址",
                 value = backendOverride,
                 onValueChange = { backendOverride = it; overrideError = null },
                 placeholder = "127.0.0.1:5555",

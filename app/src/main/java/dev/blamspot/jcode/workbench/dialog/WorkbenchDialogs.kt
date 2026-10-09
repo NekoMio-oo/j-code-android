@@ -289,7 +289,7 @@ internal fun NewItemDialog(
                 when {
                     step == 1 && selectedTemplate != null -> selectedTemplate.name
                     !allowWorkspaceType -> "新建项目"
-                    else -> "New"
+                    else -> "新建"
                 },
             )
         },

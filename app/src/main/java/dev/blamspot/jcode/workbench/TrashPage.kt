@@ -256,8 +256,8 @@ private fun TrashBar(
                 text = when {
                     loading -> "正在读取回收站…"
                     count == 0 -> "清空"
-                    else -> count.toString() + " 项" + (if (count == 1) "" else "s") + " · " +
-                        humanSize(bytes) + " · kept for " + trashRetentionLabel(retentionDays).lowercase()
+                    else -> "$count 项 · " + humanSize(bytes) + " · 保留" +
+                        trashRetentionLabel(retentionDays)
                 },
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -276,8 +276,8 @@ private fun EmptyBin(loading: Boolean, retentionDays: Int, modifier: Modifier) {
             text = if (loading) {
                 "正在读取回收站…"
             } else {
-                "此处没有内容。已删除的文件和文件夹将保留 " +
-                    trashRetentionLabel(retentionDays).lowercase() + "."
+                "此处没有内容。已删除的文件和文件夹将保留" +
+                    trashRetentionLabel(retentionDays) + "。"
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
